@@ -19,7 +19,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Design
 
-- [ ] **DSGN-01**: Multiple distinct design explorations generated for browser preview and user iteration before committing to a final direction
+- [x] **DSGN-01**: Multiple distinct design explorations generated for browser preview and user iteration before committing to a final direction
 - [ ] **DSGN-02**: Creative but safe layout — asymmetric grids, overlapping elements, unconventional flow while maintaining readability
 - [ ] **DSGN-03**: Dark mode with system preference detection and animated toggle, persisted in localStorage
 - [ ] **DSGN-04**: Noise/grain texture overlay for visual depth
@@ -79,7 +79,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CONT-05 | Phase 2 | Pending |
 | CONT-06 | Phase 2 | Pending |
 | CONT-07 | Phase 2 | Pending |
-| DSGN-01 | Phase 1 | Pending |
+| DSGN-01 | Phase 1 | Complete |
 | DSGN-02 | Phase 2 | Pending |
 | DSGN-03 | Phase 3 | Pending |
 | DSGN-04 | Phase 3 | Pending |
