@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v4.2
 milestone_name: milestone
 status: planning
-stopped_at: Completed 01-04-PLAN.md (Phase 1 complete)
-last_updated: "2026-03-06T22:11:58.805Z"
+stopped_at: Phase 2 context gathered
+last_updated: "2026-03-06T22:56:20.872Z"
 last_activity: 2026-03-06 -- Completed plan 01-04 (design direction selection)
 progress:
   total_phases: 4
@@ -21,7 +21,7 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-06)
 
 **Core value:** Visitors immediately get a sense of Khai's personality and technical ability through a portfolio that is as engaging to interact with as the work it showcases.
-**Current focus:** Phase 1: Foundation and Design Exploration
+**Current focus:** Phase 2: Content Sections (design locked, ready to plan)
 
 ## Current Position
 
@@ -71,6 +71,11 @@ Recent decisions affecting current work:
 - HYBRID design direction: Glassmorphism base + Light+Airy palette + Colorful+Playful energy/emojis + Neobrutalism accents
 - Video Game (#5) dropped -- too cheesy for portfolio tone
 - Emojis treated as UI elements, not decoration
+- LOCKED: Liquid Glass + Neobrutalism style (see DESIGN-DIRECTION.md for full spec)
+- LOCKED: Exploration6.tsx is the main page -- all Phase 2+ extends it directly
+- Glass recipe: near-zero fill + blur(40px) saturate(1.6) + 3px #3d3248 border + offset shadow + specular rim + noise overlay
+- No orbs/gradient blobs -- removed for readability
+- Background: warm mid-tone gradient (#e8ddd5 -> #cdd0e5), NOT near-white
 
 ### Pending Todos
 
@@ -83,6 +88,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-06T22:10:00Z
-Stopped at: Completed 01-04-PLAN.md (Phase 1 complete)
-Resume file: .planning/phases/01-foundation-and-design-exploration/01-04-SUMMARY.md
+Last session: 2026-03-06T22:56:20.866Z
+Stopped at: Phase 2 context gathered
+Resume file: .planning/phases/02-content-sections/02-CONTEXT.md
