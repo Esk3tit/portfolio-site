@@ -14,6 +14,7 @@ import {
   projects,
   contactLinks,
 } from "@/data/content";
+import { FloatingNav } from "@/components/sections/FloatingNav";
 
 export default function Exploration6() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -198,6 +199,9 @@ export default function Exploration6() {
         fontFamily: "var(--font-body, 'Inter', system-ui, sans-serif)",
       }}
     >
+
+      {/* Floating section navigation */}
+      <FloatingNav />
 
       {/* SVG noise filter for frosted glass grain texture */}
       <svg className="absolute h-0 w-0">
