@@ -72,35 +72,35 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| CONT-01 | TBD | Pending |
-| CONT-02 | TBD | Pending |
-| CONT-03 | TBD | Pending |
-| CONT-04 | TBD | Pending |
-| CONT-05 | TBD | Pending |
-| CONT-06 | TBD | Pending |
-| CONT-07 | TBD | Pending |
-| DSGN-01 | TBD | Pending |
-| DSGN-02 | TBD | Pending |
-| DSGN-03 | TBD | Pending |
-| DSGN-04 | TBD | Pending |
-| DSGN-05 | TBD | Pending |
-| DSGN-06 | TBD | Pending |
-| ANIM-01 | TBD | Pending |
-| ANIM-02 | TBD | Pending |
-| ANIM-03 | TBD | Pending |
-| ANIM-04 | TBD | Pending |
-| INFR-01 | TBD | Pending |
-| INFR-02 | TBD | Pending |
-| INFR-03 | TBD | Pending |
-| INFR-04 | TBD | Pending |
-| INFR-05 | TBD | Pending |
-| INFR-06 | TBD | Pending |
+| CONT-01 | Phase 2 | Pending |
+| CONT-02 | Phase 2 | Pending |
+| CONT-03 | Phase 2 | Pending |
+| CONT-04 | Phase 2 | Pending |
+| CONT-05 | Phase 2 | Pending |
+| CONT-06 | Phase 2 | Pending |
+| CONT-07 | Phase 2 | Pending |
+| DSGN-01 | Phase 1 | Pending |
+| DSGN-02 | Phase 2 | Pending |
+| DSGN-03 | Phase 3 | Pending |
+| DSGN-04 | Phase 3 | Pending |
+| DSGN-05 | Phase 3 | Pending |
+| DSGN-06 | Phase 2 | Pending |
+| ANIM-01 | Phase 3 | Pending |
+| ANIM-02 | Phase 3 | Pending |
+| ANIM-03 | Phase 3 | Pending |
+| ANIM-04 | Phase 3 | Pending |
+| INFR-01 | Phase 4 | Pending |
+| INFR-02 | Phase 4 | Pending |
+| INFR-03 | Phase 4 | Pending |
+| INFR-04 | Phase 4 | Pending |
+| INFR-05 | Phase 4 | Pending |
+| INFR-06 | Phase 1 | Pending |
 
 **Coverage:**
 - v1 requirements: 23 total
-- Mapped to phases: 0
-- Unmapped: 23
+- Mapped to phases: 23
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-06*
-*Last updated: 2026-03-06 after initial definition*
+*Last updated: 2026-03-06 after roadmap creation*
