@@ -13,8 +13,8 @@ Requirements for initial release. Each maps to roadmap phases.
 - [x] **CONT-02**: About section with background, interests, and what Khai does
 - [x] **CONT-03**: Work experience section with clear timeline of past roles
 - [x] **CONT-04**: Skills section organized by category with visual display
-- [ ] **CONT-05**: Projects showcase with descriptions, tech stack tags, and GitHub links
-- [ ] **CONT-06**: Contact section with email, LinkedIn, and GitHub links
+- [x] **CONT-05**: Projects showcase with descriptions, tech stack tags, and GitHub links
+- [x] **CONT-06**: Contact section with email, LinkedIn, and GitHub links
 - [x] **CONT-07**: Resume PDF download via git-committed file (easy to swap by replacing file in repo)
 
 ### Design
@@ -76,8 +76,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CONT-02 | Phase 2 | Complete |
 | CONT-03 | Phase 2 | Complete |
 | CONT-04 | Phase 2 | Complete |
-| CONT-05 | Phase 2 | Pending |
-| CONT-06 | Phase 2 | Pending |
+| CONT-05 | Phase 2 | Complete |
+| CONT-06 | Phase 2 | Complete |
 | CONT-07 | Phase 2 | Complete |
 | DSGN-01 | Phase 1 | Complete |
 | DSGN-02 | Phase 2 | Complete |
