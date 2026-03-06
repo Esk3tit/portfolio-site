@@ -47,11 +47,12 @@ Plans:
   3. Layout uses asymmetric grids, overlapping elements, or unconventional flow -- visibly distinct from a standard top-to-bottom portfolio
   4. Resume PDF downloads correctly when clicked and the PDF file lives in the repo for easy swapping
   5. Copy tone throughout is playful, human, and specific -- not generic corporate language
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 02-01: TBD
-- [ ] 02-02: TBD
+- [ ] 02-01-PLAN.md — Extract reusable UI components (GlassPanel, buttons, tags) + content data file + resume PDF
+- [ ] 02-02-PLAN.md — Refine Hero/About with real content, build Experience and Skills sections
+- [ ] 02-03-PLAN.md — Build Projects expand, Contact section, and Floating Nav + visual checkpoint
 
 ### Phase 3: Interactivity and Visual Effects
 **Goal**: The portfolio feels alive and memorable -- scroll animations, cursor effects, micro-interactions, dark mode, and visual textures transform it from a static site into an experience
