@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState, useCallback } from "react";
 import { gsap, useGSAP } from "@/lib/gsap";
 import { GlassPanel } from "@/components/ui/GlassPanel";
 import { NeoBrutalButton } from "@/components/ui/NeoBrutalButton";
@@ -11,37 +11,54 @@ import {
   aboutPanels,
   experiences,
   skillCategories,
+  projects,
+  contactLinks,
 } from "@/data/content";
-
-const projects = [
-  {
-    emoji: "\u{1F3B5}",
-    title: "Rhythm",
-    description:
-      "A music discovery app that learns your taste and surprises you with gems you didn't know existed.",
-    tags: ["React", "Node.js", "Spotify API"],
-    headerColor: "#c9a4b2",
-  },
-  {
-    emoji: "\u{1F3A8}",
-    title: "Pixel Garden",
-    description:
-      "Collaborative pixel art canvas where strangers build something beautiful together, one dot at a time.",
-    tags: ["WebSocket", "Canvas API", "Go"],
-    headerColor: "#a78bcd",
-  },
-  {
-    emoji: "\u{1F36A}",
-    title: "Snack Stack",
-    description:
-      "Rate and track every snack you've ever tried. Yes, it's exactly as important as it sounds.",
-    tags: ["Next.js", "PostgreSQL", "Tailwind"],
-    headerColor: "#8bb4d4",
-  },
-];
 
 export default function Exploration6() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [expandedProject, setExpandedProject] = useState<number | null>(null);
+
+  const toggleProject = useCallback(
+    (index: number) => {
+      const detailEl = document.querySelector(`.e6-project-detail-${index}`);
+      if (!detailEl) return;
+
+      if (expandedProject === index) {
+        // Collapse
+        gsap.to(detailEl, {
+          height: 0,
+          opacity: 0,
+          duration: 0.4,
+          ease: "power2.inOut",
+          onComplete: () => setExpandedProject(null),
+        });
+      } else {
+        // Collapse previous if any
+        if (expandedProject !== null) {
+          const prevEl = document.querySelector(
+            `.e6-project-detail-${expandedProject}`
+          );
+          if (prevEl) {
+            gsap.to(prevEl, {
+              height: 0,
+              opacity: 0,
+              duration: 0.3,
+              ease: "power2.inOut",
+            });
+          }
+        }
+        // Expand new
+        setExpandedProject(index);
+        gsap.fromTo(
+          detailEl,
+          { height: 0, opacity: 0 },
+          { height: "auto", opacity: 1, duration: 0.5, ease: "power2.out" }
+        );
+      }
+    },
+    [expandedProject]
+  );
 
   useGSAP(
     () => {
@@ -150,6 +167,16 @@ export default function Exploration6() {
         stagger: 0.12,
         ease: "back.out(1.2)",
       });
+
+      // Contact section
+      gsap.from(".e6-contact-card", {
+        scrollTrigger: { trigger: ".e6-contact-section", start: "top 80%" },
+        y: 40,
+        opacity: 0,
+        duration: 0.7,
+        stagger: 0.15,
+        ease: "power3.out",
+      });
     },
     { scope: containerRef }
   );
@@ -181,7 +208,7 @@ export default function Exploration6() {
       </svg>
 
       {/* ─── HERO SECTION ─── */}
-      <section className="relative flex min-h-screen items-center justify-center px-6">
+      <section id="hero" className="relative flex min-h-screen items-center justify-center px-6">
         <div className="relative z-10 w-full max-w-2xl text-center">
           {/* Emoji badge — playful energy */}
           <GlassPanel
@@ -419,7 +446,7 @@ export default function Exploration6() {
       </section>
 
       {/* ─── PROJECTS SECTION ─── */}
-      <section className="e6-projects-section relative px-6 pb-32 pt-8 md:px-12">
+      <section id="projects" className="e6-projects-section relative px-6 py-28 md:px-12">
         <div className="mx-auto max-w-5xl">
           <div className="e6-projects-heading mb-14">
             <NeoBrutalHeading emoji={"\u{1F6E0}\uFE0F"} rotate="-1deg">
@@ -427,50 +454,221 @@ export default function Exploration6() {
             </NeoBrutalHeading>
           </div>
 
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {projects.map((project) => (
+          <div className="grid gap-8 md:grid-cols-2">
+            {projects.map((project, index) => (
               <GlassPanel
                 key={project.title}
-                className="e6-project-card group transition-all duration-300 hover:-translate-y-1 hover:shadow-[6px_6px_0px_#3d3248]"
+                className="e6-project-card group cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-[6px_6px_0px_#3d3248]"
+                style={{ overflow: "visible" }}
               >
-                {/* Neobrutalist colored header bar */}
-                <div
-                  className="flex items-center gap-3 px-6 py-3"
-                  style={{
-                    background: project.headerColor,
-                    borderBottom: "3px solid #3d3248",
-                    borderRadius: "1rem 1rem 0 0",
-                  }}
-                >
-                  <span className="text-xl">{project.emoji}</span>
-                  <h3
-                    className="text-sm font-bold uppercase tracking-wider text-white"
+                {/* Clickable card face */}
+                <div onClick={() => toggleProject(index)}>
+                  {/* Neobrutalist colored header bar */}
+                  <div
+                    className="flex items-center justify-between gap-3 overflow-hidden px-6 py-3"
                     style={{
-                      fontFamily:
-                        "var(--font-display, 'Space Grotesk', system-ui, sans-serif)",
+                      background: project.headerColor,
+                      borderBottom: "3px solid #3d3248",
+                      borderRadius: "1rem 1rem 0 0",
                     }}
                   >
-                    {project.title}
-                  </h3>
+                    <div className="flex items-center gap-3">
+                      <span className="text-xl">{project.emoji}</span>
+                      <h3
+                        className="text-sm font-bold uppercase tracking-wider text-white"
+                        style={{
+                          fontFamily:
+                            "var(--font-display, 'Space Grotesk', system-ui, sans-serif)",
+                        }}
+                      >
+                        {project.title}
+                      </h3>
+                    </div>
+                    <span
+                      className="text-xs font-semibold uppercase tracking-wide text-white/80 transition-colors group-hover:text-white"
+                    >
+                      {expandedProject === index ? "Close" : "View Details"}
+                    </span>
+                  </div>
+
+                  <div className="px-6 py-6">
+                    <p
+                      className="mb-5 text-sm leading-relaxed"
+                      style={{ color: "#5a4d66" }}
+                    >
+                      {project.description}
+                    </p>
+
+                    <div className="flex flex-wrap gap-2">
+                      {project.tags.map((tag) => (
+                        <NeoBrutalTag key={tag}>{tag}</NeoBrutalTag>
+                      ))}
+                    </div>
+                  </div>
                 </div>
 
-                <div className="px-6 py-6">
-                  <p
-                    className="mb-5 text-sm leading-relaxed"
-                    style={{ color: "#5a4d66" }}
+                {/* Expandable case study detail */}
+                <div
+                  className={`e6-project-detail-${index}`}
+                  style={{ height: 0, opacity: 0, overflow: "hidden" }}
+                >
+                  <div
+                    className="border-t-2 px-6 pb-6 pt-5"
+                    style={{ borderColor: "#3d324833" }}
                   >
-                    {project.description}
-                  </p>
+                    <div className="mb-4">
+                      <p
+                        className="mb-1 text-xs font-bold uppercase tracking-wider"
+                        style={{ color: project.headerColor }}
+                      >
+                        The Problem
+                      </p>
+                      <p
+                        className="text-sm leading-relaxed"
+                        style={{ color: "#5a4d66" }}
+                      >
+                        {project.problem}
+                      </p>
+                    </div>
 
-                  <div className="flex flex-wrap gap-2">
-                    {project.tags.map((tag) => (
-                      <NeoBrutalTag key={tag}>{tag}</NeoBrutalTag>
-                    ))}
+                    <div className="mb-4">
+                      <p
+                        className="mb-1 text-xs font-bold uppercase tracking-wider"
+                        style={{ color: project.headerColor }}
+                      >
+                        My Approach
+                      </p>
+                      <p
+                        className="text-sm leading-relaxed"
+                        style={{ color: "#5a4d66" }}
+                      >
+                        {project.approach}
+                      </p>
+                    </div>
+
+                    <div className="mb-5">
+                      <p
+                        className="mb-2 text-xs font-bold uppercase tracking-wider"
+                        style={{ color: project.headerColor }}
+                      >
+                        Key Highlights
+                      </p>
+                      <ul className="flex flex-col gap-1.5">
+                        {project.highlights.map((highlight) => (
+                          <li
+                            key={highlight}
+                            className="flex items-start gap-2 text-sm leading-relaxed"
+                            style={{ color: "#5a4d66" }}
+                          >
+                            <span
+                              className="mt-1.5 inline-block h-1.5 w-1.5 shrink-0 rounded-full"
+                              style={{ background: project.headerColor }}
+                            />
+                            {highlight}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    <div className="flex flex-wrap gap-3">
+                      {project.github && (
+                        <NeoBrutalButton
+                          href={project.github}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          color={project.headerColor}
+                          rotate="0deg"
+                          className="text-xs"
+                        >
+                          GitHub {"\u{1F431}"}
+                        </NeoBrutalButton>
+                      )}
+                      {project.liveUrl && (
+                        <NeoBrutalButton
+                          href={project.liveUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          color="#8bb4d4"
+                          rotate="0deg"
+                          className="text-xs"
+                        >
+                          Live Demo {"\u{1F680}"}
+                        </NeoBrutalButton>
+                      )}
+                    </div>
                   </div>
                 </div>
               </GlassPanel>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* ─── CONTACT SECTION ─── */}
+      <section id="contact" className="e6-contact-section relative px-6 py-28 md:px-12">
+        <div className="mx-auto max-w-4xl">
+          <div className="mb-14 text-center">
+            <NeoBrutalHeading emoji={"\u{1F4AC}"} rotate="1deg">
+              Get In Touch
+            </NeoBrutalHeading>
+          </div>
+
+          <GlassPanel className="px-8 py-10 md:px-12">
+            <div className="flex flex-col items-center gap-6 sm:flex-row sm:justify-center">
+              {contactLinks.map((link) => (
+                <a
+                  key={link.name}
+                  href={link.href}
+                  target={link.name !== "Email" ? "_blank" : undefined}
+                  rel={link.name !== "Email" ? "noopener noreferrer" : undefined}
+                  className="e6-contact-card group w-full sm:w-auto"
+                >
+                  <GlassPanel
+                    className="flex flex-col items-center gap-2 px-8 py-6 text-center transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-[6px_6px_0px_#3d3248]"
+                  >
+                    <span className="text-3xl">{link.emoji}</span>
+                    <p
+                      className="text-sm font-bold uppercase tracking-wider"
+                      style={{
+                        color: "#3d3248",
+                        fontFamily:
+                          "var(--font-display, 'Space Grotesk', system-ui, sans-serif)",
+                      }}
+                    >
+                      {link.name}
+                    </p>
+                    <p
+                      className="text-xs"
+                      style={{ color: "#8a7d96" }}
+                    >
+                      {link.label}
+                    </p>
+                  </GlassPanel>
+                </a>
+              ))}
+            </div>
+
+            {/* Resume download -- second touchpoint */}
+            <div className="mt-8 flex justify-center">
+              <NeoBrutalButton
+                href="/resume.pdf"
+                download="Khai_Phan_Resume.pdf"
+                color="#a78bcd"
+                rotate="-1deg"
+              >
+                Download Resume {"\u{1F4C4}"}
+              </NeoBrutalButton>
+            </div>
+
+            {/* Warm closing copy */}
+            <p
+              className="mt-8 text-center text-sm leading-relaxed"
+              style={{ color: "#8a7d96" }}
+            >
+              Whether it&apos;s a project idea, a job opportunity, or you just want to talk
+              about animation easing curves -- I&apos;m always down to chat. Don&apos;t be a stranger.
+            </p>
+          </GlassPanel>
         </div>
       </section>
     </div>
