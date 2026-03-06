@@ -1,0 +1,15 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Space Grotesk", sans-serif;
+  --font-body: "Inter", sans-serif;
+  --color-surface: oklch(0.98 0 0);
+  --color-text: oklch(0.15 0 0);
+  --color-primary-500: oklch(0.65 0.2 250);
+  --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+body {
+  background: var(--color-surface);
+  color: var(--color-text);
+}
