@@ -9,10 +9,10 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Content
 
-- [ ] **CONT-01**: Hero section with animated intro and personality-driven copy
-- [ ] **CONT-02**: About section with background, interests, and what Khai does
-- [ ] **CONT-03**: Work experience section with clear timeline of past roles
-- [ ] **CONT-04**: Skills section organized by category with visual display
+- [x] **CONT-01**: Hero section with animated intro and personality-driven copy
+- [x] **CONT-02**: About section with background, interests, and what Khai does
+- [x] **CONT-03**: Work experience section with clear timeline of past roles
+- [x] **CONT-04**: Skills section organized by category with visual display
 - [ ] **CONT-05**: Projects showcase with descriptions, tech stack tags, and GitHub links
 - [ ] **CONT-06**: Contact section with email, LinkedIn, and GitHub links
 - [x] **CONT-07**: Resume PDF download via git-committed file (easy to swap by replacing file in repo)
@@ -20,7 +20,7 @@ Requirements for initial release. Each maps to roadmap phases.
 ### Design
 
 - [x] **DSGN-01**: Multiple distinct design explorations generated for browser preview and user iteration before committing to a final direction
-- [ ] **DSGN-02**: Creative but safe layout — asymmetric grids, overlapping elements, unconventional flow while maintaining readability
+- [x] **DSGN-02**: Creative but safe layout — asymmetric grids, overlapping elements, unconventional flow while maintaining readability
 - [ ] **DSGN-03**: Dark mode with system preference detection and animated toggle, persisted in localStorage
 - [ ] **DSGN-04**: Noise/grain texture overlay for visual depth
 - [ ] **DSGN-05**: Gradient animations or dynamic color shifts
@@ -72,15 +72,15 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| CONT-01 | Phase 2 | Pending |
-| CONT-02 | Phase 2 | Pending |
-| CONT-03 | Phase 2 | Pending |
-| CONT-04 | Phase 2 | Pending |
+| CONT-01 | Phase 2 | Complete |
+| CONT-02 | Phase 2 | Complete |
+| CONT-03 | Phase 2 | Complete |
+| CONT-04 | Phase 2 | Complete |
 | CONT-05 | Phase 2 | Pending |
 | CONT-06 | Phase 2 | Pending |
 | CONT-07 | Phase 2 | Complete |
 | DSGN-01 | Phase 1 | Complete |
-| DSGN-02 | Phase 2 | Pending |
+| DSGN-02 | Phase 2 | Complete |
 | DSGN-03 | Phase 3 | Pending |
 | DSGN-04 | Phase 3 | Pending |
 | DSGN-05 | Phase 3 | Pending |
