@@ -63,48 +63,50 @@ export default function Exploration6() {
 
   useGSAP(
     () => {
-      // Hero entrance — playful energy with glass polish
-      // Small delay lets Next.js finish hydration so elements are in the DOM
-      // and measurable. Without this, gsap.from() sets opacity/scale to 0 but
-      // the timeline may not play on the very first visit.
+      // Hero entrance — use fromTo() so start states are set explicitly
+      // and the timeline reliably plays on first visit after hydration.
       const heroTl = gsap.timeline({
         defaults: { ease: "power3.out" },
-        delay: 0.1,
+        delay: 0.15,
       });
 
       heroTl
-        .from(".e6-hero-emoji", {
-          scale: 0,
-          rotation: -180,
-          duration: 0.7,
-          ease: "back.out(1.7)",
-        })
-        .from(
+        .fromTo(
+          ".e6-hero-emoji",
+          { scale: 0, rotation: -180 },
+          { scale: 1, rotation: 0, duration: 0.7, ease: "back.out(1.7)" }
+        )
+        .fromTo(
           ".e6-hero-glass",
-          { scale: 0.92, opacity: 0, y: 40, duration: 1.2 },
+          { scale: 0.92, opacity: 0, y: 40 },
+          { scale: 1, opacity: 1, y: 0, duration: 1.2 },
           "-=0.3"
         )
-        .from(
+        .fromTo(
           ".e6-hero-greeting",
-          { y: 30, opacity: 0, duration: 0.8 },
+          { y: 30, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.8 },
           "-=0.7"
         )
-        .from(
+        .fromTo(
           ".e6-hero-name",
-          { y: 50, opacity: 0, duration: 1.0 },
+          { y: 50, opacity: 0 },
+          { y: 0, opacity: 1, duration: 1.0 },
           "-=0.5"
         )
-        .from(
+        .fromTo(
           ".e6-hero-tagline",
-          { y: 25, opacity: 0, duration: 0.8 },
+          { y: 25, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.8 },
           "-=0.5"
         )
-        .from(
+        .fromTo(
           ".e6-hero-cta",
+          { scale: 0, rotation: -6, opacity: 0 },
           {
-            scale: 0,
-            rotation: -6,
-            opacity: 0,
+            scale: 1,
+            rotation: 0,
+            opacity: 1,
             duration: 0.5,
             ease: "back.out(2)",
             stagger: 0.1,
@@ -112,84 +114,52 @@ export default function Exploration6() {
           "-=0.3"
         );
 
-      // About section
-      gsap.from(".e6-about-heading", {
-        scrollTrigger: { trigger: ".e6-about-section", start: "top 85%" },
-        y: 40,
-        opacity: 0,
-        duration: 1.0,
-        ease: "power3.out",
-      });
+      // Scroll-triggered sections — use fromTo() so GSAP never sets opacity:0
+      // before the trigger fires. gsap.from() with ScrollTrigger immediately
+      // renders the "from" state (opacity:0), and if the trigger position is
+      // miscalculated on first load the elements stay invisible forever.
 
-      gsap.from(".e6-about-panel", {
-        scrollTrigger: { trigger: ".e6-about-section", start: "top 80%" },
-        scale: 0.95,
-        opacity: 0,
-        y: 50,
-        duration: 1.0,
-        stagger: 0.15,
-        ease: "power3.out",
-      });
+      // About section
+      gsap.fromTo(".e6-about-heading",
+        { y: 40, opacity: 0 },
+        { scrollTrigger: { trigger: ".e6-about-section", start: "top 85%" }, y: 0, opacity: 1, duration: 1.0, ease: "power3.out" }
+      );
+
+      gsap.fromTo(".e6-about-panel",
+        { scale: 0.95, opacity: 0, y: 50 },
+        { scrollTrigger: { trigger: ".e6-about-section", start: "top 80%" }, scale: 1, opacity: 1, y: 0, duration: 1.0, stagger: 0.15, ease: "power3.out" }
+      );
 
       // Experience section
-      gsap.from(".e6-experience-card", {
-        scrollTrigger: {
-          trigger: ".e6-experience-section",
-          start: "top 80%",
-        },
-        y: 50,
-        opacity: 0,
-        scale: 0.95,
-        duration: 0.8,
-        stagger: 0.12,
-        ease: "power3.out",
-      });
+      gsap.fromTo(".e6-experience-card",
+        { y: 50, opacity: 0, scale: 0.95 },
+        { scrollTrigger: { trigger: ".e6-experience-section", start: "top 80%" }, y: 0, opacity: 1, scale: 1, duration: 0.8, stagger: 0.12, ease: "power3.out" }
+      );
 
       // Skills section
-      gsap.from(".e6-skill-category", {
-        scrollTrigger: { trigger: ".e6-skills-section", start: "top 80%" },
-        y: 40,
-        opacity: 0,
-        duration: 0.7,
-        stagger: 0.1,
-        ease: "power3.out",
-      });
+      gsap.fromTo(".e6-skill-category",
+        { y: 40, opacity: 0 },
+        { scrollTrigger: { trigger: ".e6-skills-section", start: "top 80%" }, y: 0, opacity: 1, duration: 0.7, stagger: 0.1, ease: "power3.out" }
+      );
 
       // Projects section
-      gsap.from(".e6-projects-heading", {
-        scrollTrigger: { trigger: ".e6-projects-section", start: "top 85%" },
-        x: -50,
-        opacity: 0,
-        duration: 0.7,
-        ease: "back.out(1.4)",
-      });
+      gsap.fromTo(".e6-projects-heading",
+        { x: -50, opacity: 0 },
+        { scrollTrigger: { trigger: ".e6-projects-section", start: "top 85%" }, x: 0, opacity: 1, duration: 0.7, ease: "back.out(1.4)" }
+      );
 
-      gsap.from(".e6-project-card", {
-        scrollTrigger: { trigger: ".e6-projects-section", start: "top 78%" },
-        y: 60,
-        opacity: 0,
-        scale: 0.95,
-        rotation: (i: number) => (i % 2 === 0 ? -2 : 2),
-        duration: 0.8,
-        stagger: 0.12,
-        ease: "back.out(1.2)",
-      });
+      gsap.fromTo(".e6-project-card",
+        { y: 60, opacity: 0, scale: 0.95 },
+        { scrollTrigger: { trigger: ".e6-projects-section", start: "top 78%" }, y: 0, opacity: 1, scale: 1, duration: 0.8, stagger: 0.12, ease: "back.out(1.2)" }
+      );
 
       // Contact section
-      gsap.from(".e6-contact-card", {
-        scrollTrigger: { trigger: ".e6-contact-section", start: "top 80%" },
-        y: 40,
-        opacity: 0,
-        duration: 0.7,
-        stagger: 0.15,
-        ease: "power3.out",
-      });
+      gsap.fromTo(".e6-contact-card",
+        { y: 40, opacity: 0 },
+        { scrollTrigger: { trigger: ".e6-contact-section", start: "top 80%" }, y: 0, opacity: 1, duration: 0.7, stagger: 0.15, ease: "power3.out" }
+      );
 
-      // Force ScrollTrigger to recalculate after Next.js hydration completes.
-      // Double-rAF ensures the browser has fully painted and laid-out elements
-      // before we recalculate trigger positions.  Without this, scroll-triggered
-      // elements (project cards, contact cards) stay at opacity:0 because
-      // ScrollTrigger measured positions before layout was stable.
+      // Recalculate trigger positions after hydration paint
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           ScrollTrigger.refresh(true);
