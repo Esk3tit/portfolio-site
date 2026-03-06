@@ -35,19 +35,19 @@ Progress: [████████░░] 75%
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 1
-- Average duration: 3min
-- Total execution time: 0.05 hours
+- Total plans completed: 3
+- Average duration: 2.3min
+- Total execution time: 0.12 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 01-foundation | 1 | 3min | 3min |
+| 01-foundation | 3 | 7min | 2.3min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (3min)
-- Trend: baseline
+- Last 5 plans: 01-01 (3min), 01-02 (2min), 01-03 (2min)
+- Trend: stable
 
 *Updated after each plan completion*
 
@@ -64,6 +64,8 @@ Recent decisions affecting current work:
 - Inter (body) + Space Grotesk (display) as baseline font pairing
 - oklch color space for theme tokens
 - Static imports with record-based routing for explorations
+- Each exploration uses inline styles + Tailwind for full self-containment (no global theme dependency)
+- Prefixed class selectors (e1-, e2-, e3-) for GSAP targeting to prevent cross-exploration collisions
 - Neobrutalism uses mono font stack and solid offset shadows for raw aesthetic
 - Video Game UI uses inline styles for neon glow text-shadow + styled-jsx for keyframe animations
 
