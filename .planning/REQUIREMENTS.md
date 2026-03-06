@@ -40,7 +40,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **INFR-03**: `prefers-reduced-motion` support — replace animations with fades/opacity, never remove entirely
 - [ ] **INFR-04**: Semantic HTML structure and keyboard accessibility (aria labels, focus management, color contrast)
 - [ ] **INFR-05**: Performance budget — Lighthouse mobile score >= 90
-- [ ] **INFR-06**: Vercel deployment with static export (Next.js 16 + Tailwind v4.2 + GSAP 3.14 + Lenis)
+- [x] **INFR-06**: Vercel deployment with static export (Next.js 16 + Tailwind v4.2 + GSAP 3.14 + Lenis)
 
 ## v2 Requirements
 
@@ -94,7 +94,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | INFR-03 | Phase 4 | Pending |
 | INFR-04 | Phase 4 | Pending |
 | INFR-05 | Phase 4 | Pending |
-| INFR-06 | Phase 1 | Pending |
+| INFR-06 | Phase 1 | Complete |
 
 **Coverage:**
 - v1 requirements: 23 total
