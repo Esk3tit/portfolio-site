@@ -62,6 +62,7 @@ Visitors immediately get a sense of Khai's personality and technical ability thr
 | Git-committed resume PDF | Simplest workflow — commit and deploy | — Pending |
 | Playful + creative direction | User wants to break from standard portfolio format | — Pending |
 | Frontend-design skill for UI | Ensures high design quality, avoids generic look | — Pending |
+| HYBRID design direction: Glassmorphism base + Light+Airy palette + Colorful+Playful energy/emojis + Neobrutalism accents | User reviewed all 5 explorations and chose to combine the best elements from 4 of 5 directions. Video Game (#5) dropped as too cheesy. | Selected 2026-03-06 |
 
 ---
 *Last updated: 2026-03-06 after initialization*
