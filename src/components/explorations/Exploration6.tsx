@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, useCallback } from "react";
-import { gsap, useGSAP } from "@/lib/gsap";
+import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
 import { GlassPanel } from "@/components/ui/GlassPanel";
 import { NeoBrutalButton } from "@/components/ui/NeoBrutalButton";
 import { NeoBrutalHeading } from "@/components/ui/NeoBrutalHeading";
@@ -64,7 +64,13 @@ export default function Exploration6() {
   useGSAP(
     () => {
       // Hero entrance — playful energy with glass polish
-      const heroTl = gsap.timeline({ defaults: { ease: "power3.out" } });
+      // Small delay lets Next.js finish hydration so elements are in the DOM
+      // and measurable. Without this, gsap.from() sets opacity/scale to 0 but
+      // the timeline may not play on the very first visit.
+      const heroTl = gsap.timeline({
+        defaults: { ease: "power3.out" },
+        delay: 0.1,
+      });
 
       heroTl
         .from(".e6-hero-emoji", {
@@ -177,6 +183,17 @@ export default function Exploration6() {
         duration: 0.7,
         stagger: 0.15,
         ease: "power3.out",
+      });
+
+      // Force ScrollTrigger to recalculate after Next.js hydration completes.
+      // Double-rAF ensures the browser has fully painted and laid-out elements
+      // before we recalculate trigger positions.  Without this, scroll-triggered
+      // elements (project cards, contact cards) stay at opacity:0 because
+      // ScrollTrigger measured positions before layout was stable.
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          ScrollTrigger.refresh(true);
+        });
       });
     },
     { scope: containerRef }

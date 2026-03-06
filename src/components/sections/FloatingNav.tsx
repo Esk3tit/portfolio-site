@@ -46,6 +46,13 @@ export function FloatingNav() {
         onEnterBack: () => setActiveSection(section.id),
       });
     });
+
+    // Refresh after hydration to ensure correct trigger positions
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        ScrollTrigger.refresh(true);
+      });
+    });
   });
 
   const scrollTo = (id: string) => {
