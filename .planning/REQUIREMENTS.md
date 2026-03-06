@@ -15,7 +15,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **CONT-04**: Skills section organized by category with visual display
 - [ ] **CONT-05**: Projects showcase with descriptions, tech stack tags, and GitHub links
 - [ ] **CONT-06**: Contact section with email, LinkedIn, and GitHub links
-- [ ] **CONT-07**: Resume PDF download via git-committed file (easy to swap by replacing file in repo)
+- [x] **CONT-07**: Resume PDF download via git-committed file (easy to swap by replacing file in repo)
 
 ### Design
 
@@ -24,7 +24,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **DSGN-03**: Dark mode with system preference detection and animated toggle, persisted in localStorage
 - [ ] **DSGN-04**: Noise/grain texture overlay for visual depth
 - [ ] **DSGN-05**: Gradient animations or dynamic color shifts
-- [ ] **DSGN-06**: Personality-driven copy tone throughout (playful, human, specific — not generic corporate)
+- [x] **DSGN-06**: Personality-driven copy tone throughout (playful, human, specific — not generic corporate)
 
 ### Animation
 
@@ -78,13 +78,13 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CONT-04 | Phase 2 | Pending |
 | CONT-05 | Phase 2 | Pending |
 | CONT-06 | Phase 2 | Pending |
-| CONT-07 | Phase 2 | Pending |
+| CONT-07 | Phase 2 | Complete |
 | DSGN-01 | Phase 1 | Complete |
 | DSGN-02 | Phase 2 | Pending |
 | DSGN-03 | Phase 3 | Pending |
 | DSGN-04 | Phase 3 | Pending |
 | DSGN-05 | Phase 3 | Pending |
-| DSGN-06 | Phase 2 | Pending |
+| DSGN-06 | Phase 2 | Complete |
 | ANIM-01 | Phase 3 | Pending |
 | ANIM-02 | Phase 3 | Pending |
 | ANIM-03 | Phase 3 | Pending |
