@@ -1,247 +1,264 @@
-# Pitfalls Research
+# Domain Pitfalls
 
-**Domain:** Creative, animation-heavy portfolio website with micro-interactions and non-standard layouts
-**Researched:** 2026-03-06
-**Confidence:** HIGH
+**Domain:** Responsive design, accessibility, performance, and refactoring for animation-heavy portfolio site
+**Researched:** 2026-03-07
+**Context:** v4.3 milestone -- adding responsive/a11y/perf to existing GSAP + Lenis + GlassPanel site, extracting Exploration6.tsx into section components
 
 ## Critical Pitfalls
 
-### Pitfall 1: Animation Performance Death on Mobile
+Mistakes that cause rewrites, broken animations, or accessibility failures.
 
-**What goes wrong:**
-Animations that feel smooth on a desktop MacBook stutter, jank, or freeze entirely on mid-range mobile devices. The site becomes unusable for a significant portion of visitors, including recruiters reviewing portfolios on their phones. Core Web Vitals (INP, CLS) tank, hurting both UX and SEO.
+### Pitfall 1: GSAP Scope Orphaning When Extracting Section Components
 
-**Why it happens:**
-Developers test exclusively on high-end hardware. They animate layout-triggering CSS properties (width, height, top, left) instead of compositor-friendly properties (transform, opacity). They stack multiple simultaneous animations without considering GPU memory limits. React re-renders from animation state changes cause dropped frames.
+**What goes wrong:** Exploration6.tsx has a single `useGSAP({ scope: containerRef })` that targets class selectors like `.e6-hero-emoji`, `.e6-about-panel`, `.e6-experience-card` across all sections. When sections are extracted into child components (HeroSection, AboutSection, etc.), those child elements are no longer reliably scoped to the parent's `containerRef` -- or worse, the parent's scope catches elements that should be owned by the child's animation context.
 
-**How to avoid:**
-- Only animate `transform` and `opacity` -- never layout properties like width, height, top, left, margin, or padding.
-- Use `will-change` sparingly on elements that will animate, to promote them to their own compositor layer.
-- Test on a throttled CPU (Chrome DevTools > Performance > 4x slowdown) throughout development, not just at the end.
-- Use GSAP or CSS animations for scroll-driven effects rather than Framer Motion for performance-critical sequences -- GSAP uses direct requestAnimationFrame without React lifecycle overhead.
-- Cap simultaneous animated elements. If 20 elements animate at once on scroll, batch them or stagger entries.
-- Profile with Chrome DevTools Performance tab: look for long frames (>16ms) and layout thrashing.
+**Why it happens:** GSAP's `useGSAP` scopes selector text to descendants of the container ref. When DOM moves into a child component, the parent's selectors either break (elements not found) or create orphaned ScrollTrigger instances that never clean up. The current code has ~15 ScrollTrigger instances and 2+ SplitText instances all managed from one `useGSAP` call.
 
-**Warning signs:**
-- Lighthouse Performance score drops below 80 on mobile.
-- Chrome DevTools shows frames exceeding 16ms in the Performance tab.
-- Animations feel "off" even on desktop when CPU throttling is enabled.
-- Battery drain complaints or device heating during site use.
+**Consequences:**
+- Animations silently stop working (selectors find nothing)
+- Memory leaks from ScrollTriggers that never get killed
+- React strict mode double-mount creates duplicate animations
+- Elements flash visible then invisible as competing contexts fight
 
-**Phase to address:**
-Foundation/Infrastructure phase -- establish animation patterns and performance budgets before building any animated sections. Every subsequent phase must maintain these constraints.
+**Prevention:**
+- Each extracted section component gets its OWN `useGSAP` hook with its OWN `containerRef` scope
+- Move the animation code WITH the JSX -- do not leave animation logic in the parent
+- Each section component is responsible for its own ScrollTrigger setup and cleanup
+- Use `contextSafe()` for any event handlers (like `toggleProject`) that create animations after mount
+- Test unmount/remount in React strict mode to verify no leaked ScrollTriggers
 
----
+**Detection:** Log `ScrollTrigger.getAll().length` on mount and unmount. If the count grows across navigations, you have leaks.
 
-### Pitfall 2: Custom Cursor and Hover Effects Break on Touch Devices
+**Phase to address:** Component extraction phase -- this is the FIRST thing to get right before any other changes.
 
-**What goes wrong:**
-Custom cursor followers, magnetic hover effects, and cursor-trail animations are built as core interactive elements. On mobile and tablet (touch devices), there is no cursor -- these effects simply do not exist. The site feels broken or empty on touch devices, which may represent 50%+ of traffic.
+### Pitfall 2: SplitText Breaks on Responsive Resize Without autoSplit
 
-**Why it happens:**
-The entire interaction model is designed around mouse pointer presence. Developers forget that `mousemove` events do not fire on touch devices. Custom cursor elements render but sit invisible at (0,0). Hover-dependent reveals never trigger.
+**What goes wrong:** The current code uses `new SplitText(".e6-hero-name", { type: "chars" })` and `new SplitText(heading, { type: "words" })`. When the viewport resizes (orientation change on mobile, desktop resize), SplitText's injected wrapper `<div>` elements do not reflow properly. Text wraps mid-character or words stack incorrectly. The hero gradient text is especially fragile -- the code already has a workaround that manually re-applies gradient styles to split chars.
 
-**How to avoid:**
-- Detect pointer capability with `window.matchMedia('(pointer: fine)')` before initializing any cursor effects.
-- Never make custom cursor effects the only way to discover or interact with content. They must be purely decorative enhancements.
-- Design touch-first interactions (tap, swipe) as the baseline, then layer cursor effects on top for pointer devices.
-- Replace hover-reveal patterns with scroll-reveal or tap-reveal on touch devices.
-- Do not render cursor-follower components at all on touch devices -- conditionally mount them.
+**Why it happens:** SplitText replaces text nodes with nested elements calculated at the initial viewport width. On resize, the container width changes but the split elements are fixed from the original calculation. The current `revert()` only runs on unmount, not on resize.
 
-**Warning signs:**
-- Any content or navigation that is only discoverable via hover.
-- No mobile device testing until late in development.
-- Cursor-related components that lack a `isTouchDevice` guard.
+**Consequences:**
+- Text overlaps or breaks mid-word on mobile after orientation change
+- Gradient text on hero name loses styling after resize
+- Line breaks appear in wrong places at different breakpoints
 
-**Phase to address:**
-Design/Component Architecture phase -- define interaction patterns for both pointer and touch before building components. Each interactive element needs both a pointer and touch interaction model.
+**Prevention:**
+- Use `autoSplit: true` with an `onSplit()` callback that creates the animation. SplitText automatically reverts and re-splits on container resize (debounced 200ms) and on font load
+- Move animation creation INTO `onSplit()` and return the animation so SplitText can clean up the old one on re-split
+- For the hero gradient text: apply gradient styles via a CSS class (not inline JS in a forEach loop) so they survive re-splits automatically
 
----
+**Detection:** Rotate a phone from portrait to landscape. If heading text looks broken, SplitText did not re-split.
 
-### Pitfall 3: Creative Layout Destroys Accessibility and Screen Reader Navigation
+**Phase to address:** Responsive design phase -- must be fixed when adding breakpoints.
 
-**What goes wrong:**
-Non-standard layouts (scattered elements, overlapping sections, horizontal scroll regions, elements positioned with absolute/fixed) create a visual hierarchy that does not match the DOM order. Screen readers read content in nonsensical order. Keyboard users cannot tab through the page logically. WCAG compliance fails.
+### Pitfall 3: prefers-reduced-motion Partially Applied = Invisible Content
 
-**Why it happens:**
-Developers position elements visually with CSS transforms and absolute positioning without considering that assistive technology reads the DOM in source order. Creative layouts often break the natural document flow. ARIA landmarks and roles are forgotten because the design "looks right" visually.
+**What goes wrong:** Developers add `prefers-reduced-motion` checks to SOME animations but miss others. Elements that were supposed to animate in with `opacity: 0 -> 1` via GSAP stay permanently invisible because the animation was disabled but the initial state (opacity: 0, y: 50, scale: 0.95) was still applied by the `fromTo()` call.
 
-**How to avoid:**
-- Write semantic HTML in logical reading order first. Use CSS Grid, Flexbox, and transforms to achieve visual creativity without reordering the DOM.
-- Add proper ARIA landmarks (`role="banner"`, `role="main"`, `role="contentinfo"`) and heading hierarchy (h1 > h2 > h3, no skipping).
-- Test with VoiceOver (macOS) or NVDA (Windows) at least once per major section build.
-- Ensure all interactive elements are keyboard-focusable and have visible focus indicators.
-- Use `tabindex` only when necessary and avoid positive values (use 0 or -1 only).
+**Why it happens:** The current code uses `gsap.fromTo()` extensively -- every section has elements that start at `{ opacity: 0, y: 40-60, scale: 0.95 }`. These "from" values are applied IMMEDIATELY when `fromTo()` executes, before any scroll trigger fires. If you conditionally skip the animation but not the initial state setup, elements remain hidden. This is the single most common reduced-motion bug.
 
-**Warning signs:**
-- Tab key navigation jumps around the page unpredictably.
-- Removing all CSS makes the content unreadable or out of order.
-- No `<main>`, `<nav>`, `<header>`, or `<footer>` elements in the markup.
-- Heading levels skip (e.g., h1 to h4).
+**Consequences:**
+- Invisible content for the exact users who need accessibility support (ironic failure)
+- Some sections animate, others are frozen at their "from" state
+- Content is in the DOM but visually absent -- breaks both screen readers and sighted users
 
-**Phase to address:**
-Foundation phase -- establish semantic HTML structure and landmark patterns before adding visual styling. Accessibility must be baked into the component architecture, not retrofitted.
+**Prevention:**
+- Use `gsap.matchMedia()` to wrap ALL animation setup. When `(prefers-reduced-motion: reduce)` matches, provide a separate block that sets elements to their final visible state immediately (opacity: 1, y: 0, scale: 1) or applies simple opacity-only fades
+- Never use `gsap.set()` or `gsap.fromTo()` for initial hidden states OUTSIDE of the matchMedia block
+- The reduced-motion block should `gsap.set()` all animated elements to their FINAL visible state
+- Test by toggling "Reduce motion" in macOS System Settings > Accessibility > Display
 
----
+**Detection:** Enable "Reduce motion" in macOS settings. If any section content is invisible, the from-state was applied without the to-animation.
 
-### Pitfall 4: Ignoring prefers-reduced-motion
+**Phase to address:** Accessibility phase -- but the architecture for this (matchMedia wrapping) should be planned during component extraction.
 
-**What goes wrong:**
-Users with vestibular disorders (affecting balance and spatial orientation) experience dizziness, nausea, and migraines from parallax scrolling, scaling animations, and continuous motion. The site becomes physically harmful to these users. This is also a WCAG 2.1 Level AAA requirement (Success Criterion 2.3.3).
+### Pitfall 4: Lenis Smooth Scroll Fights Native Accessibility
 
-**Why it happens:**
-Developers do not know about the `prefers-reduced-motion` media query or treat it as an edge case. The animation-heavy design makes it feel like removing animations would "ruin" the experience.
+**What goes wrong:** Lenis overrides native scroll behavior. The current `SmoothScrollProvider` has NO reduced-motion check -- it always applies smooth scrolling regardless of user preference. This can break: (1) screen reader virtual cursor scrolling, (2) scroll position when keyboard-tabbing to off-screen elements, (3) users who get motion sick from interpolated scrolling.
 
-**How to avoid:**
-- Wrap all CSS animations and transitions in a `@media (prefers-reduced-motion: no-preference)` block, or use the inverse to disable them.
-- In JavaScript animation libraries (GSAP, Framer Motion), check `window.matchMedia('(prefers-reduced-motion: reduce)')` and replace motion with opacity fades or instant state changes.
-- Do not just remove all animations -- replace parallax with static positioning, replace slide-ins with fade-ins, replace continuous motion with single-state renders. The site should still feel polished.
-- Consider adding a visible toggle button on the site itself for users who want to control motion independently of OS settings.
-- Avoid animations longer than 5 seconds and content that flashes more than 3 times per second.
+**Why it happens:** The `SmoothScrollProvider` unconditionally wraps the app in `<ReactLenis root>` with `autoRaf: false` and ties it to `gsap.ticker`. There is no conditional path for users who prefer reduced motion.
 
-**Warning signs:**
-- No `prefers-reduced-motion` queries anywhere in the codebase.
-- Animations that have no fallback mode.
-- Continuous looping animations without a pause mechanism.
+**Consequences:**
+- Users who get motion sick experience smooth-scroll-induced nausea
+- Keyboard Tab navigation may fight with Lenis scroll interpolation
+- Screen reader users may not have content scroll into view correctly
 
-**Phase to address:**
-Foundation/Infrastructure phase -- create a motion preference context/hook that all animation components consume. This must exist before any animations are built.
+**Prevention:**
+- Check `window.matchMedia('(prefers-reduced-motion: reduce)')` in `SmoothScrollProvider` -- either skip Lenis entirely or set `lerp: 1` (instant, no interpolation)
+- Add a `MediaQueryList.addEventListener('change')` listener so if the user toggles reduced-motion mid-session, Lenis responds
+- Verify CMD+F (find on page) and VoiceOver cursor scrolling work with Lenis active
 
----
+**Detection:** Enable VoiceOver on macOS, navigate the site with VO cursor. If content doesn't scroll into view when focused, Lenis is interfering.
 
-### Pitfall 5: Recruiter Abandonment -- Style Over Substance
+**Phase to address:** Accessibility phase.
 
-**What goes wrong:**
-The portfolio is visually impressive but recruiters and hiring managers cannot quickly find what they need: role titles, tech stack, project descriptions, and contact info. They spend 6-10 seconds on a portfolio before moving on. If they are fighting animations to find basic info, they leave. The site impresses developers but fails its actual purpose.
+### Pitfall 5: backdrop-filter: blur(40px) Destroys Mobile Performance
 
-**Why it happens:**
-The developer optimizes for "wow factor" and peer approval rather than the actual audience (recruiters, hiring managers, potential collaborators). Content is buried behind animation sequences, scroll-triggered reveals, or non-obvious navigation. Information density is sacrificed for visual drama.
+**What goes wrong:** Every `GlassPanel` applies `backdrop-filter: blur(40px) saturate(1.6)`. On mobile, each backdrop-filter creates a separate compositing layer. The page has 15+ GlassPanels (hero badge, hero card, 4 about panels, 3 experience cards + emoji badges, 4 skill categories, project cards, contact card + nested link cards). The GPU must blur the background behind EACH panel on every frame during scroll.
 
-**How to avoid:**
-- Ensure every major content section (hero, about, experience, projects, contact) is reachable within 2-3 seconds of landing, either by scrolling or clear navigation.
-- Do not gate content behind mandatory animation sequences -- animations should enhance content discovery, not block it.
-- Include a visible, conventional navigation element (even if creatively styled) so visitors can jump to any section.
-- Keep animation entrance durations short (200-400ms). Users should not wait for content to finish animating before they can read it.
-- Test with the "squint test": squint at your page -- can you identify where the key sections are?
+**Why it happens:** `backdrop-filter` cannot be cached like regular `filter` because it samples what is BEHIND the element, which changes on scroll. Combined with Lenis smooth scroll (repaints on every rAF), GSAP scroll-triggered animations (transform changes), and the fixed noise texture overlay (another compositing layer), the GPU is overwhelmed on mid-range phones.
 
-**Warning signs:**
-- Any section takes more than 1 scroll + 500ms of animation to become readable.
-- No persistent navigation element.
-- Project descriptions require multiple clicks or interactions to read.
-- Contact information is only in the footer, behind 5+ sections of animations.
+**Consequences:**
+- Jank during scroll on mobile (dropped frames)
+- Lighthouse Performance score tanks from main thread blocked by compositing
+- Battery drain on mobile devices
+- Worst case: browser drops to software rendering
 
-**Phase to address:**
-Content/Layout phase -- establish content hierarchy and navigation before adding creative effects. The site should be fully usable as a static page before any animation is added.
+**Prevention:**
+- Reduce blur radius on mobile: `blur(40px)` desktop, `blur(12px)` or `blur(8px)` mobile via CSS media query or `gsap.matchMedia()`
+- Consider replacing `backdrop-filter` with solid semi-transparent background on mobile (no blur) if Lighthouse still struggles
+- Remove or reduce the fixed noise texture overlay on mobile (the SVG filter `url(#glass-noise)` on a fixed full-screen div is an additional compositing cost)
+- Use Chrome DevTools Layers panel to count compositing layers -- aim for under 30 on mobile
+- Add `will-change: transform` to elements that animate, but remove it after animation completes
 
----
+**Detection:** Run Lighthouse mobile audit with throttling. Profile with Chrome DevTools Performance tab on 4x CPU slowdown. Check for frames exceeding 16ms.
 
-### Pitfall 6: Scroll Hijacking and Non-Standard Scroll Behavior
+**Phase to address:** Performance optimization phase -- but plan the mobile fallback design during responsive design phase.
 
-**What goes wrong:**
-Custom scroll behavior (horizontal scrolling sections, scroll snapping, scroll-speed manipulation, scroll-jacking) confuses users and breaks muscle memory. Trackpad users, mouse wheel users, and touch-scroll users all have different expectations. The page feels "broken" rather than creative. Worst case: users literally cannot scroll past a section.
+## Moderate Pitfalls
 
-**Why it happens:**
-Scroll hijacking feels cinematic in demos and on award-winning sites like Awwwards. But those sites are viewed as novelty experiences, not utility tools. A portfolio needs to function as a utility (convey information) while feeling creative.
+### Pitfall 6: ScrollTrigger.refresh() Timing After Component Extraction
 
-**How to avoid:**
-- Never override native scroll velocity or direction without an extremely compelling reason.
-- If using horizontal scroll sections, make them short (3-5 items max) and provide clear visual affordance that horizontal scrolling is expected.
-- Prefer scroll-triggered animations (elements animate as they enter viewport) over scroll-linked animations (animation progress tied to scroll position) for content sections.
-- Test with all input methods: trackpad, mouse wheel, touch swipe, keyboard arrows, and spacebar.
-- Always allow users to scroll past any section -- never trap them.
+**What goes wrong:** The current code calls `ScrollTrigger.refresh(true)` with a double `requestAnimationFrame` delay after the single component mounts. When Exploration6 is split into 6+ child components, each child mounts at slightly different times. If each child calls `ScrollTrigger.refresh()`, they fight each other -- the first refresh calculates positions before later children have rendered.
 
-**Warning signs:**
-- Using `overflow: hidden` on the body or main container.
-- JavaScript that calls `preventDefault()` on scroll or wheel events.
-- Users need to scroll an unusually large distance to move past a section.
-- Scroll position jumps or snaps unexpectedly.
+**Prevention:**
+- Call `ScrollTrigger.refresh()` ONCE from the parent page component after all section children have mounted
+- Use a single `useEffect` with an empty dependency array in the page-level component, with the double-rAF delay
+- Do NOT call refresh inside individual section components
+- Alternative: use `ScrollTrigger.config({ autoRefreshEvents: "visibilitychange,DOMContentLoaded,load" })` and let it handle refresh timing
 
-**Phase to address:**
-Layout/Interaction phase -- establish scroll behavior ground rules before building section-specific interactions.
+**Phase to address:** Component extraction phase.
 
----
+### Pitfall 7: Responsive Breakpoints Without gsap.matchMedia() = Zombie Animations
 
-## Technical Debt Patterns
+**What goes wrong:** Adding responsive CSS breakpoints (hiding elements, changing layouts) without wrapping GSAP animations in `gsap.matchMedia()` creates "zombie animations" -- ScrollTriggers targeting elements that are `display: none` on mobile. These zombies still calculate positions and fire callbacks, wasting CPU and causing position miscalculations for other ScrollTriggers.
 
-| Shortcut | Immediate Benefit | Long-term Cost | When Acceptable |
-|----------|-------------------|----------------|-----------------|
-| Inline animation values instead of design tokens | Faster prototyping | Inconsistent timing/easing across the site, painful to update | Never -- set up animation tokens (durations, easings) from day one |
-| No animation cleanup in useEffect | Works in development | Memory leaks from scroll listeners and RAF loops accumulate, causing crashes on long sessions | Never -- always return cleanup functions |
-| Using pixel values for layout instead of relative units | Easier mental math | Breaks at every non-standard viewport size, especially tablets | Never for layout; acceptable for small decorative details (borders, shadows) |
-| Skipping font preloading | No visible issue on fast connections | FOUT/FOIT on slower connections causes layout shift and unprofessional flash of system fonts | Never -- preload critical fonts in the document head |
-| Single large animation library import | Quick setup | Bundle size bloat, especially Framer Motion (~32KB gzipped) pulling in unused features | Acceptable if only one library is used; avoid importing both GSAP and Framer Motion for different things |
+**Prevention:**
+- Use `gsap.matchMedia()` to create separate animation sets for mobile vs desktop
+- Inside each matchMedia block, animations are automatically reverted when the media query stops matching
+- Do NOT use CSS `display: none` to hide elements that have ScrollTriggers -- use matchMedia to prevent the ScrollTrigger from being created at all
+- The magnetic cursor and tilt effects should only exist in the `(hover: hover)` media query block
 
-## Performance Traps
+**Phase to address:** Responsive design phase.
 
-| Trap | Symptoms | Prevention | When It Breaks |
-|------|----------|------------|----------------|
-| Unthrottled scroll event listeners | Janky scrolling, high CPU usage, battery drain on mobile | Use `IntersectionObserver` for visibility detection, debounce/throttle scroll handlers to 60fps max, use passive event listeners | Immediately noticeable on mid-range mobile devices |
-| Animating layout properties | Elements stutter during animation, CLS score spikes | Only animate transform and opacity; use Chrome DevTools "Rendering > Layout Shift Regions" to detect | Any device, but worst on mobile |
-| Too many DOM elements with will-change | Excessive GPU memory usage, tab crashes | Apply will-change only to elements actively animating, remove it after animation completes | 20+ elements with will-change simultaneously |
-| Large unoptimized images in project showcases | Slow LCP (Largest Contentful Paint), high bandwidth | Use next/image or equivalent with srcset, WebP/AVIF formats, lazy loading for below-fold images | Any connection slower than 10Mbps |
-| Custom fonts without font-display strategy | FOIT (invisible text for 1-3 seconds) or FOUT (jarring font swap) | Use `font-display: swap` with a well-matched fallback font, preload critical fonts with `<link rel="preload">` | Noticeable on 3G/4G connections |
+### Pitfall 8: Keyboard Focus Completely Missing
 
-## UX Pitfalls
+**What goes wrong:** The current site has no `tabIndex` management, no focus-visible styles, and no skip-navigation link. The project card expand/collapse uses `onClick` on a plain `<div>` -- not keyboard accessible. The FloatingNav has no keyboard handling.
 
-| Pitfall | User Impact | Better Approach |
-|---------|-------------|-----------------|
-| Mandatory loading screen / intro animation | Visitors wait 3-5 seconds before seeing any content; many bounce | Show content immediately, animate elements in as they appear; if a loader is needed, keep it under 1 second |
-| Hover-only content reveals | Mobile users never see the content; desktop users may not discover it | Use scroll-triggered reveals as the base, hover as an enhancement |
-| Parallax on every section | Creates a theme park ride feeling; causes motion sickness; makes content hard to read | Use parallax sparingly (hero section only, if at all) and respect prefers-reduced-motion |
-| Auto-playing video backgrounds | High bandwidth, battery drain, distracting from content, accessibility nightmare | Use static hero image with subtle CSS animation (gradient shift, slight scale), or short looping video with controls |
-| Creative navigation labels | Users cannot find "Work" when it is labeled "Adventures" or "Playground" | Use conventional labels (About, Work, Projects, Contact) even if the visual treatment is creative |
-| No visual feedback on interactions | Clicks and taps feel unresponsive | Add micro-interactions (scale, color shift) on every clickable element with 100-200ms response time |
+**Prevention:**
+- Add a skip-to-content link (`<a href="#main-content">`) as the first focusable element
+- Make project card expand/collapse keyboard-accessible: use `<button>` for the clickable area, or add `role="button"` + `tabIndex={0}` + `onKeyDown` handler for Enter/Space
+- Add visible `:focus-visible` styles matching the neobrutalist aesthetic (3px outline with offset, using `--glass-border` color)
+- Ensure FloatingNav links are keyboard-reachable and have focus indicators
+- Test: Tab through the entire page. Every interactive element must be reachable and visually indicated
 
-## "Looks Done But Isn't" Checklist
+**Phase to address:** Accessibility phase.
 
-- [ ] **Responsive breakpoints:** Tested on actual mobile devices (not just Chrome DevTools resize) -- verify touch interactions, not just layout
-- [ ] **Scroll animations:** Tested with reduced-motion enabled in OS settings -- verify site is still fully usable and polished
-- [ ] **Custom cursor:** Disabled on touch devices -- verify no invisible cursor element at (0,0) in the DOM
-- [ ] **Font loading:** Tested on throttled 3G connection -- verify no FOIT (invisible text) lasting more than 100ms
-- [ ] **Contact links:** All mailto, LinkedIn, and GitHub links actually work and open correctly on mobile
-- [ ] **Resume PDF:** Downloads correctly on mobile Safari and Chrome -- verify file is not zero bytes and opens as expected
-- [ ] **Animation cleanup:** Navigate between sections/pages rapidly -- verify no memory leaks (check Chrome DevTools Memory tab)
-- [ ] **Keyboard navigation:** Tab through entire site -- verify all interactive elements are reachable and focus indicators are visible
-- [ ] **SEO metadata:** Open Graph tags, title, description, and favicon are all set -- verify with social media link preview tools
-- [ ] **404 page:** Navigate to a non-existent URL -- verify a styled 404 page appears, not a framework error
+### Pitfall 9: document.querySelector in React = Fragile Global Selectors
 
-## Recovery Strategies
+**What goes wrong:** The `toggleProject` function uses `document.querySelector(`.e6-project-detail-${index}`)` to find elements. This bypasses React's ref system, creates global selectors that could match wrong elements after extraction, and breaks if class naming changes during refactor.
 
-| Pitfall | Recovery Cost | Recovery Steps |
-|---------|---------------|----------------|
-| Animation performance issues | MEDIUM | Profile with Chrome DevTools, replace layout animations with transform/opacity, add will-change selectively, reduce simultaneous animated elements |
-| Broken mobile experience | HIGH | Requires rethinking interaction patterns; build touch-first versions of each interactive component; may need to simplify or remove cursor effects entirely |
-| Accessibility failures | MEDIUM | Add semantic HTML structure, ARIA landmarks, and focus management; can be done incrementally per section without visual redesign |
-| Recruiter usability problems | LOW | Add conventional navigation, reduce animation entrance delays, ensure content is immediately readable; mostly CSS/timing changes |
-| Scroll hijacking complaints | HIGH | Removing custom scroll behavior often requires re-architecting section layouts that depended on it; better to avoid from the start |
-| prefers-reduced-motion missing | LOW | Add media query wrapping to CSS animations and a JS hook for programmatic animations; can be done as a single pass through the codebase |
+**Prevention:**
+- Replace `document.querySelector` with React refs (use `useRef` arrays or a ref callback pattern)
+- When extracting ProjectCard as its own component, use a local ref for the detail element
+- This also prevents the bug where duplicate component instances would find each other's elements
 
-## Pitfall-to-Phase Mapping
+**Phase to address:** Component extraction phase.
 
-| Pitfall | Prevention Phase | Verification |
-|---------|------------------|--------------|
-| Animation performance death on mobile | Foundation (animation utilities + perf budget) | Lighthouse mobile score >= 90; no frames > 16ms on 4x CPU throttle |
-| Custom cursor breaks on touch | Component Architecture (interaction patterns) | Full site walkthrough on real iPhone and Android device |
-| Accessibility / screen reader failures | Foundation (semantic HTML structure) | VoiceOver full read-through produces logical content order |
-| prefers-reduced-motion ignored | Foundation (motion preference hook/context) | Enable reduced-motion in OS settings; site still looks polished with fades only |
-| Recruiter abandonment | Content/Layout (information hierarchy) | New visitor can identify name, role, and 1 project within 5 seconds of landing |
-| Scroll hijacking | Layout/Interaction (scroll behavior rules) | All input methods (trackpad, mouse, touch, keyboard) scroll naturally |
-| Font loading flash | Foundation (font strategy) | Throttled 3G load shows no invisible or jarring text swap |
-| Memory leaks from animations | Every phase (cleanup discipline) | 5 minutes of continuous scrolling shows flat memory graph in DevTools |
+### Pitfall 10: CSS Custom Property Gradient Animation Orphaned After Extraction
+
+**What goes wrong:** The gradient animation in Exploration6 uses `gsap.to(document.documentElement, { "--bg-gradient-start": ... })` with a MutationObserver for theme changes. When extracting components, this global animation could end up in a section component (wrong scope), get duplicated across components, or be lost entirely.
+
+**Prevention:**
+- Keep the gradient animation and MutationObserver in ONE place -- the page-level component or a dedicated provider
+- Do NOT put this logic in any section component
+- Section components should NEVER animate CSS custom properties on `document.documentElement`
+
+**Phase to address:** Component extraction phase.
+
+## Minor Pitfalls
+
+### Pitfall 11: Color Contrast Failures in Current Palette
+
+**What goes wrong:** The muted color palette (`#b8a9c9` greeting text on warm backgrounds, `var(--text-secondary)` in dark mode) likely fails WCAG AA contrast requirements (4.5:1 for normal text). The gradient text on the hero name is particularly risky -- `background-clip: text` with a gradient means contrast varies across the text.
+
+**Prevention:**
+- Run axe-core or Lighthouse accessibility audit on BOTH light and dark mode
+- Check gradient text contrast at its WEAKEST point (lightest gradient color against the panel background)
+- Adjust `--text-secondary` and `--text-body` CSS custom properties if they fail 4.5:1
+- The `#b8a9c9` hero greeting text is likely the worst offender
+
+**Phase to address:** Accessibility phase.
+
+### Pitfall 12: Emoji as Decorative Elements = Screen Reader Noise
+
+**What goes wrong:** The site uses emoji extensively in section headings, badges, and project cards. Screen readers announce each emoji by name ("sparkles", "rocket", "briefcase"), creating noisy, repetitive output.
+
+**Prevention:**
+- Decorative emoji: wrap in `<span aria-hidden="true">`
+- The sparkles badge already has `role="img" aria-label="sparkles"` which is correct for meaningful emoji
+- Section heading emoji (briefcase, brain, tools, speech bubble) should be `aria-hidden="true"` since the text label already provides meaning
+- Do NOT use emoji as the only indicator of meaning
+
+**Phase to address:** Accessibility phase.
+
+### Pitfall 13: Static Export Cannot Use next/og for Dynamic OG Images
+
+**What goes wrong:** The project uses `output: 'export'` (static). `next/og` for dynamic Open Graph image generation requires a server runtime and will fail at build time.
+
+**Prevention:**
+- Use a pre-generated static OG image (PNG, 1200x630) committed to `/public/og-image.png`
+- Reference via static `<meta property="og:image">` tags in the root layout
+- This is simpler and more reliable for a single-page portfolio
+
+**Phase to address:** Accessibility/meta tags phase.
+
+### Pitfall 14: Removing Explore Pages May Leave Dead Imports
+
+**What goes wrong:** If explore page routes and components are deleted but imports referencing them linger elsewhere (in page.tsx, barrel exports, or dynamic imports), the build breaks or dead code inflates the bundle.
+
+**Prevention:**
+- Delete ALL related files: route files (`/explore/[id]/page.tsx`), component files (Exploration1-5), and any barrel exports
+- Run `next build` after deletion and verify no import errors
+- Check bundle size before and after to confirm dead code is eliminated
+- Search the codebase for any string references to "exploration" or "explore"
+
+**Phase to address:** Code cleanup phase (do this first, before component extraction).
+
+## Phase-Specific Warnings
+
+| Phase Topic | Likely Pitfalls | Key Mitigation |
+|-------------|----------------|----------------|
+| Code cleanup (remove explores) | #14 (dead imports) | Delete all artifacts, verify build, check bundle |
+| Component extraction | #1 (scope orphaning), #6 (refresh timing), #9 (querySelector), #10 (gradient animation) | Each section owns its useGSAP + containerRef. Page-level refresh only. Replace querySelector with refs. Keep gradient in page component. |
+| Responsive design | #2 (SplitText resize), #5 (backdrop-filter mobile), #7 (zombie animations) | Use SplitText autoSplit. Reduce/remove blur on mobile. Wrap all GSAP in matchMedia. |
+| Accessibility | #3 (reduced-motion invisible content), #4 (Lenis a11y), #8 (keyboard), #11 (contrast), #12 (emoji noise) | gsap.matchMedia for reduced-motion with final-state fallback. Disable Lenis interpolation for reduced-motion. Add keyboard handling + focus styles. Audit contrast. |
+| Performance / Lighthouse | #5 (backdrop-filter), #7 (zombie ScrollTriggers) | Profile on mobile throttling. Reduce compositing layers. Kill unused ScrollTriggers via matchMedia. |
+
+## Recommended Phase Ordering Based on Pitfall Dependencies
+
+1. **Code cleanup first** -- Remove explore pages and dead code (Pitfall 14). Clean slate for extraction.
+2. **Component extraction second** -- Pitfalls 1, 6, 9, 10 are all refactor-specific. Get architecture right before layering features.
+3. **Responsive design third** -- Pitfalls 2, 5, 7 require settled component structure so matchMedia can be applied per-section.
+4. **Accessibility fourth** -- Pitfalls 3, 4, 8, 11, 12 layer on the responsive foundation. Reduced-motion relies on matchMedia already being in place from responsive.
+5. **Performance tuning last** -- Pitfall 5 optimization is iterative and needs the final DOM structure to profile accurately.
 
 ## Sources
 
-- [web.dev: Optimize Cumulative Layout Shift](https://web.dev/articles/optimize-cls)
-- [web.dev: prefers-reduced-motion](https://web.dev/articles/prefers-reduced-motion)
-- [W3C WCAG 2.1: Animation from Interactions (SC 2.3.3)](https://www.w3.org/WAI/WCAG21/Understanding/animation-from-interactions.html)
-- [MDN: prefers-reduced-motion](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@media/prefers-reduced-motion)
-- [Semaphore: Framer Motion vs GSAP](https://semaphore.io/blog/react-framer-motion-gsap)
-- [Motion.dev: GSAP vs Motion comparison](https://motion.dev/docs/gsap-vs-motion)
-- [The Problem With Personal Websites: Accessibility Vs. Creativity](https://contentmgt.web.illinois.edu/2026/01/19/the-problem-with-personal-websites-accessibility-vs-creativity/)
-- [profy.dev: Portfolio websites survey with 60+ hiring managers](https://profy.dev/article/portfolio-websites-survey)
-- [web.dev: Preload optional fonts](https://web.dev/articles/preload-optional-fonts)
-- [Shadow Digital: Website Animations Pros, Cons & Best Practices](https://www.shadowdigital.cc/resources/do-you-need-website-animations)
+- [GSAP React Integration (official docs)](https://gsap.com/resources/React/) -- useGSAP, contextSafe, scope
+- [gsap.matchMedia() (official docs)](https://gsap.com/docs/v3/GSAP/gsap.matchMedia()) -- responsive breakpoints, reduced-motion
+- [SplitText (official docs)](https://gsap.com/docs/v3/Plugins/SplitText/) -- autoSplit, onSplit, resize handling
+- [SplitText responsive revert (GSAP forum)](https://gsap.com/community/forums/topic/31716-splittext-responsive-howto-revert/)
+- [SplitText revert after resize (GSAP forum)](https://gsap.com/community/forums/topic/44579-splittext-revert-after-resize/)
+- [GSAP and accessibility (Anne Bovelett)](https://annebovelett.eu/gsap-and-accessibility-yes-you-can-have-both/)
+- [GSAP in Practice: Avoid the Pitfalls (Marmelab)](https://marmelab.com/blog/2024/05/30/gsap-in-practice-avoid-the-pitfalls.html)
+- [ScrollTrigger cleanup in React (GSAP forum)](https://gsap.com/community/forums/topic/35810-scrolltrigger-and-react-component-cycle-cleanup/)
+- [Lenis smooth scroll (official)](https://lenis.darkroom.engineering/)
+- [Lenis GitHub](https://github.com/darkroomengineering/lenis) -- accessibility claims
+- [Smooth Scrolling and Accessibility (CSS-Tricks)](https://css-tricks.com/smooth-scrolling-accessibility/)
+- [Optimizing GSAP in Next.js (Thomas Augot)](https://medium.com/@thomasaugot/optimizing-gsap-animations-in-next-js-15-best-practices-for-initialization-and-cleanup-2ebaba7d0232)
+- [Adventures in text splitting: GSAP SplitText rewrite (Webflow)](https://webflow.com/blog/gsap-splittext-rewrite)
 
 ---
-*Pitfalls research for: Creative animation-heavy portfolio website*
-*Researched: 2026-03-06*
+*Pitfalls research for: v4.3 Cleanup and Launch -- responsive, accessibility, performance, refactoring*
+*Researched: 2026-03-07*

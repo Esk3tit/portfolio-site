@@ -1,399 +1,538 @@
-# Architecture Research
+# Architecture Patterns
 
-**Domain:** Creative, animation-heavy portfolio website
-**Researched:** 2026-03-06
-**Confidence:** HIGH
+**Domain:** Portfolio site refactor -- responsive design, accessibility, performance, code cleanup
+**Researched:** 2026-03-07
+**Confidence:** HIGH (based on direct codebase analysis, not external research)
 
-## Standard Architecture
-
-### System Overview
-
-```
-+------------------------------------------------------------------+
-|                        App Shell (Layout)                         |
-|  +------------------------------------------------------------+  |
-|  |  Smooth Scroll Provider (Lenis)                             |  |
-|  |  +--------------------------------------------------------+|  |
-|  |  |  Animation Context Provider                             ||  |
-|  |  |  (scroll progress, viewport state, reduced-motion)      ||  |
-|  |  |  +----------------------------------------------------+||  |
-|  |  |  |  Custom Cursor Provider                             |||  |
-|  |  |  |  (cursor position, cursor variant, magnetic targets)|||  |
-|  |  |  |  +------------------------------------------------+|||  |
-|  |  |  |  |              Page Content                        ||||  |
-|  |  |  |  |                                                  ||||  |
-|  |  |  |  |  +----------+  +----------+  +----------+       ||||  |
-|  |  |  |  |  | Section  |  | Section  |  | Section  |       ||||  |
-|  |  |  |  |  | Hero     |  | About    |  | Work     |  ...  ||||  |
-|  |  |  |  |  +----------+  +----------+  +----------+       ||||  |
-|  |  |  |  |       |              |              |            ||||  |
-|  |  |  |  |  +---------+   +---------+   +---------+        ||||  |
-|  |  |  |  |  |Animated |   |Animated |   |Animated |        ||||  |
-|  |  |  |  |  |Elements |   |Elements |   |Elements |        ||||  |
-|  |  |  |  |  +---------+   +---------+   +---------+        ||||  |
-|  |  |  |  +------------------------------------------------+|||  |
-|  |  |  +----------------------------------------------------+||  |
-|  |  +--------------------------------------------------------+|  |
-|  +------------------------------------------------------------+  |
-+------------------------------------------------------------------+
-```
-
-### Component Responsibilities
-
-| Component | Responsibility | Typical Implementation |
-|-----------|----------------|------------------------|
-| App Shell / Layout | Root layout, font loading, metadata, global styles | Next.js `app/layout.tsx` |
-| Smooth Scroll Provider | Smooth scroll behavior, scroll position broadcasting | Lenis wrapper context provider |
-| Animation Context | Scroll progress values, viewport dimensions, prefers-reduced-motion | React Context + Framer Motion `useScroll` |
-| Custom Cursor Provider | Track mouse position, manage cursor variant (default/hover/magnetic), hide on mobile | React Context + `requestAnimationFrame` lerp |
-| Section Components | Each portfolio section (Hero, About, Work, Skills, Projects, Contact) | Self-contained components with own animations |
-| Animated Elements | Reusable animation primitives (reveal, parallax, stagger, magnetic) | Framer Motion `motion.*` components |
-| Navigation | Section anchors, scroll-to behavior, active section indicator | Fixed/absolute positioned nav with scroll spy |
-| Static Assets | Resume PDF, images, fonts | Next.js `public/` directory |
-
-## Recommended Project Structure
+## Current Architecture (Before Refactor)
 
 ```
 src/
-├── app/
-│   ├── layout.tsx              # Root layout, providers, fonts, metadata
-│   ├── page.tsx                # Single page — assembles all sections
-│   └── globals.css             # CSS variables, resets, base styles
-├── components/
-│   ├── sections/               # Major page sections
-│   │   ├── Hero.tsx
-│   │   ├── About.tsx
-│   │   ├── WorkExperience.tsx
-│   │   ├── Skills.tsx
-│   │   ├── Projects.tsx
-│   │   └── Contact.tsx
-│   ├── ui/                     # Reusable UI primitives
-│   │   ├── MagneticButton.tsx
-│   │   ├── TextReveal.tsx
-│   │   ├── ParallaxImage.tsx
-│   │   ├── StaggerContainer.tsx
-│   │   ├── SectionHeading.tsx
-│   │   └── ProjectCard.tsx
-│   ├── cursor/                 # Custom cursor system
-│   │   ├── CustomCursor.tsx
-│   │   └── CursorProvider.tsx
-│   ├── navigation/             # Nav components
-│   │   └── Navigation.tsx
-│   └── layout/                 # Layout wrappers
-│       └── SmoothScroll.tsx
-├── providers/                  # Context providers
-│   ├── AnimationProvider.tsx
-│   └── index.tsx               # Compose all providers
-├── hooks/                      # Custom hooks
-│   ├── useScrollProgress.ts
-│   ├── useInView.ts
-│   ├── useMousePosition.ts
-│   ├── useMagnetic.ts
-│   ├── useReducedMotion.ts
-│   └── useSectionInView.ts
-├── data/                       # Content data (no CMS)
-│   ├── experience.ts
-│   ├── projects.ts
-│   ├── skills.ts
-│   └── personal.ts
-├── lib/                        # Utilities
-│   ├── animations.ts           # Shared animation variants/configs
-│   ├── utils.ts                # General helpers (cn, lerp, clamp)
-│   └── constants.ts            # Breakpoints, durations, easing curves
-└── styles/                     # Additional styles if needed
-    └── fonts.ts                # Font configuration
+  app/
+    layout.tsx          -- RootLayout (fonts, theme script, cursor, providers)
+    page.tsx            -- HomePage renders <Exploration6 />
+    globals.css         -- Tailwind v4 + CSS custom properties for theming
+    explore/[id]/       -- TO BE REMOVED: dynamic routes for explorations 1-6
+  components/
+    cursor/
+      CustomCursor.tsx  -- Magnetic pull behavior (renders null, cursor is CSS)
+    explorations/
+      Exploration1-5.tsx -- TO BE REMOVED: earlier design explorations
+      Exploration6.tsx   -- TO BE EXTRACTED: single 787-line "use client" component
+    providers/
+      DarkModeProvider.tsx -- Theme context with localStorage + system detection
+      SmoothScroll.tsx     -- Lenis smooth scroll + GSAP ticker sync
+    sections/
+      FloatingNav.tsx      -- Right-side dot nav with ScrollTrigger tracking
+    ui/
+      DarkModeToggle.tsx   -- Toggle button in FloatingNav
+      GlassPanel.tsx       -- Glass card with tilt effect (GSAP-based)
+      NeoBrutalButton.tsx  -- Button/link with neobrutalist styling
+      NeoBrutalHeading.tsx -- Section heading with neobrutalist banner
+      NeoBrutalTag.tsx     -- Skill/tech tag pill
+  data/
+    content.ts          -- All content data with TypeScript interfaces
+  lib/
+    gsap.ts             -- GSAP + ScrollTrigger + SplitText registration
 public/
-├── resume/
-│   └── Khai_Phan_Resume.pdf    # Git-committed, swappable
-├── images/                     # Project screenshots, profile photo
-└── fonts/                      # Self-hosted fonts if any
+    habbycursor*.png    -- KEEP: banana cursor images (3 sizes)
+    resume.pdf          -- KEEP: resume download
+    file.svg, globe.svg, next.svg, vercel.svg, window.svg -- TO BE REMOVED: Vercel defaults
 ```
 
-### Structure Rationale
+### Key Architectural Facts About Current State
 
-- **`components/sections/`:** Each portfolio section is a self-contained component. Sections own their layout, content rendering, and section-specific animations. This is the natural decomposition for a single-page portfolio.
-- **`components/ui/`:** Reusable animated primitives shared across sections. A `TextReveal` used in Hero is the same component used in About. This avoids duplicating animation logic.
-- **`components/cursor/`:** Isolated because the cursor system is global, always-on, and architecturally distinct from section content. It listens to mouse events at the window level and renders a fixed-position overlay.
-- **`providers/`:** Context providers are separated from components because they are infrastructure, not UI. The provider composition order matters (Lenis must wrap Animation, which must wrap Cursor).
-- **`hooks/`:** Animation hooks are the glue between providers and components. Extracting them keeps components declarative and testable.
-- **`data/`:** Content lives in typed TypeScript files, not a CMS. This matches the project constraint (content in code) and gives type safety. Changing a job title means editing a `.ts` file and deploying.
+1. **Exploration6.tsx is a 787-line monolith.** It contains all 6 sections inline, owns all GSAP animations in one `useGSAP` block, manages `expandedProject` state, gradient animation, and `scrollToAbout`. Every section's animation is coupled to every other section's lifecycle.
 
-## Architectural Patterns
+2. **Animation is 100% GSAP.** No Framer Motion. GSAP with ScrollTrigger for scroll reveals, SplitText for heading/hero text, `useGSAP` hook for React integration. All registered in `src/lib/gsap.ts`.
 
-### Pattern 1: Provider Composition for Animation State
+3. **Cursor is CSS-only.** The `CustomCursor` component renders `null` -- it only handles magnetic pull via `[data-magnetic]` attribute detection. The actual cursor image is set via inline `<style>` in `layout.tsx` using `@media (pointer: fine)`.
 
-**What:** Nest context providers in a specific order so animation systems can share state without prop drilling. Lenis (scroll) wraps everything, Animation Context reads from Lenis, Cursor reads mouse events independently.
+4. **Theme uses CSS custom properties + MutationObserver.** Not Tailwind's `dark:` variant. An inline script in `<head>` prevents FOUC. `DarkModeProvider` manages state. The gradient animation in Exploration6 watches for class changes on `<html>` to restart with new color targets.
 
-**When to use:** Any site with multiple independent animation systems that need to coexist (smooth scroll + scroll-triggered animations + cursor effects).
+5. **Static export.** `output: "export"` in `next.config.ts`. No server components, no API routes, no ISR. Everything is client-rendered.
 
-**Trade-offs:** Adds provider nesting depth, but eliminates prop drilling entirely. The alternative (passing scroll values as props through 6+ levels) is worse.
+6. **FloatingNav is desktop-only.** `hidden md:flex` -- completely invisible on mobile. No navigation exists below 768px.
 
-**Example:**
+## Recommended Architecture (After Refactor)
+
+```
+src/
+  app/
+    layout.tsx          -- MODIFIED: add OG meta tags, favicon link
+    page.tsx            -- MODIFIED: import section components, own gradient animation
+    globals.css         -- MODIFIED: add reduced-motion rules, responsive fixes
+  components/
+    cursor/
+      CustomCursor.tsx  -- UNCHANGED (already touch-aware)
+    providers/
+      DarkModeProvider.tsx -- UNCHANGED
+      SmoothScroll.tsx     -- MODIFIED: disable Lenis on reduced-motion
+    sections/
+      FloatingNav.tsx      -- MODIFIED: add mobile navigation variant
+      HeroSection.tsx      -- NEW: extracted from Exploration6 lines 316-398
+      AboutSection.tsx     -- NEW: extracted from Exploration6 lines 400-442
+      ExperienceSection.tsx -- NEW: extracted from Exploration6 lines 444-512
+      SkillsSection.tsx    -- NEW: extracted from Exploration6 lines 516-552
+      ProjectsSection.tsx  -- NEW: extracted from Exploration6 lines 554-712
+      ContactSection.tsx   -- NEW: extracted from Exploration6 lines 714-783
+    ui/
+      DarkModeToggle.tsx   -- UNCHANGED
+      GlassPanel.tsx       -- MODIFIED: disable tilt on reduced-motion
+      NeoBrutalButton.tsx  -- UNCHANGED
+      NeoBrutalHeading.tsx -- MODIFIED: accept `as` prop for heading level
+      NeoBrutalTag.tsx     -- UNCHANGED
+  data/
+    content.ts           -- UNCHANGED
+  hooks/
+    useReducedMotion.ts  -- NEW: shared prefers-reduced-motion hook
+    useGradientAnimation.ts -- NEW: extracted gradient cycling logic
+  lib/
+    gsap.ts              -- UNCHANGED
+public/
+    favicon.ico          -- NEW: from old portfolio
+    habbycursor*.png     -- KEEP
+    resume.pdf           -- KEEP
+    og-image.png         -- NEW: Open Graph social preview image
+```
+
+### Files to Delete
+
+| File/Directory | Reason |
+|----------------|--------|
+| `src/app/explore/` (entire directory) | Exploration routes no longer needed |
+| `src/components/explorations/Exploration1.tsx` | Superseded by Exploration6 |
+| `src/components/explorations/Exploration2.tsx` | Superseded by Exploration6 |
+| `src/components/explorations/Exploration3.tsx` | Superseded by Exploration6 |
+| `src/components/explorations/Exploration4.tsx` | Superseded by Exploration6 |
+| `src/components/explorations/Exploration5.tsx` | Superseded by Exploration6 |
+| `src/components/explorations/Exploration6.tsx` | Replaced by extracted section components |
+| `public/file.svg` | Vercel default asset |
+| `public/globe.svg` | Vercel default asset |
+| `public/next.svg` | Vercel default asset |
+| `public/vercel.svg` | Vercel default asset |
+| `public/window.svg` | Vercel default asset |
+
+### New Files
+
+| File | Purpose | Dependencies |
+|------|---------|-------------|
+| `src/hooks/useReducedMotion.ts` | Shared `prefers-reduced-motion` detection | None |
+| `src/hooks/useGradientAnimation.ts` | Gradient background cycling with theme-awareness | `useReducedMotion`, `@/lib/gsap` |
+| `src/components/sections/HeroSection.tsx` | Hero entrance animation, SplitText, CTAs | GlassPanel, NeoBrutalButton, content.ts, gsap |
+| `src/components/sections/AboutSection.tsx` | About panels with scroll reveal | GlassPanel, content.ts, gsap |
+| `src/components/sections/ExperienceSection.tsx` | Timeline cards with scroll reveal | GlassPanel, NeoBrutalHeading, content.ts, gsap |
+| `src/components/sections/SkillsSection.tsx` | Skill categories with scroll reveal | GlassPanel, NeoBrutalHeading, NeoBrutalTag, content.ts, gsap |
+| `src/components/sections/ProjectsSection.tsx` | Project cards with expand/collapse state | GlassPanel, NeoBrutalHeading, NeoBrutalButton, NeoBrutalTag, content.ts, gsap |
+| `src/components/sections/ContactSection.tsx` | Contact links + resume download | GlassPanel, NeoBrutalHeading, NeoBrutalButton, content.ts, gsap |
+| `public/favicon.ico` | Site favicon from old portfolio | None |
+| `public/og-image.png` | Social share preview image (1200x630) | None |
+
+### Modified Files
+
+| File | What Changes | Why |
+|------|-------------|-----|
+| `src/app/layout.tsx` | Add OG/Twitter meta in `metadata` export, favicon in `icons` | Social previews, branding |
+| `src/app/page.tsx` | Import section components instead of Exploration6; own the wrapper div (gradient bg, SVG noise filter, noise overlay); call `useGradientAnimation` | Component extraction |
+| `src/app/globals.css` | Add `@media (prefers-reduced-motion: reduce)` block to disable/shorten transitions | Accessibility |
+| `src/components/sections/FloatingNav.tsx` | Add mobile bottom bar or toggle-able nav below `md` breakpoint | Responsive -- currently invisible on mobile |
+| `src/components/ui/GlassPanel.tsx` | Check `useReducedMotion()` to skip tilt effect | Accessibility |
+| `src/components/ui/NeoBrutalHeading.tsx` | Accept optional `as` prop (`h2` | `h3`) for correct heading hierarchy | Accessibility |
+| `src/components/providers/SmoothScroll.tsx` | Check `prefers-reduced-motion` and skip Lenis initialization when active | Accessibility |
+
+## Component Boundaries
+
+| Component | Responsibility | Communicates With |
+|-----------|---------------|-------------------|
+| `RootLayout` | HTML shell, fonts, theme FOUC script, OG tags, providers, CustomCursor | DarkModeProvider, SmoothScrollProvider, CustomCursor |
+| `HomePage (page.tsx)` | Page wrapper (gradient bg, noise filter SVG, noise overlay), renders sections in order, gradient animation | All section components, useGradientAnimation |
+| `HeroSection` | Hero entrance timeline (GSAP), SplitText char split on name, CTAs, `scrollToAbout` | GlassPanel, NeoBrutalButton, content.ts |
+| `AboutSection` | Two-panel grid, scroll-triggered stagger reveal | GlassPanel, content.ts |
+| `ExperienceSection` | Stacked cards, scroll-triggered stagger reveal, emoji badges | GlassPanel, NeoBrutalHeading, content.ts |
+| `SkillsSection` | Skill category grid, scroll-triggered stagger reveal | GlassPanel, NeoBrutalHeading, NeoBrutalTag, content.ts |
+| `ProjectsSection` | Project card grid, expand/collapse (owns `expandedProject` state), GSAP height animation | GlassPanel, NeoBrutalHeading, NeoBrutalButton, NeoBrutalTag, content.ts |
+| `ContactSection` | Contact links, resume download, scroll-triggered reveal | GlassPanel, NeoBrutalHeading, NeoBrutalButton, content.ts |
+| `FloatingNav` | Section tracking via ScrollTrigger, scroll-to via Lenis, dark mode toggle, mobile variant | DarkModeToggle, ScrollTrigger, Lenis |
+| `CustomCursor` | Magnetic pull on `[data-magnetic]` elements, disabled on touch | GSAP, window mousemove |
+| `useReducedMotion` | Returns boolean for `prefers-reduced-motion: reduce` | Used by sections, SmoothScroll, GlassPanel |
+
+## Data Flow
+
+### Current Flow (Monolithic)
+```
+content.ts --> Exploration6.tsx (imports ALL data, renders ALL 6 sections,
+               owns ALL GSAP animations in one useGSAP block,
+               owns expandedProject state, gradient animation, scrollToAbout)
+```
+
+### Proposed Flow (Extracted)
+```
+content.ts --|-> HeroSection (heroContent)
+             |-> AboutSection (aboutPanels)
+             |-> ExperienceSection (experiences)
+             |-> SkillsSection (skillCategories)
+             |-> ProjectsSection (projects) -- owns expandedProject state
+             |-> ContactSection (contactLinks)
+
+page.tsx renders:
+  <div ref={containerRef}>     // gradient bg, wrapper
+    <FloatingNav />
+    <svg>noise filter def</svg>
+    <div>noise overlay</div>
+    <HeroSection />
+    <AboutSection />
+    <ExperienceSection />
+    <SkillsSection />
+    <ProjectsSection />
+    <ContactSection />
+  </div>
+```
+
+### Gradient Animation Ownership
+
+The gradient animation (Exploration6 lines 66-122) animates `--bg-gradient-start` and `--bg-gradient-end` on `document.documentElement` and watches for theme class changes via MutationObserver. This is page-level behavior.
+
+**Decision: Extract to `src/hooks/useGradientAnimation.ts`, call from `page.tsx`.**
+
+Rationale:
+- page.tsx is already `"use client"` (must be, since it uses hooks).
+- Gradient animation is visual page chrome, not section-specific.
+- It observes theme changes -- logically page-level, not provider-level.
+- Keeping it in DarkModeProvider would couple visual effects to state management.
+
+### SplitText and ScrollTrigger Animation Ownership
+
+Currently one `useGSAP` block in Exploration6 handles ALL scroll-triggered animations for ALL sections. After extraction, each section owns its own animations:
+
 ```typescript
-// providers/index.tsx
-export function Providers({ children }: { children: React.ReactNode }) {
+// Each section component follows this pattern:
+"use client";
+export default function AboutSection() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const reducedMotion = useReducedMotion();
+
+  useGSAP(() => {
+    if (reducedMotion) return;
+
+    // SplitText for headings within this section
+    const splits: InstanceType<typeof SplitText>[] = [];
+    const headings = sectionRef.current?.querySelectorAll(".split-heading");
+    headings?.forEach((h) => {
+      const split = new SplitText(h, { type: "words" });
+      splits.push(split);
+      gsap.fromTo(split.words,
+        { y: 40, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.6, stagger: 0.08, ease: "power3.out",
+          scrollTrigger: { trigger: h, start: "top 85%" } }
+      );
+    });
+
+    // Section-specific element animations
+    gsap.fromTo(".about-panel", /* ... */);
+
+    return () => splits.forEach((s) => s.revert());
+  }, { scope: sectionRef });
+
+  return <section id="about" ref={sectionRef} aria-labelledby="about-heading">...</section>;
+}
+```
+
+**Key point:** The `scope: sectionRef` in `useGSAP` means CSS selectors like `.about-panel` are scoped to that section's DOM subtree. No cross-section selector conflicts.
+
+### Class Name Renaming
+
+Current class names use `e6-` prefix (namespaced for Exploration6). After extraction, rename to semantic names since each section is scoped by its own ref:
+
+| Current | After |
+|---------|-------|
+| `e6-hero-emoji` | `hero-emoji` |
+| `e6-hero-glass` | `hero-glass` |
+| `e6-hero-greeting` | `hero-greeting` |
+| `e6-hero-name` | `hero-name` |
+| `e6-hero-name-gradient` | `hero-name-gradient` |
+| `e6-hero-tagline` | `hero-tagline` |
+| `e6-hero-cta` | `hero-cta` |
+| `e6-about-section` | (use `id="about"` on section element) |
+| `e6-about-heading` | `about-heading` |
+| `e6-about-panel` | `about-panel` |
+| `e6-experience-section` | (use `id="experience"` on section element) |
+| `e6-experience-card` | `experience-card` |
+| `e6-skills-section` | (use `id="skills"` on section element) |
+| `e6-skill-category` | `skill-category` |
+| `e6-projects-section` | (use `id="projects"` on section element) |
+| `e6-projects-heading` | `projects-heading` |
+| `e6-project-card` | `project-card` |
+| `e6-project-detail-{N}` | `project-detail-{N}` |
+| `e6-contact-section` | (use `id="contact"` on section element) |
+| `e6-contact-card` | `contact-card` |
+| `e6-split-heading` | `split-heading` |
+| `e6-floating-nav` | `floating-nav` |
+| `e6-link-underline` | `link-underline` (in globals.css) |
+
+## Patterns to Follow
+
+### Pattern 1: Reduced Motion Hook
+
+**What:** Centralized `prefers-reduced-motion` detection reused by all animated components.
+**When:** Every component that uses GSAP animations or interactive motion (tilt, magnetic pull).
+
+```typescript
+// src/hooks/useReducedMotion.ts
+"use client";
+import { useState, useEffect } from "react";
+
+export function useReducedMotion(): boolean {
+  const [reduced, setReduced] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setReduced(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setReduced(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+  return reduced;
+}
+```
+
+**Reduced motion strategy:**
+1. Section animations: `if (reducedMotion) return;` at top of `useGSAP` callback -- elements render at final position with full opacity (no GSAP `fromTo` setting `opacity: 0`).
+2. Lenis: Skip initialization entirely -- native browser scroll.
+3. GlassPanel tilt: Skip tilt mousemove/mouseleave handlers.
+4. Gradient animation: Set static gradient, no cycling.
+5. SplitText: Do not instantiate -- text stays unsplit.
+6. CSS transitions: Global media query shortens all `transition-duration` to near-zero.
+
+```css
+/* globals.css addition */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+```
+
+### Pattern 2: Section Component Template
+
+**What:** Standard structure every extracted section follows.
+**When:** All 6 section components.
+
+```typescript
+"use client";
+import { useRef } from "react";
+import { gsap, ScrollTrigger, useGSAP, SplitText } from "@/lib/gsap";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
+// + section-specific UI component imports
+// + section-specific data imports from content.ts
+
+export default function XxxSection() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const reducedMotion = useReducedMotion();
+
+  useGSAP(() => {
+    if (reducedMotion) return;
+    const splits: InstanceType<typeof SplitText>[] = [];
+
+    // Heading SplitText reveal (if section has NeoBrutalHeading)
+    // ...
+
+    // Element-specific scroll-triggered animations
+    // ...
+
+    return () => splits.forEach((s) => s.revert());
+  }, { scope: sectionRef });
+
   return (
-    <SmoothScrollProvider>
-      <AnimationProvider>
-        <CursorProvider>
-          {children}
-        </CursorProvider>
-      </AnimationProvider>
-    </SmoothScrollProvider>
+    <section
+      id="xxx"
+      ref={sectionRef}
+      className="relative z-[2] px-6 py-28 md:px-12"
+      aria-labelledby="xxx-heading"
+    >
+      <div className="mx-auto max-w-5xl">
+        {/* Section content */}
+      </div>
+    </section>
   );
 }
 ```
 
-### Pattern 2: Animation Variants as Data
+Key properties:
+- `"use client"` -- required for `useRef`, `useGSAP`, `useReducedMotion`
+- Own `ref` for GSAP `scope` -- prevents selector leaking
+- Own `useGSAP` -- animations scoped to this section's DOM
+- `aria-labelledby` -- connects section to its heading for screen readers
+- No props -- each section imports its own data directly
+- No inter-section communication -- sections are independent
 
-**What:** Define animation configurations (variants) as plain objects in a shared file, then reference them declaratively in components. This separates "what animates" from "how it animates."
+### Pattern 3: Mobile Navigation
 
-**When to use:** When multiple components share the same animation behavior (e.g., fade-up-on-scroll used in 10+ places).
+**What:** Navigation accessible on mobile since FloatingNav is `hidden md:flex`.
+**When:** Below `md` (768px) breakpoint.
 
-**Trade-offs:** Slightly more indirection, but massive reduction in duplicated animation code. Also makes it trivial to adjust timing globally.
+Two viable approaches:
 
-**Example:**
+**Option A (Recommended): Fixed bottom bar.**
+- Simple row of section labels at bottom of viewport
+- Always visible, minimal interaction needed
+- Matches mobile UX conventions (bottom tab bars)
+- Avoids hamburger menu interaction cost
+
+**Option B: Hamburger menu.**
+- More compact but requires open/close interaction
+- Adds state management and animation for menu panel
+- Overkill for 5 nav items
+
+Implementation sketch for Option A:
 ```typescript
-// lib/animations.ts
-export const fadeUp = {
-  initial: { opacity: 0, y: 40 },
-  animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] },
+// Inside FloatingNav, add a second nav element:
+<nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden" aria-label="Section navigation">
+  <div className="flex justify-around items-center px-2 py-3"
+       style={{ background: "var(--glass-fill)", backdropFilter: "blur(20px)",
+                borderTop: "2px solid var(--glass-border)" }}>
+    {sections.map((section) => (
+      <button key={section.id} onClick={() => scrollTo(section.id)}
+              className="text-xs font-semibold uppercase tracking-wide"
+              style={{ color: isActive ? "var(--accent-purple)" : "var(--text-secondary)" }}>
+        {section.label}
+      </button>
+    ))}
+    <DarkModeToggle />
+  </div>
+</nav>
+```
+
+### Pattern 4: OG Meta Tags via Next.js Metadata API
+
+**What:** Open Graph and Twitter Card meta tags added through Next.js `metadata` export.
+**When:** In `layout.tsx`, replacing the minimal existing metadata.
+
+```typescript
+export const metadata: Metadata = {
+  title: "Khai Phan - Software Engineer",
+  description: "I build software. Sometimes it's good.",
+  metadataBase: new URL("https://khaiphan.dev"),
+  openGraph: {
+    title: "Khai Phan - Software Engineer",
+    description: "I build software. Sometimes it's good.",
+    url: "https://khaiphan.dev",
+    siteName: "Khai Phan",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Khai Phan - Software Engineer",
+    description: "I build software. Sometimes it's good.",
+    images: ["/og-image.png"],
+  },
+  icons: { icon: "/favicon.ico" },
 };
-
-// components/sections/About.tsx
-<motion.div {...fadeUp}>
-  <p>Content here</p>
-</motion.div>
 ```
 
-### Pattern 3: Scroll-Linked Animation with useScroll
+### Pattern 5: Responsive Breakpoint Strategy
 
-**What:** Use Framer Motion's `useScroll` hook to get `scrollYProgress` (0 to 1) for a target element, then transform that value into animation properties. No manual scroll listeners, no `requestAnimationFrame` loops for basic cases.
+**What:** Mobile-first responsive layout using Tailwind v4 defaults.
+**When:** All layout and typography adjustments.
 
-**When to use:** Parallax effects, progress indicators, scroll-triggered reveals, section transitions.
+Breakpoints: base (0-639), `sm` (640+), `md` (768+), `lg` (1024+).
 
-**Trade-offs:** Tied to Framer Motion. For very complex timeline sequences (e.g., pinned scroll with multiple stages), GSAP ScrollTrigger is more capable. But for 90% of portfolio scroll animations, `useScroll` + `useTransform` is simpler and sufficient.
+Responsive gaps in current code and fixes:
 
-**Example:**
-```typescript
-const ref = useRef(null);
-const { scrollYProgress } = useScroll({
-  target: ref,
-  offset: ["start end", "end start"],
-});
-const y = useTransform(scrollYProgress, [0, 1], [100, -100]);
+| Section | Issue | Fix |
+|---------|-------|-----|
+| Hero | `text-5xl` base is fine; `px-10 py-14` may crowd small phones | Reduce to `px-6 py-10` base, `md:px-10 md:py-14` |
+| About | Already has `md:grid-cols-2`, stacks on mobile | Good as-is |
+| Experience | Emoji badge `absolute -top-3 -left-3` clips on narrow screens; `ml-6` assumes badge space | Add `overflow-visible` to parent, reduce badge offset on mobile |
+| Skills | Already has `md:grid-cols-2`, stacks on mobile | Good as-is |
+| Projects | Already has `md:grid-cols-2`, stacks on mobile | Verify touch targets on expand/close |
+| Contact | Already has `sm:flex-row`, stacks on mobile | Good as-is |
+| FloatingNav | `hidden md:flex` -- no nav on mobile | Add bottom bar (Pattern 3) |
 
-return (
-  <motion.div ref={ref} style={{ y }}>
-    {/* parallax content */}
-  </motion.div>
-);
-```
+## Anti-Patterns to Avoid
 
-### Pattern 4: Magnetic Element Hook
+### Anti-Pattern 1: Lifting Animation State to Page Level
+**What:** Passing GSAP refs, timelines, or animation callbacks as props from page.tsx to sections.
+**Why bad:** Couples sections, makes reordering/removing fragile, defeats extraction purpose.
+**Instead:** Each section owns its animations via `useGSAP({ scope })`. Only page-level visual (gradient) lives in page.tsx.
 
-**What:** A reusable hook that makes any element "attract" toward the cursor when hovered. Uses lerp (linear interpolation) for smooth movement and resets on mouse leave.
+### Anti-Pattern 2: Conditional JSX for Reduced Motion
+**What:** Rendering different component trees for reduced-motion vs full-motion.
+**Why bad:** Doubles complexity, risks layout shifts, hard to maintain visual parity.
+**Instead:** Same JSX always. Skip GSAP animations when `reducedMotion === true`. Elements render at natural final positions. CSS media query handles transition shortening globally.
 
-**When to use:** Buttons, links, nav items, social icons -- any interactive element where you want a playful, tactile feel.
+### Anti-Pattern 3: Keeping `e6-` Class Prefixes
+**What:** Leaving `e6-hero-glass`, `e6-about-panel` etc. after Exploration6 is deleted.
+**Why bad:** Confusing naming, suggests these classes belong to something that no longer exists.
+**Instead:** Rename to semantic names (`hero-glass`, `about-panel`). Safe because `useGSAP({ scope })` scopes selectors to each section's ref.
 
-**Trade-offs:** Requires `requestAnimationFrame` for smooth updates outside React's render cycle. Must be disabled on touch devices (no hover on mobile).
+### Anti-Pattern 4: Creating a Shared Animation Provider
+**What:** Building a React Context that broadcasts scroll position or animation state to all sections.
+**Why bad:** Unnecessary complexity. GSAP ScrollTrigger already handles scroll-triggered animations internally. Adding a provider would duplicate what ScrollTrigger does and introduce React re-renders in the animation loop.
+**Instead:** Each section uses `useGSAP` + ScrollTrigger directly. No provider needed.
 
-**Example:**
-```typescript
-// hooks/useMagnetic.ts
-export function useMagnetic(strength = 0.3) {
-  const ref = useRef<HTMLElement>(null);
-  const [position, setPosition] = useState({ x: 0, y: 0 });
+## Build Order (Dependency-Aware)
 
-  const handleMouseMove = (e: MouseEvent) => {
-    const { left, top, width, height } = ref.current!.getBoundingClientRect();
-    const centerX = left + width / 2;
-    const centerY = top + height / 2;
-    setPosition({
-      x: (e.clientX - centerX) * strength,
-      y: (e.clientY - centerY) * strength,
-    });
-  };
+The following order respects dependencies so each step can be verified independently.
 
-  const handleMouseLeave = () => setPosition({ x: 0, y: 0 });
+### Step 1: Cleanup (no functional changes to live site)
+1. Delete `src/app/explore/` directory
+2. Delete `src/components/explorations/Exploration1-5.tsx`
+3. Delete Vercel default SVGs from `public/` (file.svg, globe.svg, next.svg, vercel.svg, window.svg)
+4. Add `public/favicon.ico` from old portfolio
+5. **Verify:** Build succeeds, site works (page.tsx still imports Exploration6)
 
-  return { ref, position, handleMouseMove, handleMouseLeave };
-}
-```
+### Step 2: Create shared hooks
+6. Create `src/hooks/useReducedMotion.ts`
+7. Create `src/hooks/useGradientAnimation.ts` (extract from Exploration6 lines 66-122)
 
-## Data Flow
+### Step 3: Extract section components (one at a time, verify each)
+8. Extract `HeroSection.tsx` -- most complex (SplitText timeline, scrollToAbout callback)
+9. Extract `AboutSection.tsx` -- simplest, good second extraction to validate pattern
+10. Extract `ExperienceSection.tsx`
+11. Extract `SkillsSection.tsx`
+12. Extract `ProjectsSection.tsx` -- owns `expandedProject` state + `toggleProject` callback
+13. Extract `ContactSection.tsx`
+14. Update `page.tsx`: import all sections, add wrapper div (gradient bg, noise filter SVG, noise overlay), call `useGradientAnimation`, call `ScrollTrigger.refresh()` after mount
+15. Delete `Exploration6.tsx` and `src/components/explorations/` directory
+16. Rename `e6-` class prefixes to semantic names across all new section files + globals.css
 
-### Scroll Animation Flow
+### Step 4: Responsive design
+17. Add mobile bottom bar navigation to FloatingNav
+18. Audit Hero section padding/font sizing on small screens
+19. Fix Experience section badge positioning for narrow viewports
+20. Verify all grids collapse to single column, touch targets >= 44x44px
 
-```
-[User Scrolls]
-    |
-    v
-[Lenis] --> normalizes scroll --> broadcasts scroll position
-    |
-    v
-[Framer Motion useScroll] --> reads scroll progress (0-1)
-    |
-    v
-[useTransform] --> maps progress to CSS values (opacity, y, scale)
-    |
-    v
-[motion.div style] --> GPU-accelerated transform applied
-```
+### Step 5: Accessibility
+21. Wire `useReducedMotion` into all section `useGSAP` callbacks (early return)
+22. Wire `useReducedMotion` into SmoothScroll.tsx (skip Lenis init)
+23. Wire `useReducedMotion` into GlassPanel.tsx (skip tilt)
+24. Wire `useReducedMotion` into useGradientAnimation.ts (static gradient)
+25. Add `@media (prefers-reduced-motion: reduce)` to globals.css
+26. Add `aria-labelledby` to all sections, add `as` prop to NeoBrutalHeading for heading hierarchy
+27. Audit color contrast in both light and dark mode
+28. Test keyboard navigation: tab order, focus ring visibility, skip-to-content link
 
-### Cursor Interaction Flow
+### Step 6: OG tags and performance
+29. Update `metadata` in layout.tsx with OG/Twitter tags
+30. Create `public/og-image.png` (1200x630)
+31. Run Lighthouse mobile audit, target 90+
+32. Address any Lighthouse findings (likely: font preloading, CLS from animations)
+33. Final build + deploy verification
 
-```
-[Mouse Move Event (window)]
-    |
-    v
-[CursorProvider] --> lerp smoothing (requestAnimationFrame)
-    |                       |
-    v                       v
-[CustomCursor.tsx]    [Cursor variant state]
-(renders dot/ring)    (default | hover | magnetic | hidden)
-    ^                       ^
-    |                       |
-[Mouse enters           [onMouseEnter on
- interactive element]    MagneticButton triggers
-                         variant change]
-```
+**Critical dependency chain:** Step 2 (hooks) before Step 3 (extraction). Step 3 (extraction) before Steps 4/5 (responsive/a11y) because reduced-motion and responsive changes target the new section components. Step 1 (cleanup) is independent and can go first.
 
-### Content Data Flow
-
-```
-[data/*.ts files]
-    |
-    v
-[Section Components] --> import typed data objects
-    |
-    v
-[Map over data] --> render animated list items
-    |
-    v
-[Static output] --> no runtime fetching, no loading states
-```
-
-### Key Data Flows
-
-1. **Scroll-to-animation pipeline:** Lenis normalizes browser scroll --> Framer Motion reads position via `useScroll` --> `useTransform` maps to CSS properties --> GPU renders transforms. This entire pipeline avoids React re-renders because Framer Motion's `motionValue` system updates the DOM directly.
-
-2. **Cursor state broadcasting:** Mouse position is tracked at the window level in `CursorProvider`. Individual interactive elements (buttons, links) communicate their hover state back up to the provider by calling `setCursorVariant('hover')` on mouse enter. The `CustomCursor` component subscribes to both position and variant to render appropriately.
-
-3. **Section visibility detection:** Each section uses `useInView` (Framer Motion) to detect when it enters the viewport. This drives two things: (a) triggering entrance animations, and (b) updating the active section in navigation for scroll-spy behavior. The `useSectionInView` hook encapsulates this.
-
-## Scaling Considerations
-
-This is a personal portfolio site. Scaling to millions of users is not a concern. The relevant "scaling" is content and complexity scaling.
-
-| Concern | Now (v1) | If Content Grows | Notes |
-|---------|----------|-------------------|-------|
-| Page weight | Single page, ~6 sections | Still single page | More sections = more DOM, but lazy loading handles it |
-| Animation performance | Framer Motion handles all | Add GSAP only if needed | GSAP is heavier; only reach for it if Framer Motion hits limits |
-| Image assets | Few project screenshots | Optimize with Next/Image | Next.js Image component handles lazy loading + format optimization |
-| Bundle size | ~32KB (Framer Motion) + ~5KB (Lenis) | Stays stable | Animation libs are fixed cost, not per-section |
-| Build time | Seconds | Seconds | Static site, no data fetching at build time |
-
-### Performance Priorities
-
-1. **First concern: animation jank on scroll.** Use `will-change: transform` sparingly, prefer `transform` and `opacity` only (GPU-composited properties), avoid animating `width`/`height`/`top`/`left`. Lenis + Framer Motion handle this well by default.
-2. **Second concern: initial load.** Fonts and hero images are the bottleneck. Use `next/font` for font optimization, preload hero assets, lazy-load below-fold images.
-3. **Third concern: mobile performance.** Reduce animation complexity on mobile. Disable custom cursor entirely (no hover on touch). Use `prefers-reduced-motion` to disable animations for users who request it.
-
-## Anti-Patterns
-
-### Anti-Pattern 1: Animating Layout Properties
-
-**What people do:** Animate `width`, `height`, `top`, `left`, `margin`, or `padding` to create movement effects.
-**Why it's wrong:** These trigger browser layout recalculation (reflow) on every frame. At 60fps, that is 16ms budget per frame spent on layout instead of rendering. Results in visible jank, especially on mobile.
-**Do this instead:** Animate only `transform` (translate, scale, rotate) and `opacity`. These are GPU-composited and skip layout/paint entirely. Framer Motion does this by default when you use `x`, `y`, `scale`, `rotate` props.
-
-### Anti-Pattern 2: Scroll Listener Soup
-
-**What people do:** Add multiple `addEventListener('scroll', ...)` across different components, each doing their own scroll position calculations.
-**Why it's wrong:** Scroll events fire at high frequency. Multiple uncoordinated listeners cause redundant calculations and can block the main thread. Also creates memory leaks if listeners aren't cleaned up.
-**Do this instead:** Centralize scroll handling through Lenis (which provides a single normalized scroll stream) and Framer Motion's `useScroll` (which uses IntersectionObserver internally, not scroll events). One source of truth, zero manual cleanup.
-
-### Anti-Pattern 3: Custom Cursor Without Mobile Guard
-
-**What people do:** Render a custom cursor on all devices, including touch screens.
-**Why it's wrong:** Touch devices have no persistent cursor. The custom cursor element sits invisible in the DOM, consuming memory and processing mouse events that never fire meaningfully. Worse, some implementations hide the native cursor via CSS, breaking touch interaction.
-**Do this instead:** Detect touch/pointer capabilities and disable the custom cursor entirely on touch devices. Use `window.matchMedia('(hover: hover)')` or check `navigator.maxTouchPoints`.
-
-### Anti-Pattern 4: Over-Animating Everything
-
-**What people do:** Add entrance animations, hover effects, parallax, and micro-interactions to every single element on the page.
-**Why it's wrong:** Creates visual noise. The user's eye has no resting point. Important content gets lost in motion. Also degrades performance as dozens of simultaneous animations compete for frame budget.
-**Do this instead:** Animate strategically. Hero section gets the most motion. Section transitions get subtle reveals. Interactive elements get hover feedback. Background elements get subtle parallax. Leave body text and secondary content static.
-
-## Integration Points
-
-### External Services
-
-| Service | Integration Pattern | Notes |
-|---------|---------------------|-------|
-| None | N/A | No backend, no APIs, no CMS. Fully static site. |
-
-This is a deliberate architectural choice: no contact form backend, no analytics (v1), no CMS. Content lives in `data/*.ts` files. Resume is a static PDF. This eliminates all external dependencies and keeps deployment simple.
-
-### Internal Boundaries
-
-| Boundary | Communication | Notes |
-|----------|---------------|-------|
-| Sections <-> Animation System | Framer Motion props + hooks | Sections consume `useScroll`, `useInView`, animation variants |
-| Sections <-> Content Data | Direct TypeScript imports | No async, no loading states. Type-safe at compile time |
-| Cursor System <-> Interactive Elements | Context callbacks (`setCursorVariant`) | Elements call up to CursorProvider on hover |
-| Navigation <-> Sections | Scroll-to + section ID refs | Nav triggers `lenis.scrollTo('#section-id')`, sections expose IDs |
-| Smooth Scroll <-> Animations | Lenis scroll position feeds Framer Motion | Lenis normalizes, Framer Motion consumes |
-
-## Build Order (Dependencies)
-
-The following build order respects component dependencies:
-
-### Phase 1: Foundation
-1. **Next.js App Shell** -- layout, metadata, fonts, global styles
-2. **Smooth Scroll Provider** (Lenis) -- needed before any scroll-based animations
-3. **Animation utilities** (`lib/animations.ts`, shared variants, hooks)
-4. **Content data files** (`data/*.ts`) -- typed content ready for sections
-
-### Phase 2: Core Sections (static content, basic animations)
-5. **Hero section** -- first impression, most animation-heavy
-6. **About section** -- straightforward content
-7. **Work Experience section** -- list/timeline rendering
-8. **Skills section** -- visual display of tech stack
-9. **Projects section** -- cards with links
-10. **Contact section** -- links to email/LinkedIn/GitHub, resume download
-
-### Phase 3: Interactivity Layer
-11. **Custom Cursor system** (Provider + Component) -- depends on all sections existing to have hover targets
-12. **Magnetic button effects** -- applied to interactive elements across sections
-13. **Navigation** with scroll-spy -- depends on all sections having IDs
-14. **Scroll-triggered entrance animations** -- polish pass across all sections
-
-### Phase 4: Polish
-15. **Responsive adjustments** -- mobile layouts, disabled cursor, reduced animations
-16. **Accessibility** -- reduced-motion support, keyboard navigation, focus states
-17. **Performance optimization** -- lazy loading, image optimization, bundle analysis
-18. **Deployment** -- Vercel (natural fit for Next.js)
-
-**Ordering rationale:** Foundation must come first because every component depends on the scroll provider and animation utilities. Sections come next because they are the content -- the site has no value without them. Interactivity is layered on after sections exist, because cursor effects and magnetic buttons need elements to interact with. Polish is last because responsive/a11y/perf work is most efficient when the full site is assembled.
+**Parallelizable after Step 3:** Steps 4 (responsive) and 5 (accessibility) modify different aspects of the same components and can be done concurrently or interleaved. Step 6 (OG/performance) depends on everything else being in place.
 
 ## Sources
 
-- [Motion (Framer Motion) official docs](https://motion.dev)
-- [GSAP vs Framer Motion comparison](https://dev.to/sharoztanveer/gsap-vs-framer-motion-which-animation-library-should-you-choose-for-your-creative-web-projects-4d02)
-- [React animation libraries in 2025](https://dev.to/raajaryan/react-animation-libraries-in-2025-what-companies-are-actually-using-3lik)
-- [Lenis smooth scroll + Next.js integration](https://devdreaming.com/blogs/nextjs-smooth-scrolling-with-lenis-gsap)
-- [Next.js project structure docs](https://nextjs.org/docs/app/getting-started/project-structure)
-- [Magnetic cursor effect implementation](https://www.100daysofcraft.com/blog/motion-interactions/building-a-magnetic-cursor-effect)
-- [Sticky cursor with Next.js tutorial](https://blog.olivierlarose.com/tutorials/sticky-cursor)
-- [GSAP vs Motion detailed comparison](https://motion.dev/docs/gsap-vs-motion)
-- [React scroll animations with Framer Motion](https://blog.logrocket.com/react-scroll-animations-framer-motion/)
-- [Interactive portfolio examples](https://reallygooddesigns.com/18-interactive-portfolio-examples-that-engage-on-another-level/)
-- [Micro-interaction design patterns](https://www.justinmind.com/web-design/micro-interactions)
-- [Custom cursor in React implementation](https://medium.com/design-bootcamp/implementing-custom-cursors-in-react-51784bae3d1d)
+- Direct analysis of all source files in the current codebase
+- GSAP `useGSAP` hook `scope` option for React component scoping
+- Next.js Metadata API for OG tags (static metadata export)
+- WAI-ARIA landmark roles and heading hierarchy best practices
+- Open Graph protocol: 1200x630 recommended image dimensions
 
 ---
-*Architecture research for: Creative, animation-heavy portfolio website*
-*Researched: 2026-03-06*
+*Architecture research for: v4.3 Cleanup and Launch milestone*
+*Researched: 2026-03-07*

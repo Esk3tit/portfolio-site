@@ -1,202 +1,256 @@
-# Feature Research
+# Feature Landscape
 
-**Domain:** Creative/interactive software engineer portfolio website
-**Researched:** 2026-03-06
-**Confidence:** HIGH
+**Domain:** Responsive design, accessibility, performance, and cleanup for animation-heavy portfolio site
+**Researched:** 2026-03-07
+**Scope:** v4.3 milestone only -- responsive, a11y, perf, OG tags, reduced-motion, code cleanup
 
-## Feature Landscape
+## Table Stakes
 
-### Table Stakes (Users Expect These)
+Features users (and search engines, screen readers, hiring managers on phones) expect. Missing = site feels broken or unprofessional.
 
-Features visitors (recruiters, hiring managers, fellow devs) assume exist. Missing these = site feels broken or amateurish.
+| Feature | Why Expected | Complexity | Dependencies | Notes |
+|---------|--------------|------------|--------------|-------|
+| Mobile-responsive layout | 60%+ of portfolio traffic is mobile; recruiters browse on phones | Medium | Existing Tailwind grid classes (`md:grid-cols-2`) already in Exploration6 | Grids collapse to single column, hero text scales down, spacing reduces. Tailwind mobile-first approach means unprefixed = mobile, `md:` = tablet, `lg:` = desktop |
+| Touch-friendly tap targets | WCAG 2.5.5 + basic usability -- 44x44px minimum | Low | NeoBrutalButton, NeoBrutalTag, contact links, FloatingNav dots | Current FloatingNav dots are 8-12px -- far too small for touch. Already hidden on mobile (`hidden md:flex`) so not blocking, but dark mode toggle needs mobile placement |
+| Keyboard navigation | Screen reader users, power users, motor-impaired users all use Tab | Medium | All interactive elements (buttons, links, project cards, dark mode toggle) | Project expand/collapse uses `onClick` on a `div` -- needs `button` element or `role="button"` + `onKeyDown` + `tabIndex` |
+| Visible focus indicators | WCAG 2.4.7 (AA) + 2.4.11 (AA, WCAG 2.2) -- users must see where focus is | Low | All focusable elements (buttons, links, toggle) | Currently no custom focus styles; browser defaults may be invisible against glass panel backgrounds. Focus indicators must have 3:1 contrast ratio per WCAG 2.4.11 |
+| Color contrast (WCAG AA) | 4.5:1 for body text, 3:1 for large text and UI components | Low | CSS custom properties for both light/dark themes | Verify: `--text-secondary: #8a7d96` on warm/cool gradient backgrounds in both themes. `--text-body` and accent colors need checking too |
+| Semantic HTML structure | Screen readers need landmarks, heading hierarchy, lists | Medium | Exploration6 uses sections with `id` but wrapping `div` has no landmark role | Needs `<main>`, proper `<h1>`-`<h2>` hierarchy (currently h1 in hero, h2 in sections -- good), `<nav>` already on FloatingNav |
+| `prefers-reduced-motion` support | Users with vestibular disorders, motion sensitivity; OS-level setting | Medium | GSAP scroll-triggered animations, Lenis smooth scroll, gradient animation, GlassPanel tilt, SplitText reveals, hero entrance timeline | Entire animation system needs `gsap.matchMedia()` wrapper with `reduceMotion` condition |
+| OG meta tags | Links shared on Slack/LinkedIn/Twitter need title, description, image preview | Low | Next.js Metadata API in `layout.tsx`, static OG image asset | Currently only has basic `title` and `description` -- no `openGraph`, no `twitter`, no OG image |
+| Favicon replacement | Browser tab identity; current is Vercel default | Low | Already have `src/app/favicon.ico` (untracked) | Swap in, remove Vercel defaults |
+| Lighthouse mobile >= 90 | Professional credibility; proves performance skill to recruiters | High | All other optimizations feed into this score | Risks: backdrop-filter blur(40px) on many GlassPanels, GSAP+Lenis bundle size, Google Fonts network requests (mitigated by next/font) |
 
-| Feature | Why Expected | Complexity | Notes |
-|---------|--------------|------------|-------|
-| Hero/intro section with name and role | First impression; visitors need to know who you are within 2 seconds | LOW | Should convey personality immediately -- not a generic "Hi, I'm a developer" |
-| About section | Visitors want to know the person behind the work -- background, interests, what drives you | LOW | Keep concise. 2-3 paragraphs max. Personality > formality |
-| Work experience section | Recruiters and hiring managers look for this first; validates professional credibility | MEDIUM | Needs clear timeline/structure. Avoid wall-of-text descriptions |
-| Projects showcase | Core proof of technical ability. 4-6 high-quality projects beats 15 mediocre ones | MEDIUM | Each project needs: description, tech stack, link (live/GitHub). Screenshots or demos strongly preferred |
-| Skills/tech stack display | Quick scanning for tech fit. Recruiters filter by this | LOW | Organize by category (languages, frameworks, tools). Visual display preferred over plain lists |
-| Contact information | Dead-end portfolios lose opportunities. Visitors need a clear next action | LOW | Email, LinkedIn, GitHub links. No form needed (per PROJECT.md) |
-| Resume/CV download | Standard expectation for professional portfolios. Recruiters want a PDF to pass along | LOW | Git-committed PDF, single click download. Keep prominent |
-| Responsive design (mobile + desktop) | 60%+ of portfolio views happen on mobile. Broken mobile = instant bounce | MEDIUM | All creative effects must degrade gracefully on mobile. Not optional |
-| Fast load time (<3s) | Visitors bounce at 3+ seconds. Creative sites are especially at risk due to animation weight | MEDIUM | Lazy load assets, optimize images, minimize JS bundle. Performance budget matters |
-| Navigation/wayfinding | Even creative layouts need clear navigation. Visitors should never feel lost | LOW | Can be unconventional but must be discoverable. Keyboard accessible |
-| Semantic HTML and basic accessibility | Screen readers, keyboard navigation, and proper heading structure are baseline expectations | MEDIUM | `aria` labels, focus management, sufficient color contrast, reduced-motion support |
-| Open Graph / social meta tags | Links shared on LinkedIn, Twitter, Slack need proper preview cards | LOW | Title, description, image. Often forgotten but high-impact for sharing |
+## Differentiators
 
-### Differentiators (Competitive Advantage)
+Features that elevate the site beyond "checkbox accessible." Not expected, but signal craft and attention to detail.
 
-Features that make this portfolio memorable. These align with the project's core value: "as engaging to interact with as the work it showcases."
+| Feature | Value Proposition | Complexity | Dependencies | Notes |
+|---------|-------------------|------------|--------------|-------|
+| Graceful reduced-motion fallback | Animations become instant opacity fades instead of disappearing; site still feels designed even with motion off | Medium | `gsap.matchMedia()` with `reduceMotion` condition | Use `duration: 0` for instant `gsap.set()` instead of removing animations entirely. Content still reveals, just without movement. This is the GSAP-recommended pattern |
+| Skip-to-content link | Screen reader and keyboard users jump past nav; signals a11y awareness to technical reviewers | Low | `<main>` element with `id` | Hidden visually via `sr-only`, visible on `:focus`, links to `#main-content` |
+| Designed OG image | Branded preview when shared on social; stands out in Slack channels vs generic text-only cards | Low | Static image file in `/public/` | 1200x630px, match Liquid Glass + Neobrutalism aesthetic. Use static file -- `opengraph-image.png` file convention or explicit path in metadata |
+| `aria-expanded` on project cards | Project expand/collapse announces state changes to screen readers | Low | Project card toggle already works with GSAP | Add `aria-expanded={expandedProject === index}` on trigger, `aria-controls` pointing to detail panel |
+| Dark mode toggle on mobile | Currently hidden with FloatingNav on mobile -- users have no way to toggle theme | Low | DarkModeToggle component exists | Add fixed-position toggle visible on mobile, or a header bar. Don't duplicate the toggle -- move or make responsive |
+| Font `display: swap` verification | Prevents FOIT (flash of invisible text) | Low | `next/font` already configured | `next/font` outputs `font-display: swap` by default -- just verify it works in production build |
+| Both-theme contrast verification | Light mode may pass WCAG AA but dark mode fails (or vice versa) | Low | CSS custom properties in globals.css | Dark mode `--text-body: #c4b8d0` on `#1a1520` background and `--text-secondary: #9a8daa` both need contrast ratio checks |
 
-| Feature | Value Proposition | Complexity | Notes |
-|---------|-------------------|------------|-------|
-| Custom cursor effects | Creates immediate sense of interactivity and craft. Signals "this person cares about details" | MEDIUM | Magnetic cursors near interactive elements, custom cursor shape, trail effects. Must disable on touch devices |
-| Scroll-triggered animations | Makes content feel alive as it reveals. Transforms passive reading into active discovery | MEDIUM | Use GSAP ScrollTrigger or Framer Motion. Staggered reveals, parallax layers, text animations. Must respect `prefers-reduced-motion` |
-| Smooth page/section transitions | Eliminates the "click and jump" feel. Creates a cohesive, app-like experience | MEDIUM | GSAP FLIP transitions or Framer Motion layout animations. Smooth scroll with Lenis or similar |
-| Micro-interactions on hover/click | Small delightful moments that reward exploration -- button morphs, card lifts, icon animations | LOW-MEDIUM | Hover states on cards, magnetic buttons, subtle scale/rotation on interaction. Keep consistent |
-| Unexpected/non-linear layout | Breaks the "top-to-bottom sections" pattern that Khai explicitly wants to avoid | HIGH | Overlapping elements, asymmetric grids, sections that break the container. Needs careful responsive handling |
-| Text reveal animations | Animated text (split by character/word/line) adds polish and directs attention | MEDIUM | SplitText-style reveals on headings. Staggered character animations. Can use CSS or GSAP |
-| Dark mode with animated toggle | Shows attention to UX. The toggle animation itself becomes a micro-interaction | LOW-MEDIUM | Respect system preference via `prefers-color-scheme`. Persist choice in localStorage. Sun/moon toggle animation |
-| Loading/intro animation | First-time visitors get a "curtain raise" moment that sets the creative tone | MEDIUM | Keep under 2-3 seconds. Skip on return visits (sessionStorage). Should feel intentional, not like a loading spinner |
-| Personality-driven copy and tone | The writing itself differentiates. Playful, human, specific > generic corporate tone | LOW | Not a code feature but critical to the experience. "I build things that..." > "Experienced software engineer with..." |
-| Interactive project cards/showcase | Projects that respond to mouse position, tilt, or have mini-previews on hover | MEDIUM | 3D tilt effect on cards, video preview on hover, expandable detail views |
-| Noise/grain texture overlay | Adds depth and character vs flat design. Common in award-winning creative portfolios | LOW | CSS background with subtle noise SVG/PNG. Performance-friendly |
-| Gradient animations or color shifts | Dynamic color creates energy and visual interest | LOW | CSS animated gradients or WebGL-powered color fields. Keep subtle |
+## Anti-Features
 
-### Anti-Features (Commonly Requested, Often Problematic)
+Features to explicitly NOT build in v4.3. Tempting but harmful or out of scope.
 
-Features that seem appealing but actively harm the portfolio's effectiveness.
-
-| Feature | Why Requested | Why Problematic | Alternative |
-|---------|---------------|-----------------|-------------|
-| 3D WebGL scene as hero | "Bruno Simon's portfolio is amazing" | Massive bundle size (Three.js is 150KB+ min), kills mobile performance, accessibility nightmare, months of dev time for one section | Use 2D canvas effects, CSS 3D transforms, or subtle WebGL accents (not full scenes). Get 80% of the wow at 20% of the cost |
-| Contact form with backend | Feels professional | Requires backend/serverless, spam protection, form validation -- all for something a mailto link handles. Per PROJECT.md, explicitly out of scope | Direct email link with `mailto:`, LinkedIn link, GitHub link. Simpler and higher conversion |
-| Blog/CMS integration | "I should blog" | Scope creep. Adds content management complexity, SEO concerns, and maintenance burden. Most developer blogs go stale after 3 posts | Out of scope per PROJECT.md. If added later, use a separate subdomain or platform (dev.to, Hashnode) |
-| Particle systems / heavy canvas backgrounds | Visually impressive in demos | Kills battery life on mobile, causes frame drops on mid-range devices, distracts from content. Performance constraint in PROJECT.md explicitly warns against this | Use CSS animations, SVG animations, or very lightweight canvas with <50 particles. Less is more |
-| Sound/audio effects | "It would be so immersive" | Autoplaying audio is universally hated. Even opt-in audio adds complexity and rarely enhances a portfolio | Silent micro-interactions achieve the same delight without the annoyance |
-| Page-per-section routing (SPA with routes) | Feels like a "real app" | Single-page portfolio with smooth scroll is faster, simpler, and better for this content volume. Routing adds complexity for no user benefit | Single page with scroll-based navigation. Use hash anchors for direct linking to sections |
-| Analytics dashboard / visitor tracking | "I want to know who views my portfolio" | Adds privacy concerns, cookie banners, and complexity. Not in v1 scope | Add simple analytics (Plausible, Umami) later if needed. No dashboard needed |
-| Chatbot / AI assistant | Trendy in 2026 | Gimmicky on a personal portfolio. Adds massive complexity. Visitors want to scan, not chat | Clear navigation and well-structured content replaces any need for a chatbot |
-| Overly complex page transitions | "Like those Awwwards sites" | Route-based transitions with FLIP animations are extremely hard to get right, create accessibility issues, and are brittle. Diminishing returns on a single-page site | Smooth scroll + section reveal animations achieve 90% of the effect with 10% of the complexity |
-| Template/theme usage | "Faster to launch" | Defeats the purpose. A software engineer's portfolio IS the proof of skill. Templates signal "I didn't build this" | Build from scratch. The portfolio itself is a project that demonstrates ability |
+| Anti-Feature | Why Avoid | What to Do Instead |
+|--------------|-----------|-------------------|
+| Hamburger menu for mobile | Site is single-page with 6 sections and natural scroll; hamburger adds complexity for zero value | FloatingNav already hidden on mobile (`hidden md:flex`); users scroll naturally. If needed later, a simple fixed bottom bar |
+| Custom animated focus rings | GSAP-animated focus rings add complexity and can interfere with a11y tooling | Use CSS `outline` with `outline-offset` -- simple, reliable, always visible. Style with theme colors via custom properties |
+| Automated OG image generation | `ImageResponse` / `@vercel/og` adds server-side rendering complexity; static export may not support it | Commit a static 1200x630 PNG to `/public/og-image.png`. Design it once, done |
+| Service worker / PWA | Overkill for a portfolio; adds caching bugs and update complexity | Static export on Vercel CDN is already fast. No offline use case exists |
+| Lazy-loading sections with Suspense | Single-page scroll loads all content upfront; code-splitting 6 small sections adds complexity for negligible gain | Optimize asset sizes and remove dead code instead. `next/font` already handles font loading |
+| `will-change` on all glass panels | Promotes every element to GPU compositor layer; too many promoted elements actually increases memory and hurts performance | Only add `will-change` before active GSAP animations, remove after. Or let GSAP handle GPU promotion internally |
+| ARIA over-engineering | Adding `role`, `aria-*` to every single element creates noise for screen readers; more ARIA is not better ARIA | Only add ARIA where native HTML semantics are insufficient: project toggle (`aria-expanded`), live regions for dynamic content |
+| Loading skeleton / spinner | Static export = content is in HTML at first paint; there is no data fetching | None needed; content is already in the static HTML bundle |
+| `next/image` for all assets | Static export does not support Next.js Image Optimization API without `next-image-export-optimizer` | Use standard `<img>` with manually optimized assets, or add `next-image-export-optimizer` only if image count grows |
 
 ## Feature Dependencies
 
 ```
-[Responsive Design]
-    └──required-by──> [All other features] (everything must work mobile)
+Code Cleanup (remove explores, extract sections)
+    --> Responsive layout (per-section responsive work)
+    --> Semantic HTML (clean component boundaries)
+    --> Lighthouse (smaller bundle)
 
-[Smooth Scroll Setup]
-    └──required-by──> [Scroll-triggered Animations]
-                          └──enhances──> [Text Reveal Animations]
-                          └──enhances──> [Section Transitions]
+Semantic HTML (<main>, heading hierarchy, landmark roles)
+    --> Keyboard navigation (Tab order makes sense)
+    --> Focus indicators (styled on correct elements)
+    --> Skip-to-content link (needs <main id="main-content">)
+    --> aria-expanded on project cards
 
-[CSS Custom Properties / Design Tokens]
-    └──required-by──> [Dark Mode Toggle]
-    └──required-by──> [Consistent Micro-interactions]
+prefers-reduced-motion
+    --> GSAP matchMedia wrapper (all scroll-triggered animations)
+    --> Lenis disable or instant mode (lerp: 1)
+    --> CSS transition disabling (gradient animation, theme transitions)
+    --> GlassPanel tilt effect disable
+    --> CustomCursor magnetic pull disable (or keep -- it's subtle)
 
-[Layout System (grid/flex foundations)]
-    └──required-by──> [Unexpected/Non-linear Layout]
-    └──required-by──> [Interactive Project Cards]
+Responsive layout
+    --> Touch target sizing (44x44px minimums)
+    --> Dark mode toggle mobile placement
+    --> Hero text scaling (text-5xl down to text-3xl)
+    --> Grid collapse (2-col to 1-col on mobile)
+    --> Experience card emoji badges (absolute positioning may break)
 
-[Custom Cursor Setup]
-    └──enhances──> [Magnetic Buttons]
-    └──enhances──> [Interactive Project Cards]
-    └──conflicts──> [Touch Devices] (must disable gracefully)
+OG meta tags
+    --> OG image asset (must exist in /public/ first)
+    --> metadataBase URL (https://khaiphan.dev)
+    --> Metadata API expansion in layout.tsx
 
-[Loading Animation]
-    └──must-precede──> [Hero Section Reveal]
-    └──independent-of──> [Content Sections]
-
-[prefers-reduced-motion Detection]
-    └──required-by──> [All Animations] (must respect user preference)
+Lighthouse 90+ (depends on everything)
+    --> Responsive layout (mobile scoring)
+    --> Accessibility fixes (a11y audit portion)
+    --> Font optimization (next/font -- already done)
+    --> Asset optimization (favicon, cursor PNG, OG image)
+    --> backdrop-filter performance (may need mobile fallback)
+    --> Dead code removal (explore pages, unused explorations)
+    --> GSAP tree-shaking verification
 ```
 
-### Dependency Notes
+## MVP Recommendation
 
-- **Smooth Scroll requires early setup:** All scroll-linked animations depend on the scroll engine (Lenis/GSAP ScrollSmoother). Set up in Phase 1.
-- **CSS Custom Properties before Dark Mode:** Color system with CSS variables must exist before dark mode can toggle them.
-- **Custom Cursor conflicts with Touch:** Must detect touch devices and disable custom cursor entirely. No hybrid approach works well.
-- **prefers-reduced-motion is foundational:** Every animation feature must check this. Build the check once, use everywhere.
-- **Layout system before creative layouts:** The grid/flex foundation must be solid before layering on unexpected/asymmetric positioning.
+### Phase 1: Cleanup (unblocks everything else)
+1. **Remove explore pages** (`/explore/[id]`, Exploration1-5, explore index) -- reduces bundle, removes dead routes
+2. **Extract Exploration6 into section components** (Hero, About, Experience, Skills, Projects, Contact) -- enables per-section responsive/a11y work
+3. **Remove Vercel default assets and dead code** (orphaned CSS, unused imports) -- cleaner bundle
+4. **Replace favicon** -- swap `src/app/favicon.ico`, remove Vercel SVG
 
-## MVP Definition
+### Phase 2: Responsive Design (highest user impact)
+5. **Mobile-first responsive layout** -- Tailwind breakpoints: base (mobile) -> `md:` (tablet 768px) -> `lg:` (desktop 1024px)
+   - Hero: scale `text-5xl sm:text-6xl md:text-7xl` (already partially done), reduce padding
+   - Grids: `grid-cols-1 md:grid-cols-2` for about panels, skills, projects (partially done)
+   - Experience cards: full width on mobile, adjust emoji badge positioning
+   - Contact: stack vertically on mobile (already `flex-col` with `sm:flex-row`)
+6. **Dark mode toggle on mobile** -- add mobile-visible toggle (fixed bottom-right or top header)
+7. **Touch target audit** -- ensure all interactive elements meet 44x44px minimum
 
-### Launch With (v1)
+### Phase 3: Accessibility (depends on clean semantic structure from Phase 1-2)
+8. **Semantic HTML** -- wrap in `<main>`, verify heading hierarchy, ensure sections are landmarks
+9. **Keyboard navigation** -- convert project card `div[onClick]` to `button`, verify Tab order
+10. **Visible focus indicators** -- CSS `outline` with `outline-offset`, themed with custom properties
+11. **`prefers-reduced-motion`** -- `gsap.matchMedia()` wrapper: `duration: 0` for all GSAP animations, disable Lenis smoothing, pause gradient, disable tilt
+12. **Color contrast** -- verify all text/background combinations in both themes against WCAG AA (4.5:1 body, 3:1 large text)
+13. **Skip-to-content link** -- `sr-only focus:not-sr-only` pattern
+14. **`aria-expanded` on project toggles** -- semantic expand/collapse behavior
 
-Minimum viable portfolio -- enough to replace khaiphan.dev and make a strong impression.
+### Phase 4: Meta + Performance (polish pass)
+15. **OG meta tags** -- expand Metadata API in `layout.tsx` with `openGraph` and `twitter` objects
+16. **OG image** -- design and commit 1200x630px static PNG to `/public/`
+17. **Lighthouse audit** -- run mobile audit, identify specific bottlenecks
+18. **Performance fixes** -- address Lighthouse findings (likely: backdrop-filter on mobile, unused JS, font loading timing)
+19. **Final a11y sweep** -- automated audit (axe-core or Lighthouse a11y) + manual keyboard walkthrough
 
-- [ ] Hero section with personality-driven intro and entrance animation -- first impression is everything
-- [ ] About section with background and what Khai does -- builds human connection
-- [ ] Work experience section with clear timeline -- validates professional credibility
-- [ ] Skills display organized by category -- enables quick tech-fit scanning
-- [ ] Projects showcase (4 existing projects) with descriptions and links -- core proof of ability
-- [ ] Contact section with email, LinkedIn, GitHub -- enables next action
-- [ ] Resume PDF download -- recruiter expectation
-- [ ] Responsive design across breakpoints -- non-negotiable
-- [ ] Scroll-triggered section reveal animations -- minimum "creative" bar
-- [ ] Custom cursor effects (desktop only) -- immediate signal that this is a crafted experience
-- [ ] Micro-interactions on buttons, links, and cards -- consistent delight layer
-- [ ] Dark mode with system preference detection -- modern UX expectation
-- [ ] Open Graph meta tags -- for when links are shared
-- [ ] `prefers-reduced-motion` support -- accessibility baseline
+### Defer to Future
+- **Automated OG image generation**: Static image is sufficient; site content rarely changes
+- **Service worker / PWA**: No offline use case
+- **`next-image-export-optimizer`**: Only needed if image count grows significantly
 
-### Add After Launch (v1.x)
+## Implementation Notes
 
-Features to layer on once the core is solid.
+### GSAP `matchMedia()` Pattern for Reduced Motion
 
-- [ ] Loading/intro animation -- polish layer, not essential for first deploy
-- [ ] Text reveal animations (character/word split) -- adds craft to typography
-- [ ] Interactive project cards with tilt/hover previews -- elevates the showcase
-- [ ] Noise/grain texture overlay -- adds visual depth
-- [ ] Gradient animations or dynamic color shifts -- energy and movement
-- [ ] Smooth scroll library (Lenis) -- upgrades the scroll feel
+The recommended GSAP pattern wraps ALL animation setup in `gsap.matchMedia()`. GSAP automatically reverts animations when conditions change (HIGH confidence -- official GSAP docs).
 
-### Future Consideration (v2+)
+```typescript
+const mm = gsap.matchMedia();
+mm.add({
+  isDesktop: "(min-width: 768px)",
+  isMobile: "(max-width: 767px)",
+  reduceMotion: "(prefers-reduced-motion: reduce)"
+}, (context) => {
+  const { isDesktop, reduceMotion } = context.conditions!;
 
-Features to consider once the portfolio is live and validated.
+  // Content still reveals, just instantly
+  gsap.fromTo(".element",
+    { opacity: 0 },
+    { opacity: 1, duration: reduceMotion ? 0 : 0.8 }
+  );
 
-- [ ] Non-linear/unexpected layout experiments -- high complexity, do after foundations are solid
-- [ ] Analytics integration (Plausible/Umami) -- once you want visitor data
-- [ ] Performance monitoring -- ensure animations stay smooth as features grow
-- [ ] Blog or writing section -- only if Khai actively wants to write
+  // SplitText: skip char/word split entirely for reduced motion
+  // (SplitText DOM manipulation is unnecessary if no stagger animation)
+  if (!reduceMotion) {
+    const split = new SplitText(".heading", { type: "words" });
+    gsap.from(split.words, { y: 40, opacity: 0, stagger: 0.08 });
+  }
 
-## Feature Prioritization Matrix
+  return () => { /* cleanup */ };
+});
+```
 
-| Feature | User Value | Implementation Cost | Priority |
-|---------|------------|---------------------|----------|
-| Hero with animation | HIGH | MEDIUM | P1 |
-| About section | HIGH | LOW | P1 |
-| Work experience | HIGH | MEDIUM | P1 |
-| Projects showcase | HIGH | MEDIUM | P1 |
-| Skills display | MEDIUM | LOW | P1 |
-| Contact section | HIGH | LOW | P1 |
-| Resume download | MEDIUM | LOW | P1 |
-| Responsive design | HIGH | MEDIUM | P1 |
-| Scroll-triggered animations | HIGH | MEDIUM | P1 |
-| Custom cursor (desktop) | MEDIUM | MEDIUM | P1 |
-| Hover micro-interactions | MEDIUM | LOW | P1 |
-| Dark mode toggle | MEDIUM | LOW-MEDIUM | P1 |
-| OG meta tags | MEDIUM | LOW | P1 |
-| Reduced-motion support | MEDIUM | LOW | P1 |
-| Loading animation | MEDIUM | MEDIUM | P2 |
-| Text reveal animations | MEDIUM | MEDIUM | P2 |
-| Interactive project cards | MEDIUM | MEDIUM | P2 |
-| Noise/grain overlay | LOW | LOW | P2 |
-| Gradient animations | LOW | LOW | P2 |
-| Smooth scroll library | MEDIUM | LOW | P2 |
-| Non-linear layout | MEDIUM | HIGH | P3 |
-| Analytics | LOW | LOW | P3 |
+### Lenis + Reduced Motion
 
-## Competitor Feature Analysis
+Lenis should be conditionally configured. Options:
+- **Option A**: Don't render `<ReactLenis>` when reduced motion is active (check with `window.matchMedia('(prefers-reduced-motion: reduce)').matches` before mount)
+- **Option B**: Pass `options={{ lerp: 1, duration: 0 }}` to make scroll instant (no smoothing effect)
 
-| Feature | Bruno Simon (3D) | Brittany Chiang (Minimal) | Joffrey Spitzer (GSAP) | Khai's Approach |
-|---------|-----------------|--------------------------|------------------------|-----------------|
-| Hero impact | 3D driving game -- extreme wow | Clean type + subtle animation | Minimalist reveal animations | Animated intro with personality, no 3D overhead |
-| Navigation | Embedded in 3D scene | Sticky sidebar nav | Minimal, scroll-driven | Creative but discoverable nav |
-| Project showcase | Objects in 3D world | Grid with hover details | FLIP transitions between views | Interactive cards with hover effects |
-| Scroll experience | Not scroll-based | Standard scroll | GSAP ScrollTrigger | Smooth scroll + triggered animations |
-| Cursor | Default | Default | Custom with hover states | Custom cursor with magnetic effects |
-| Performance | Heavy (Three.js) | Fast (static) | Good (optimized GSAP) | Target: fast with graceful animation |
-| Mobile | Degraded experience | Excellent | Good | Must be excellent |
-| Personality | Very high (unique concept) | Professional, understated | Refined, craft-focused | Playful, energetic, Vietnamese engineer identity |
+Option A is cleaner -- native scroll is perfectly fine and avoids any Lenis overhead.
+
+### backdrop-filter Performance on Mobile
+
+The site uses `blur(40px) saturate(1.6)` on every GlassPanel. Mobile devices handle 3-5 simultaneous blur effects acceptably, but scrolling through sections with many glass panels may cause frame drops. During Lighthouse testing, if TBT (Total Blocking Time) or CLS suffers:
+- Reduce blur radius to `blur(20px)` on mobile via `@media (max-width: 767px)`
+- Or replace with solid semi-transparent background on low-end devices
+- Monitor with Chrome DevTools Performance tab at 4x CPU throttle
+
+### Next.js Metadata API for OG Tags
+
+Current `layout.tsx` has minimal metadata. Required expansion (HIGH confidence -- Next.js official docs):
+
+```typescript
+export const metadata: Metadata = {
+  metadataBase: new URL('https://khaiphan.dev'),
+  title: "Khai Phan - Software Engineer",
+  description: "I build software. Sometimes it's good.",
+  openGraph: {
+    title: "Khai Phan - Software Engineer",
+    description: "I build software. Sometimes it's good.",
+    url: 'https://khaiphan.dev',
+    siteName: 'Khai Phan',
+    images: [{ url: '/og-image.png', width: 1200, height: 630 }],
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: "Khai Phan - Software Engineer",
+    description: "I build software. Sometimes it's good.",
+    images: ['/og-image.png'],
+  },
+};
+```
+
+Key: `openGraph` and `twitter` objects need their own `title`/`description` -- they do NOT inherit from top-level fields. `metadataBase` is required for absolute URL resolution of the OG image.
+
+### Responsive Breakpoint Strategy
+
+Tailwind v4 mobile-first with the existing classes already in use:
+- **Base** (0-767px): Single column, reduced padding, smaller typography
+- **`sm:` (640px+)**: Minor adjustments (contact links row)
+- **`md:` (768px+)**: Two-column grids, FloatingNav visible, larger hero text
+- **`lg:` (1024px+)**: Max-width containers, full spacing
+
+Most of the responsive work is adjusting existing classes. The site already uses `md:grid-cols-2` and `md:px-12` in several places. Main gaps: hero section sizing on small screens, experience card layout, and mobile dark mode toggle placement.
+
+### Project Card Keyboard Accessibility
+
+Current code: `<div onClick={() => toggleProject(index)}>` -- inaccessible to keyboard users.
+
+Fix:
+```tsx
+<button
+  onClick={() => toggleProject(index)}
+  aria-expanded={expandedProject === index}
+  aria-controls={`project-detail-${index}`}
+  className="w-full text-left"
+>
+  {/* card content */}
+</button>
+```
+
+The detail panel needs `id={`project-detail-${index}`}` to match `aria-controls`.
 
 ## Sources
 
-- [Webflow - Microinteractions examples](https://webflow.com/blog/microinteractions)
-- [Codrops - Joffrey Spitzer Portfolio (Astro + GSAP)](https://tympanus.net/codrops/2026/02/18/joffrey-spitzer-portfolio-a-minimalist-astro-gsap-build-with-reveals-flip-transitions-and-subtle-motion/)
-- [Lovable - Best Interactive Websites 2026](https://lovable.dev/guides/best-interactive-websites)
-- [Muzli - Top 100 Creative Portfolio Websites 2025](https://muz.li/blog/top-100-most-creative-and-unique-portfolio-websites-of-2025/)
-- [Awwwards - Portfolio Websites](https://www.awwwards.com/websites/portfolio/)
-- [CareerFoundry - Software Engineer Portfolio Guide](https://careerfoundry.com/en/blog/web-development/software-engineer-portfolio/)
-- [DEV Community - Frontend Developer Portfolio Tips 2025](https://dev.to/siddheshcodes/frontend-developer-portfolio-tips-for-2025-build-a-stunning-site-that-gets-you-hired-3hga)
-- [Motion.dev - Scroll Animations](https://motion.dev/docs/react-scroll-animations)
-- [Made With GSAP - Examples](https://madewithgsap.com/)
-- [HubSpot - Custom Animated Cursors](https://blog.hubspot.com/website/animated-cursor)
-- [Codrops - Custom Cursor Effects](https://tympanus.net/codrops/2019/01/31/custom-cursor-effects/)
-- [Digital Upward - 2026 Web Design Trends](https://www.digitalupward.com/blog/2026-web-design-trends-glassmorphism-micro-animations-ai-magic/)
+- [GSAP matchMedia() docs](https://gsap.com/docs/v3/GSAP/gsap.matchMedia/) -- HIGH confidence
+- [GSAP matchMedia reduced motion CodePen](https://codepen.io/GreenSock/pen/qBoRdqp) -- HIGH confidence
+- [GSAP and accessibility (Anne Bovelett)](https://annebovelett.eu/gsap-and-accessibility-yes-you-can-have-both/) -- MEDIUM confidence
+- [Next.js generateMetadata API](https://nextjs.org/docs/app/api-reference/functions/generate-metadata) -- HIGH confidence
+- [Next.js Metadata and OG images guide](https://nextjs.org/docs/app/getting-started/metadata-and-og-images) -- HIGH confidence
+- [WCAG 2.4.11 Focus Not Obscured (TestParty)](https://testparty.ai/blog/wcag-2-4-11-focus-not-obscured-minimum-2025-guide) -- MEDIUM confidence
+- [WCAG 2.2 Complete Guide (AllAccessible)](https://www.allaccessible.org/blog/wcag-22-complete-guide-2025) -- MEDIUM confidence
+- [Tailwind CSS responsive design docs](https://tailwindcss.com/docs/responsive-design) -- HIGH confidence
+- [Lenis GitHub](https://github.com/darkroomengineering/lenis) -- HIGH confidence
+- [web.dev prefers-reduced-motion](https://web.dev/articles/prefers-reduced-motion) -- HIGH confidence
+- [Pope Tech accessible animation guide](https://blog.pope.tech/2025/12/08/design-accessible-animation-and-movement/) -- MEDIUM confidence
+- [backdrop-filter performance (Chrome bug report)](https://github.com/nextcloud/spreed/issues/7896) -- MEDIUM confidence
+- [Lighthouse performance scoring](https://developer.chrome.com/docs/lighthouse/performance/performance-scoring) -- HIGH confidence
 
 ---
-*Feature research for: Creative interactive software engineer portfolio*
-*Researched: 2026-03-06*
+*Feature research for: v4.3 Cleanup and Launch milestone (responsive, a11y, performance, OG tags)*
+*Researched: 2026-03-07*
