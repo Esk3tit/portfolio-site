@@ -72,9 +72,14 @@ export default function Exploration6() {
     const isDark = document.documentElement.classList.contains("dark");
     const root = document.documentElement;
 
-    // Set current values as starting point
+    // Immediately set CSS vars to match new theme, then animate from there
+    const startBase = isDark ? "#1a1520" : "#e8ddd5";
+    const endBase = isDark ? "#1e2030" : "#cdd0e5";
     const startTarget = isDark ? "#1e1828" : "#eddcd2";
     const endTarget = isDark ? "#222438" : "#d5cbe8";
+
+    root.style.setProperty("--bg-gradient-start", startBase);
+    root.style.setProperty("--bg-gradient-end", endBase);
 
     gradientTweenRef.current = gsap.to(root, {
       "--bg-gradient-start": startTarget,

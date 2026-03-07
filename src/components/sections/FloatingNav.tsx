@@ -19,24 +19,6 @@ export function FloatingNav() {
   const lenis = useLenis();
 
   useGSAP(() => {
-    // Show/hide based on scroll past hero
-    ScrollTrigger.create({
-      trigger: "#about",
-      start: "top 90%",
-      onEnter: () =>
-        gsap.to(".e6-floating-nav", {
-          opacity: 1,
-          pointerEvents: "auto",
-          duration: 0.3,
-        }),
-      onLeaveBack: () =>
-        gsap.to(".e6-floating-nav", {
-          opacity: 0,
-          pointerEvents: "none",
-          duration: 0.3,
-        }),
-    });
-
     // Track active section
     sections.forEach((section) => {
       ScrollTrigger.create({
@@ -62,7 +44,7 @@ export function FloatingNav() {
 
   return (
     <nav
-      className="e6-floating-nav fixed right-6 top-1/2 z-50 -translate-y-1/2 opacity-0 pointer-events-none hidden md:flex"
+      className="e6-floating-nav fixed right-6 top-1/2 z-50 -translate-y-1/2 hidden md:flex"
       aria-label="Section navigation"
     >
       <div className="flex flex-col items-center gap-3">
