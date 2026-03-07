@@ -24,11 +24,12 @@ export function GlassPanel({
       className={`relative overflow-hidden rounded-2xl ${className}`}
       style={{
         background:
-          "linear-gradient(160deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%)",
+          "linear-gradient(160deg, var(--glass-fill) 0%, var(--glass-fill-end) 100%)",
         backdropFilter: "blur(40px) saturate(1.6)",
         WebkitBackdropFilter: "blur(40px) saturate(1.6)",
-        border: "3px solid #3d3248",
+        border: "3px solid var(--glass-border)",
         boxShadow: shadow,
+        transition: "background 0.35s ease, border-color 0.35s ease",
         ...(rotate ? { transform: `rotate(${rotate})` } : {}),
         ...(padding ? { padding } : {}),
         ...style,
@@ -40,11 +41,12 @@ export function GlassPanel({
         style={{
           border: "1.5px solid transparent",
           background:
-            "linear-gradient(180deg, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.15) 40%, rgba(255,255,255,0.05) 60%, rgba(255,255,255,0.25) 100%) border-box",
+            "linear-gradient(180deg, var(--glass-specular-top) 0%, rgba(255,255,255,0.15) 40%, rgba(255,255,255,0.05) 60%, rgba(255,255,255,0.25) 100%) border-box",
           WebkitMask:
             "linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0)",
           WebkitMaskComposite: "xor",
           maskComposite: "exclude",
+          transition: "background 0.35s ease",
         }}
       />
       {/* Frosted noise grain overlay -- references page-level #glass-noise SVG filter */}

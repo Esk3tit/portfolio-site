@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useCallback } from "react";
+import { useRef, useState, useCallback, useEffect } from "react";
 import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
 import { GlassPanel } from "@/components/ui/GlassPanel";
 import { NeoBrutalButton } from "@/components/ui/NeoBrutalButton";
@@ -19,6 +19,7 @@ import { FloatingNav } from "@/components/sections/FloatingNav";
 export default function Exploration6() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [expandedProject, setExpandedProject] = useState<number | null>(null);
+  const gradientTweenRef = useRef<gsap.core.Tween | null>(null);
 
   const toggleProject = useCallback(
     (index: number) => {
@@ -61,9 +62,63 @@ export default function Exploration6() {
     [expandedProject]
   );
 
+  // Gradient animation -- slowly shifts background colors
+  const startGradientAnimation = useCallback(() => {
+    // Kill existing tween
+    if (gradientTweenRef.current) {
+      gradientTweenRef.current.kill();
+    }
+
+    const isDark = document.documentElement.classList.contains("dark");
+    const root = document.documentElement;
+
+    // Set current values as starting point
+    const startTarget = isDark ? "#1e1828" : "#eddcd2";
+    const endTarget = isDark ? "#222438" : "#d5cbe8";
+
+    gradientTweenRef.current = gsap.to(root, {
+      "--bg-gradient-start": startTarget,
+      "--bg-gradient-end": endTarget,
+      duration: 25,
+      ease: "sine.inOut",
+      yoyo: true,
+      repeat: -1,
+    });
+  }, []);
+
+  // Listen for theme changes to restart gradient with correct targets
+  useEffect(() => {
+    startGradientAnimation();
+
+    const observer = new MutationObserver((mutations) => {
+      for (const mutation of mutations) {
+        if (
+          mutation.type === "attributes" &&
+          mutation.attributeName === "class"
+        ) {
+          // Theme changed -- restart gradient animation with new color targets
+          // Small delay to let CSS custom properties update first
+          requestAnimationFrame(() => startGradientAnimation());
+        }
+      }
+    });
+
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+
+    return () => {
+      observer.disconnect();
+      if (gradientTweenRef.current) {
+        gradientTweenRef.current.kill();
+      }
+    };
+  }, [startGradientAnimation]);
+
   useGSAP(
     () => {
-      // Hero entrance — use fromTo() so start states are set explicitly
+      // Hero entrance -- use fromTo() so start states are set explicitly
       // and the timeline reliably plays on first visit after hydration.
       const heroTl = gsap.timeline({
         defaults: { ease: "power3.out" },
@@ -114,10 +169,8 @@ export default function Exploration6() {
           "-=0.3"
         );
 
-      // Scroll-triggered sections — use fromTo() so GSAP never sets opacity:0
-      // before the trigger fires. gsap.from() with ScrollTrigger immediately
-      // renders the "from" state (opacity:0), and if the trigger position is
-      // miscalculated on first load the elements stay invisible forever.
+      // Scroll-triggered sections -- use fromTo() so GSAP never sets opacity:0
+      // before the trigger fires.
 
       // About section
       gsap.fromTo(".e6-about-heading",
@@ -182,8 +235,9 @@ export default function Exploration6() {
       className="relative min-h-screen overflow-hidden"
       style={{
         background:
-          "linear-gradient(180deg, #e8ddd5 0%, #d8cfc8 30%, #d5cde0 60%, #cdd0e5 100%)",
+          "linear-gradient(180deg, var(--bg-gradient-start) 0%, color-mix(in srgb, var(--bg-gradient-start) 60%, var(--bg-gradient-end)) 30%, color-mix(in srgb, var(--bg-gradient-end) 70%, var(--bg-gradient-start)) 60%, var(--bg-gradient-end) 100%)",
         fontFamily: "var(--font-body, 'Inter', system-ui, sans-serif)",
+        transition: "background 0.35s ease",
       }}
     >
 
@@ -198,10 +252,19 @@ export default function Exploration6() {
         </filter>
       </svg>
 
+      {/* Page-level noise texture overlay */}
+      <div
+        className="pointer-events-none fixed inset-0 z-[1]"
+        style={{
+          filter: "url(#glass-noise)",
+          opacity: 0.06,
+        }}
+      />
+
       {/* ─── HERO SECTION ─── */}
-      <section id="hero" className="relative flex min-h-screen items-center justify-center px-6">
+      <section id="hero" className="relative z-[2] flex min-h-screen items-center justify-center px-6">
         <div className="relative z-10 w-full max-w-2xl text-center">
-          {/* Emoji badge — playful energy */}
+          {/* Emoji badge -- playful energy */}
           <GlassPanel
             className="e6-hero-emoji mx-auto mb-8 flex h-16 w-16 items-center justify-center rounded-2xl text-3xl"
             rotate="-4deg"
@@ -211,7 +274,7 @@ export default function Exploration6() {
             </span>
           </GlassPanel>
 
-          {/* Glass hero card — Liquid Glass style */}
+          {/* Glass hero card -- Liquid Glass style */}
           <GlassPanel
             className="e6-hero-glass px-10 py-14 md:px-16 md:py-18"
             shadow="5px 5px 0px #3d3248"
@@ -226,16 +289,17 @@ export default function Exploration6() {
             <h1
               className="e6-hero-name mt-5 text-5xl font-bold leading-tight tracking-tight sm:text-6xl md:text-7xl"
               style={{
-                color: "#3d3248",
+                color: "var(--text-primary)",
                 fontFamily:
                   "var(--font-display, 'Space Grotesk', system-ui, sans-serif)",
+                transition: "color 0.35s ease",
               }}
             >
               I&apos;m{" "}
               <span
                 style={{
                   background:
-                    "linear-gradient(135deg, #c9a4b2 0%, #a78bcd 50%, #8bb4d4 100%)",
+                    "linear-gradient(135deg, var(--accent-pink) 0%, var(--accent-purple) 50%, var(--accent-blue) 100%)",
                   WebkitBackgroundClip: "text",
                   WebkitTextFillColor: "transparent",
                   backgroundClip: "text",
@@ -243,28 +307,29 @@ export default function Exploration6() {
               >
                 {heroContent.name}
               </span>
-              <span style={{ color: "#c9a4b2" }}>.</span>
+              <span style={{ color: "var(--accent-pink)" }}>.</span>
             </h1>
 
             {/* Neobrutalist subtitle banner */}
             <div
               className="e6-hero-tagline mx-auto mt-8 inline-block px-6 py-3"
               style={{
-                background: "#fff",
-                border: "3px solid #3d3248",
-                boxShadow: "4px 4px 0px #3d3248",
+                background: "var(--hero-tagline-bg)",
+                border: "3px solid var(--glass-border)",
+                boxShadow: "4px 4px 0px var(--glass-border)",
                 transform: "rotate(-1deg)",
+                transition: "background 0.35s ease, border-color 0.35s ease",
               }}
             >
               <p
                 className="text-base font-semibold md:text-lg"
-                style={{ color: "#3d3248" }}
+                style={{ color: "var(--text-primary)", transition: "color 0.35s ease" }}
               >
                 {heroContent.tagline}
               </p>
             </div>
 
-            {/* CTAs — scroll down + resume download */}
+            {/* CTAs -- scroll down + resume download */}
             <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
               <NeoBrutalButton
                 onClick={scrollToAbout}
@@ -289,17 +354,18 @@ export default function Exploration6() {
       </section>
 
       {/* ─── ABOUT SECTION ─── */}
-      <section id="about" className="e6-about-section relative px-6 py-28 md:px-12">
+      <section id="about" className="e6-about-section relative z-[2] px-6 py-28 md:px-12">
         <div className="mx-auto max-w-5xl">
           <div className="e6-about-heading mb-14 text-center">
             <h2
               className="inline-block px-5 py-2.5 text-sm font-bold tracking-[0.25em] uppercase"
               style={{
-                background: "#f5eff8",
-                color: "#3d3248",
-                border: "3px solid #3d3248",
-                boxShadow: "4px 4px 0px #3d3248",
+                background: "var(--heading-bg)",
+                color: "var(--text-primary)",
+                border: "3px solid var(--glass-border)",
+                boxShadow: "4px 4px 0px var(--glass-border)",
                 transform: "rotate(1deg)",
+                transition: "background 0.35s ease, color 0.35s ease, border-color 0.35s ease",
               }}
             >
               {"\u{1F9D1}\u200D\u{1F4BB}"} About Me
@@ -314,13 +380,13 @@ export default function Exploration6() {
               >
                 <h3
                   className="mb-4 text-xs font-bold tracking-[0.25em] uppercase"
-                  style={{ color: panel.emoji === "\u{1F680}" ? "#c9a4b2" : "#a78bcd" }}
+                  style={{ color: panel.emoji === "\u{1F680}" ? "var(--accent-pink)" : "var(--accent-purple)" }}
                 >
                   {panel.emoji} {panel.title}
                 </h3>
                 <p
                   className="text-base leading-relaxed"
-                  style={{ color: "#5a4d66" }}
+                  style={{ color: "var(--text-body)", transition: "color 0.35s ease" }}
                 >
                   {panel.content}
                 </p>
@@ -331,7 +397,7 @@ export default function Exploration6() {
       </section>
 
       {/* ─── EXPERIENCE SECTION ─── */}
-      <section id="experience" className="e6-experience-section relative px-6 py-28 md:px-12">
+      <section id="experience" className="e6-experience-section relative z-[2] px-6 py-28 md:px-12">
         <div className="mx-auto max-w-4xl">
           <div className="mb-14 text-center">
             <NeoBrutalHeading emoji={"\u{1F4BC}"} rotate="1deg">
@@ -358,22 +424,23 @@ export default function Exploration6() {
                   <h3
                     className="text-xl font-bold"
                     style={{
-                      color: "#3d3248",
+                      color: "var(--text-primary)",
                       fontFamily:
                         "var(--font-display, 'Space Grotesk', system-ui, sans-serif)",
+                      transition: "color 0.35s ease",
                     }}
                   >
                     {exp.company}
                   </h3>
                   <p
                     className="mt-1 text-sm font-semibold"
-                    style={{ color: "#a78bcd" }}
+                    style={{ color: "var(--accent-purple)" }}
                   >
                     {exp.title}
                   </p>
                   <p
                     className="mt-0.5 text-xs tracking-wide uppercase"
-                    style={{ color: "#8a7d96" }}
+                    style={{ color: "var(--text-secondary)", transition: "color 0.35s ease" }}
                   >
                     {exp.dates}
                   </p>
@@ -383,11 +450,11 @@ export default function Exploration6() {
                       <li
                         key={bullet}
                         className="flex items-start gap-2 text-sm leading-relaxed"
-                        style={{ color: "#5a4d66" }}
+                        style={{ color: "var(--text-body)", transition: "color 0.35s ease" }}
                       >
                         <span
                           className="mt-1.5 inline-block h-1.5 w-1.5 shrink-0 rounded-full"
-                          style={{ background: "#c9a4b2" }}
+                          style={{ background: "var(--accent-pink)" }}
                         />
                         {bullet}
                       </li>
@@ -401,7 +468,7 @@ export default function Exploration6() {
       </section>
 
       {/* ─── SKILLS SECTION ─── */}
-      <section id="skills" className="e6-skills-section relative px-6 py-28 md:px-12">
+      <section id="skills" className="e6-skills-section relative z-[2] px-6 py-28 md:px-12">
         <div className="mx-auto max-w-5xl">
           <div className="mb-14 text-center">
             <NeoBrutalHeading emoji={"\u{1F9E0}"} rotate="-1deg">
@@ -418,9 +485,10 @@ export default function Exploration6() {
                 <h3
                   className="mb-4 text-sm font-bold tracking-[0.2em] uppercase"
                   style={{
-                    color: "#3d3248",
+                    color: "var(--text-primary)",
                     fontFamily:
                       "var(--font-display, 'Space Grotesk', system-ui, sans-serif)",
+                    transition: "color 0.35s ease",
                   }}
                 >
                   {category.emoji} {category.name}
@@ -437,7 +505,7 @@ export default function Exploration6() {
       </section>
 
       {/* ─── PROJECTS SECTION ─── */}
-      <section id="projects" className="e6-projects-section relative px-6 py-28 md:px-12">
+      <section id="projects" className="e6-projects-section relative z-[2] px-6 py-28 md:px-12">
         <div className="mx-auto max-w-5xl">
           <div className="e6-projects-heading mb-14">
             <NeoBrutalHeading emoji={"\u{1F6E0}\uFE0F"} rotate="-1deg">
@@ -459,7 +527,7 @@ export default function Exploration6() {
                     className="flex items-center justify-between gap-3 overflow-hidden px-6 py-3"
                     style={{
                       background: project.headerColor,
-                      borderBottom: "3px solid #3d3248",
+                      borderBottom: "3px solid var(--glass-border)",
                       borderRadius: "1rem 1rem 0 0",
                     }}
                   >
@@ -485,7 +553,7 @@ export default function Exploration6() {
                   <div className="px-6 py-6">
                     <p
                       className="mb-5 text-sm leading-relaxed"
-                      style={{ color: "#5a4d66" }}
+                      style={{ color: "var(--text-body)", transition: "color 0.35s ease" }}
                     >
                       {project.description}
                     </p>
@@ -505,7 +573,7 @@ export default function Exploration6() {
                 >
                   <div
                     className="border-t-2 px-6 pb-6 pt-5"
-                    style={{ borderColor: "#3d324833" }}
+                    style={{ borderColor: "rgba(61, 50, 72, 0.2)" }}
                   >
                     <div className="mb-4">
                       <p
@@ -516,7 +584,7 @@ export default function Exploration6() {
                       </p>
                       <p
                         className="text-sm leading-relaxed"
-                        style={{ color: "#5a4d66" }}
+                        style={{ color: "var(--text-body)", transition: "color 0.35s ease" }}
                       >
                         {project.problem}
                       </p>
@@ -531,7 +599,7 @@ export default function Exploration6() {
                       </p>
                       <p
                         className="text-sm leading-relaxed"
-                        style={{ color: "#5a4d66" }}
+                        style={{ color: "var(--text-body)", transition: "color 0.35s ease" }}
                       >
                         {project.approach}
                       </p>
@@ -549,7 +617,7 @@ export default function Exploration6() {
                           <li
                             key={highlight}
                             className="flex items-start gap-2 text-sm leading-relaxed"
-                            style={{ color: "#5a4d66" }}
+                            style={{ color: "var(--text-body)", transition: "color 0.35s ease" }}
                           >
                             <span
                               className="mt-1.5 inline-block h-1.5 w-1.5 shrink-0 rounded-full"
@@ -596,7 +664,7 @@ export default function Exploration6() {
       </section>
 
       {/* ─── CONTACT SECTION ─── */}
-      <section id="contact" className="e6-contact-section relative px-6 py-28 md:px-12">
+      <section id="contact" className="e6-contact-section relative z-[2] px-6 py-28 md:px-12">
         <div className="mx-auto max-w-4xl">
           <div className="mb-14 text-center">
             <NeoBrutalHeading emoji={"\u{1F4AC}"} rotate="1deg">
@@ -621,16 +689,17 @@ export default function Exploration6() {
                     <p
                       className="text-sm font-bold uppercase tracking-wider"
                       style={{
-                        color: "#3d3248",
+                        color: "var(--text-primary)",
                         fontFamily:
                           "var(--font-display, 'Space Grotesk', system-ui, sans-serif)",
+                        transition: "color 0.35s ease",
                       }}
                     >
                       {link.name}
                     </p>
                     <p
                       className="text-xs"
-                      style={{ color: "#8a7d96" }}
+                      style={{ color: "var(--text-secondary)", transition: "color 0.35s ease" }}
                     >
                       {link.label}
                     </p>
@@ -654,7 +723,7 @@ export default function Exploration6() {
             {/* Warm closing copy */}
             <p
               className="mt-8 text-center text-sm leading-relaxed"
-              style={{ color: "#8a7d96" }}
+              style={{ color: "var(--text-secondary)", transition: "color 0.35s ease" }}
             >
               Whether it&apos;s a project idea, a job opportunity, or you just want to talk
               about animation easing curves -- I&apos;m always down to chat. Don&apos;t be a stranger.

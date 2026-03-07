@@ -10,10 +10,11 @@ export function NeoBrutalTag({ children, className = "" }: NeoBrutalTagProps) {
     <span
       className={`px-3 py-1 text-xs font-bold uppercase ${className}`}
       style={{
-        background: "rgba(255, 255, 255, 0.5)",
-        border: "2px solid #3d3248",
-        boxShadow: "2px 2px 0px #3d3248",
-        color: "#3d3248",
+        background: "var(--tag-bg)",
+        border: "2px solid var(--glass-border)",
+        boxShadow: "2px 2px 0px var(--glass-border)",
+        color: "var(--text-primary)",
+        transition: "background 0.35s ease, color 0.35s ease, border-color 0.35s ease",
       }}
     >
       {children}
