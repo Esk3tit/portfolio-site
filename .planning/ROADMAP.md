@@ -56,10 +56,11 @@ Plans:
   2. Each section component owns its own useGSAP hook with scoped containerRef -- no animation logic in page.tsx
   3. All scroll-triggered animations, text reveals, and hover interactions work identically to the pre-extraction site
   4. Hot-reloading a single section does not break animations in other sections
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 05-01: TBD
+- [ ] 05-01-PLAN.md -- Rename NeoBrutalHeading class, create all 6 section components with BEM naming and scoped animations
+- [ ] 05-02-PLAN.md -- Wire sections into page.tsx, delete Exploration6.tsx, visual verification checkpoint
 
 ### Phase 6: Responsive Design
 **Goal**: Site is usable and visually polished on phones, tablets, and desktops with touch-friendly interaction
@@ -114,7 +115,7 @@ Phases execute in numeric order: 4 → 5 → 6 → 7 → 8
 | 2. Content Sections | v4.2 | 3/3 | Complete | 2026-03-06 |
 | 3. Interactivity and Visual Effects | v4.2 | 3/3 | Complete | 2026-03-07 |
 | 4. Code Cleanup | v4.3 | 0/2 | Not started | - |
-| 5. Component Extraction | v4.3 | 0/? | Not started | - |
+| 5. Component Extraction | v4.3 | 0/2 | Not started | - |
 | 6. Responsive Design | v4.3 | 0/? | Not started | - |
 | 7. Accessibility | v4.3 | 0/? | Not started | - |
 | 8. Meta and Performance | v4.3 | 0/? | Not started | - |
