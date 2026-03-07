@@ -40,10 +40,10 @@ created: 2026-03-07
 |---------|------|------|-------------|-----------|-------------------|-------------|--------|
 | 04-01-01 | 01 | 1 | CLEAN-01 | integration | `! test -d src/app/explore && echo PASS` | N/A | ⬜ pending |
 | 04-01-02 | 01 | 1 | CLEAN-01 | integration | `! test -f src/components/explorations/Exploration1.tsx && echo PASS` | N/A | ⬜ pending |
-| 04-02-01 | 02 | 1 | CLEAN-03 | integration | `! test -f public/vercel.svg && echo PASS` | N/A | ⬜ pending |
-| 04-02-02 | 02 | 1 | CLEAN-04 | integration | `test -f src/app/icon.png && echo PASS` | N/A | ⬜ pending |
-| 04-03-01 | 03 | 2 | CLEAN-05 | build | `npx next build 2>&1 \| grep -i "unused" \| wc -l` | N/A | ⬜ pending |
-| 04-03-02 | 03 | 2 | CLEAN-05 | manual | Visual check of site at localhost:3000 | N/A | ⬜ pending |
+| 04-01-03 | 01 | 1 | CLEAN-03 | integration | `! test -f public/vercel.svg && echo PASS` | N/A | ⬜ pending |
+| 04-01-04 | 01 | 1 | CLEAN-04 | integration | `test -f src/app/favicon.ico && test -f src/app/apple-icon.png && echo PASS` | N/A | ⬜ pending |
+| 04-02-01 | 02 | 2 | CLEAN-05 | build | `npx next build 2>&1 \| grep -i "unused" \| wc -l` | N/A | ⬜ pending |
+| 04-02-02 | 02 | 2 | CLEAN-05 | manual | Visual check of site at localhost:3000 | N/A | ⬜ pending |
 
 *Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
 
@@ -59,7 +59,7 @@ Existing infrastructure covers all phase requirements. This phase is deletion-fo
 
 | Behavior | Requirement | Why Manual | Test Instructions |
 |----------|-------------|------------|-------------------|
-| Favicon shows correct icon | CLEAN-04 | Browser rendering check | Open site in browser, verify tab icon matches logo.png |
+| Favicon shows correct icon | CLEAN-04 | Browser rendering check | Open site in browser, verify tab icon matches RealFaviconGenerator output |
 | Site visually unchanged | CLEAN-05 | Visual regression | Browse all sections, verify animations/cursor/dark mode work |
 | /explore returns 404 | CLEAN-01 | Route behavior | Navigate to /explore in browser, confirm 404 page |
 

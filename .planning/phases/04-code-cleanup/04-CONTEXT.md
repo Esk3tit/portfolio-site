@@ -21,10 +21,13 @@ Remove dead routes, unused assets, orphaned CSS, and dead TypeScript code so the
 - Audit shared UI components after deletion -- remove any that become orphaned (only used by Exploration1-5)
 
 ### Favicon
-- User will provide `public/logo.png` as the high-res source image (already placed)
-- Generate multiple sizes from it: favicon.ico, apple-touch-icon.png, favicon-32x32.png, favicon-16x16.png
-- Remove the current `src/app/favicon.ico` (not the correct one)
-- Wire up favicon metadata in Next.js to reference the generated files in public/
+- User generated favicon files via RealFaviconGenerator (pre-built, no generation needed)
+- Download and install these files to `src/app/`: icon1.png, icon0.svg, favicon.ico, apple-icon.png, manifest.json
+- Download and install these files to `public/`: web-app-manifest-192x192.png, web-app-manifest-512x512.png
+- Source URL base: `https://realfavicongenerator.net/files/7ef89c8e-3786-4120-ba1d-7a36c8234879/`
+- Remove the current `src/app/favicon.ico` before downloading the new one
+- Add `<meta name="apple-mobile-web-app-title" content="Khai Phan" />` via Next.js Metadata in layout.tsx
+- `public/logo.png` can be kept or removed (user's original source file)
 
 ### Public asset cleanup
 - Delete all 5 Vercel default SVGs: file.svg, globe.svg, next.svg, vercel.svg, window.svg
@@ -47,7 +50,7 @@ Remove dead routes, unused assets, orphaned CSS, and dead TypeScript code so the
 
 ### Claude's Discretion
 - Order of cleanup operations (what to delete first)
-- How to generate favicon sizes (sharp, imagemagick, or other tool)
+- Whether to keep or remove public/logo.png after favicon installation
 - Exact methodology for CSS/TS dead code detection
 
 </decisions>
@@ -73,7 +76,7 @@ Remove dead routes, unused assets, orphaned CSS, and dead TypeScript code so the
 <specifics>
 ## Specific Ideas
 
-- Source favicon is `public/logo.png` -- generate all size variants from this single file
+- Favicon files pre-generated via RealFaviconGenerator -- download and install, no generation needed
 - Exploration6 is the production design -- only Exploration1-5 are dead code
 - User wants a thorough cleanup: CSS classes, CSS custom properties, and TypeScript dead code
 
