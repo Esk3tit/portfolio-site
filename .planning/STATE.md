@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v4.2
 milestone_name: milestone
 status: executing
-stopped_at: Completed 03-02-PLAN.md
-last_updated: "2026-03-07T02:08:02.390Z"
-last_activity: 2026-03-07 -- Completed plan 03-01 (Dark mode, noise overlay, gradient animation)
+stopped_at: Completed 03-03-PLAN.md
+last_updated: "2026-03-07T08:19:30.000Z"
+last_activity: 2026-03-07 -- Completed plan 03-03 (Text reveals, scroll polish, banana cursor)
 progress:
   total_phases: 4
-  completed_phases: 2
+  completed_phases: 3
   total_plans: 10
-  completed_plans: 9
-  percent: 80
+  completed_plans: 10
+  percent: 100
 ---
 
 # Project State
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-06)
 
 **Core value:** Visitors immediately get a sense of Khai's personality and technical ability through a portfolio that is as engaging to interact with as the work it showcases.
-**Current focus:** Phase 3: Interactivity and Visual Effects (executing)
+**Current focus:** Phase 3: Interactivity and Visual Effects (complete)
 
 ## Current Position
 
 Phase: 3 of 4 (Interactivity and Visual Effects)
-Plan: 2 of 3 in current phase (03-02 complete)
-Status: Executing Phase 3
-Last activity: 2026-03-07 -- Completed plan 03-02 (Custom cursor, magnetic pull, hover micro-interactions)
+Plan: 3 of 3 in current phase (03-03 complete -- Phase 3 done)
+Status: Phase 3 Complete
+Last activity: 2026-03-07 -- Completed plan 03-03 (Text reveals, scroll polish, banana cursor)
 
-Progress: [█████████░] 90%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
@@ -55,6 +55,7 @@ Progress: [█████████░] 90%
 | Phase 02 P03 | 8min | 3 tasks | 3 files |
 | Phase 03 P01 | 3min | 2 tasks | 8 files |
 | Phase 03 P02 | 3min | 2 tasks | 8 files |
+| Phase 03 P03 | 1min | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -95,6 +96,9 @@ Recent decisions affecting current work:
 - [Phase 03]: NeoBrutalTag and GlassPanel converted to client components for GSAP hover handlers
 - [Phase 03]: GlassPanel tilt opt-in via tilt prop (default false) to avoid tilting full-width sections
 - [Phase 03]: data-magnetic attribute pattern for cursor-interactive elements with MutationObserver re-attach
+- [Phase 03]: CSS cursor: url() with banana image replaces GSAP dot-following cursor (user feedback: lag was annoying)
+- [Phase 03]: CustomCursor simplified to magnetic-pull-only (returns null, no DOM element)
+- [Phase 03]: SplitText word split for heading reveals, char split for hero name reveal
 
 ### Pending Todos
 
@@ -107,6 +111,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-07T02:08:02.388Z
-Stopped at: Completed 03-02-PLAN.md
+Last session: 2026-03-07T08:19:30.000Z
+Stopped at: Completed 03-03-PLAN.md
 Resume file: None
