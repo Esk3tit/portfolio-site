@@ -42,6 +42,7 @@ export function NeoBrutalButton({
         rel={rel}
         className={baseClassName}
         style={baseStyle}
+        data-magnetic
       >
         {children}
       </a>
@@ -49,7 +50,7 @@ export function NeoBrutalButton({
   }
 
   return (
-    <button onClick={onClick} className={baseClassName} style={baseStyle}>
+    <button onClick={onClick} className={baseClassName} style={baseStyle} data-magnetic>
       {children}
     </button>
   );

@@ -74,6 +74,7 @@ export function FloatingNav() {
               onClick={() => scrollTo(section.id)}
               className="group relative flex items-center"
               aria-label={`Scroll to ${section.label}`}
+              data-magnetic
             >
               {/* Tooltip label -- appears on hover */}
               <span

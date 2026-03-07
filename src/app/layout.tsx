@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Space_Grotesk } from "next/font/google";
 import { SmoothScrollProvider } from "@/components/providers/SmoothScroll";
 import { DarkModeProvider } from "@/components/providers/DarkModeProvider";
+import { CustomCursor } from "@/components/cursor/CustomCursor";
 import "./globals.css";
 
 const inter = Inter({
@@ -43,6 +44,7 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
       <body className="font-body antialiased">
+        <CustomCursor />
         <DarkModeProvider>
           <SmoothScrollProvider>{children}</SmoothScrollProvider>
         </DarkModeProvider>
