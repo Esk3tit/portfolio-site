@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, useCallback, useEffect } from "react";
-import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
+import { gsap, ScrollTrigger, useGSAP, SplitText } from "@/lib/gsap";
 import { GlassPanel } from "@/components/ui/GlassPanel";
 import { NeoBrutalButton } from "@/components/ui/NeoBrutalButton";
 import { NeoBrutalHeading } from "@/components/ui/NeoBrutalHeading";
@@ -118,6 +118,9 @@ export default function Exploration6() {
 
   useGSAP(
     () => {
+      // Track SplitText instances for cleanup
+      const splitInstances: InstanceType<typeof SplitText>[] = [];
+
       // Hero entrance -- use fromTo() so start states are set explicitly
       // and the timeline reliably plays on first visit after hydration.
       const heroTl = gsap.timeline({
@@ -142,18 +145,28 @@ export default function Exploration6() {
           { y: 30, opacity: 0 },
           { y: 0, opacity: 1, duration: 0.8 },
           "-=0.7"
-        )
-        .fromTo(
-          ".e6-hero-name",
-          { y: 50, opacity: 0 },
-          { y: 0, opacity: 1, duration: 1.0 },
+        );
+
+      // Hero name -- character-by-character reveal for premium feel
+      const heroNameEl = containerRef.current?.querySelector(".e6-hero-name");
+      if (heroNameEl) {
+        const heroSplit = new SplitText(".e6-hero-name", { type: "chars" });
+        splitInstances.push(heroSplit);
+        // Set initial state so unsplit text is invisible (no hydration flash)
+        gsap.set(heroSplit.chars, { y: 30, opacity: 0 });
+        heroTl.to(
+          heroSplit.chars,
+          { y: 0, opacity: 1, duration: 0.5, stagger: 0.03, ease: "power3.out" },
           "-=0.5"
-        )
+        );
+      }
+
+      heroTl
         .fromTo(
           ".e6-hero-tagline",
           { y: 25, opacity: 0 },
           { y: 0, opacity: 1, duration: 0.8 },
-          "-=0.5"
+          "-=0.3"
         )
         .fromTo(
           ".e6-hero-cta",
@@ -169,47 +182,66 @@ export default function Exploration6() {
           "-=0.3"
         );
 
+      // Section heading text reveals -- word-by-word slide-up with stagger
+      const headings = containerRef.current?.querySelectorAll(".e6-split-heading");
+      headings?.forEach((heading) => {
+        const split = new SplitText(heading, { type: "words" });
+        splitInstances.push(split);
+        gsap.fromTo(
+          split.words,
+          { y: 40, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 0.6,
+            stagger: 0.08,
+            ease: "power3.out",
+            scrollTrigger: { trigger: heading, start: "top 85%" },
+          }
+        );
+      });
+
       // Scroll-triggered sections -- use fromTo() so GSAP never sets opacity:0
-      // before the trigger fires.
+      // before the trigger fires. Consistent "power3.out" easing, "top 85%" triggers.
 
       // About section
       gsap.fromTo(".e6-about-heading",
         { y: 40, opacity: 0 },
-        { scrollTrigger: { trigger: ".e6-about-section", start: "top 85%" }, y: 0, opacity: 1, duration: 1.0, ease: "power3.out" }
+        { scrollTrigger: { trigger: ".e6-about-section", start: "top 85%" }, y: 0, opacity: 1, duration: 0.8, ease: "power3.out" }
       );
 
       gsap.fromTo(".e6-about-panel",
         { scale: 0.95, opacity: 0, y: 50 },
-        { scrollTrigger: { trigger: ".e6-about-section", start: "top 80%" }, scale: 1, opacity: 1, y: 0, duration: 1.0, stagger: 0.15, ease: "power3.out" }
+        { scrollTrigger: { trigger: ".e6-about-section", start: "top 85%" }, scale: 1, opacity: 1, y: 0, duration: 0.8, stagger: 0.12, ease: "power3.out" }
       );
 
       // Experience section
       gsap.fromTo(".e6-experience-card",
         { y: 50, opacity: 0, scale: 0.95 },
-        { scrollTrigger: { trigger: ".e6-experience-section", start: "top 80%" }, y: 0, opacity: 1, scale: 1, duration: 0.8, stagger: 0.12, ease: "power3.out" }
+        { scrollTrigger: { trigger: ".e6-experience-section", start: "top 85%" }, y: 0, opacity: 1, scale: 1, duration: 0.8, stagger: 0.12, ease: "power3.out" }
       );
 
       // Skills section
       gsap.fromTo(".e6-skill-category",
         { y: 40, opacity: 0 },
-        { scrollTrigger: { trigger: ".e6-skills-section", start: "top 80%" }, y: 0, opacity: 1, duration: 0.7, stagger: 0.1, ease: "power3.out" }
+        { scrollTrigger: { trigger: ".e6-skills-section", start: "top 85%" }, y: 0, opacity: 1, duration: 0.7, stagger: 0.1, ease: "power3.out" }
       );
 
       // Projects section
       gsap.fromTo(".e6-projects-heading",
         { x: -50, opacity: 0 },
-        { scrollTrigger: { trigger: ".e6-projects-section", start: "top 85%" }, x: 0, opacity: 1, duration: 0.7, ease: "back.out(1.4)" }
+        { scrollTrigger: { trigger: ".e6-projects-section", start: "top 85%" }, x: 0, opacity: 1, duration: 0.7, ease: "power3.out" }
       );
 
       gsap.fromTo(".e6-project-card",
         { y: 60, opacity: 0, scale: 0.95 },
-        { scrollTrigger: { trigger: ".e6-projects-section", start: "top 78%" }, y: 0, opacity: 1, scale: 1, duration: 0.8, stagger: 0.12, ease: "back.out(1.2)" }
+        { scrollTrigger: { trigger: ".e6-projects-section", start: "top 85%" }, y: 0, opacity: 1, scale: 1, duration: 0.8, stagger: 0.12, ease: "power3.out" }
       );
 
       // Contact section
       gsap.fromTo(".e6-contact-card",
         { y: 40, opacity: 0 },
-        { scrollTrigger: { trigger: ".e6-contact-section", start: "top 80%" }, y: 0, opacity: 1, duration: 0.7, stagger: 0.15, ease: "power3.out" }
+        { scrollTrigger: { trigger: ".e6-contact-section", start: "top 85%" }, y: 0, opacity: 1, duration: 0.7, stagger: 0.12, ease: "power3.out" }
       );
 
       // Recalculate trigger positions after hydration paint
@@ -218,6 +250,11 @@ export default function Exploration6() {
           ScrollTrigger.refresh(true);
         });
       });
+
+      // Cleanup: revert SplitText instances on unmount
+      return () => {
+        splitInstances.forEach((s) => s.revert());
+      };
     },
     { scope: containerRef }
   );
@@ -681,6 +718,7 @@ export default function Exploration6() {
                   target={link.name !== "Email" ? "_blank" : undefined}
                   rel={link.name !== "Email" ? "noopener noreferrer" : undefined}
                   className="e6-contact-card group w-full sm:w-auto"
+                  data-magnetic
                 >
                   <GlassPanel
                     className="flex flex-col items-center gap-2 px-8 py-6 text-center transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-[6px_6px_0px_#3d3248]"
