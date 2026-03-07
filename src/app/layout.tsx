@@ -18,6 +18,9 @@ const spaceGrotesk = Space_Grotesk({
 export const metadata: Metadata = {
   title: "Khai Phan - Software Engineer",
   description: "I build software. Sometimes it's good.",
+  other: {
+    "apple-mobile-web-app-title": "Khai Phan",
+  },
 };
 
 // Inline script to prevent flash of wrong theme (FOUC).
