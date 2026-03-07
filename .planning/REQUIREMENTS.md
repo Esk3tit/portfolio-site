@@ -13,7 +13,7 @@ Requirements for the Cleanup and Launch milestone. Each maps to roadmap phases.
 - [ ] **CLEAN-02**: Extract Exploration6.tsx into separate section components (Hero, About, Experience, Skills, Projects, Contact)
 - [x] **CLEAN-03**: Remove Vercel default assets (boilerplate images, SVGs, starter files from public/)
 - [x] **CLEAN-04**: Replace favicon with old portfolio favicon
-- [ ] **CLEAN-05**: Remove dead code (orphaned CSS classes like e6-link-underline, unused imports)
+- [x] **CLEAN-05**: Remove dead code (orphaned CSS classes like e6-link-underline, unused imports)
 
 ### Responsive
 
@@ -73,7 +73,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CLEAN-02 | Phase 5 | Pending |
 | CLEAN-03 | Phase 4 | Complete |
 | CLEAN-04 | Phase 4 | Complete |
-| CLEAN-05 | Phase 4 | Pending |
+| CLEAN-05 | Phase 4 | Complete |
 | RESP-01 | Phase 6 | Pending |
 | RESP-02 | Phase 6 | Pending |
 | RESP-03 | Phase 6 | Pending |
