@@ -43,7 +43,7 @@ export default function RootLayout({
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         {/* Banana cursor — inline style to bypass Lightningcss stripping url() */}
-        <style dangerouslySetInnerHTML={{ __html: `@media (pointer: fine) { * { cursor: url("/habbycursor.png") 10 4, auto !important; } }` }} />
+        <style dangerouslySetInnerHTML={{ __html: `@media (pointer: fine) { * { cursor: url("/habbycursor.png") 38 2, auto !important; } }` }} />
       </head>
       <body className="font-body antialiased">
         <CustomCursor />
