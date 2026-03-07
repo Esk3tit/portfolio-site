@@ -31,8 +31,24 @@ Visitors immediately get a sense of Khai's personality and technical ability thr
 - ✓ Text reveal animations with SplitText on headings -- v4.2
 - ✓ Vercel deployment with static export (Next.js 16 + Tailwind v4.2 + GSAP 3.14 + Lenis) -- v4.2
 
+## Current Milestone: v4.3 Cleanup and Launch
+
+**Goal:** Clean up the codebase (remove explore pages, extract components, swap assets), make the site responsive and accessible, and deploy to production at khaiphan.dev.
+
+**Target features:**
+- Remove explore pages and Vercel default assets
+- Extract Exploration6 into separate section components
+- Favicon and assets from old portfolio
+- Responsive design across breakpoints
+- Accessibility, reduced-motion, OG tags
+- Lighthouse mobile 90+ and Vercel deploy
+
 ### Active
 
+- [ ] Remove explore pages (`/explore/[id]`, explorations 1-5, explore index)
+- [ ] Extract Exploration6.tsx into separate section components (Hero, About, Experience, Skills, Projects, Contact)
+- [ ] Remove Vercel default assets and dead code (orphaned CSS, unused imports)
+- [ ] Replace favicon with old portfolio favicon
 - [ ] Responsive design across mobile, tablet, and desktop breakpoints
 - [ ] Open Graph and social meta tags for proper link preview
 - [ ] `prefers-reduced-motion` support -- replace animations with fades/opacity
@@ -82,4 +98,4 @@ Content data in `src/data/content.ts` with TODO markers for Khai to personalize 
 - **Accessibility**: Creative layout must remain navigable and readable
 
 ---
-*Last updated: 2026-03-07 after v4.2 milestone*
+*Last updated: 2026-03-07 after v4.3 milestone start*
