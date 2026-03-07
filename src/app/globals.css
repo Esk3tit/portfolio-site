@@ -48,10 +48,10 @@ html {
   transition: background-color 0.35s ease, color 0.35s ease;
 }
 
-/* Custom cursor prep — Phase 3 Plan 02 adds the actual cursor */
+/* Custom banana cursor for non-touch devices */
 @media (pointer: fine) {
   * {
-    cursor: none !important;
+    cursor: url("/nano-banana-cursor.png") 10 4, auto !important;
   }
 }
 
