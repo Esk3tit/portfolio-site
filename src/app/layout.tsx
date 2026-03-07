@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Space_Grotesk } from "next/font/google";
 import { SmoothScrollProvider } from "@/components/providers/SmoothScroll";
+import { DarkModeProvider } from "@/components/providers/DarkModeProvider";
 import "./globals.css";
 
 const inter = Inter({
@@ -14,9 +15,22 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "Khai Phan - Design Explorations",
-  description: "Portfolio design direction preview",
+  title: "Khai Phan - Software Engineer",
+  description: "I build software. Sometimes it's good.",
 };
+
+// Inline script to prevent flash of wrong theme (FOUC).
+// Runs before React hydrates so .dark class is set before first paint.
+const themeScript = `
+(function() {
+  try {
+    var stored = localStorage.getItem('theme');
+    if (stored === 'dark' || (!stored && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    }
+  } catch(e) {}
+})();
+`;
 
 export default function RootLayout({
   children,
@@ -25,8 +39,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${inter.variable} ${spaceGrotesk.variable}`}>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
       <body className="font-body antialiased">
-        <SmoothScrollProvider>{children}</SmoothScrollProvider>
+        <DarkModeProvider>
+          <SmoothScrollProvider>{children}</SmoothScrollProvider>
+        </DarkModeProvider>
       </body>
     </html>
   );

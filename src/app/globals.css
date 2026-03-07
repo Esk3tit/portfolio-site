@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --font-display: "Space Grotesk", sans-serif;
   --font-body: "Inter", sans-serif;
@@ -7,6 +9,50 @@
   --color-text: oklch(0.15 0 0);
   --color-primary-500: oklch(0.65 0.2 250);
   --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ─── Theme custom properties ─── */
+:root {
+  --glass-fill: rgba(255, 255, 255, 0.08);
+  --glass-fill-end: rgba(255, 255, 255, 0.03);
+  --glass-border: #3d3248;
+  --glass-specular-top: rgba(255, 255, 255, 0.7);
+  --text-primary: #3d3248;
+  --text-body: #5a4d66;
+  --text-secondary: #8a7d96;
+  --bg-gradient-start: #e8ddd5;
+  --bg-gradient-end: #cdd0e5;
+  --accent-purple: #a78bcd;
+  --accent-pink: #c9a4b2;
+  --accent-blue: #8bb4d4;
+  --tag-bg: rgba(255, 255, 255, 0.5);
+  --heading-bg: #f5eff8;
+  --hero-tagline-bg: #fff;
+}
+
+.dark {
+  --glass-fill: rgba(255, 255, 255, 0.12);
+  --glass-fill-end: rgba(255, 255, 255, 0.06);
+  --glass-specular-top: rgba(255, 255, 255, 0.4);
+  --text-primary: #e8ddd5;
+  --text-body: #c4b8d0;
+  --text-secondary: #9a8daa;
+  --bg-gradient-start: #1a1520;
+  --bg-gradient-end: #1e2030;
+  --tag-bg: rgba(255, 255, 255, 0.12);
+  --heading-bg: rgba(61, 50, 72, 0.6);
+  --hero-tagline-bg: rgba(30, 25, 40, 0.8);
+}
+
+html {
+  transition: background-color 0.35s ease, color 0.35s ease;
+}
+
+/* Custom cursor prep — Phase 3 Plan 02 adds the actual cursor */
+@media (pointer: fine) {
+  * {
+    cursor: none !important;
+  }
 }
 
 body {

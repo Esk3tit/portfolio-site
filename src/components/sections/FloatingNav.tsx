@@ -4,6 +4,7 @@ import { useState } from "react";
 import { gsap, useGSAP } from "@/lib/gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useLenis } from "lenis/react";
+import { DarkModeToggle } from "@/components/ui/DarkModeToggle";
 
 const sections = [
   { id: "about", label: "About" },
@@ -74,7 +75,7 @@ export function FloatingNav() {
               className="group relative flex items-center"
               aria-label={`Scroll to ${section.label}`}
             >
-              {/* Tooltip label — appears on hover */}
+              {/* Tooltip label -- appears on hover */}
               <span
                 className="absolute right-full mr-3 whitespace-nowrap rounded-lg px-3 py-1.5 text-xs font-semibold opacity-0 transition-all duration-200 group-hover:opacity-100"
                 style={{
@@ -94,20 +95,31 @@ export function FloatingNav() {
                   width: isActive ? 12 : 8,
                   height: isActive ? 12 : 8,
                   background: isActive
-                    ? "#a78bcd"
+                    ? "var(--accent-purple)"
                     : "rgba(61, 50, 72, 0.3)",
                   backdropFilter: "blur(4px)",
                   border: isActive
-                    ? "2px solid #3d3248"
+                    ? "2px solid var(--glass-border)"
                     : "1.5px solid rgba(61, 50, 72, 0.2)",
                   boxShadow: isActive
-                    ? "2px 2px 0px #3d3248"
+                    ? "2px 2px 0px var(--glass-border)"
                     : "none",
                 }}
               />
             </button>
           );
         })}
+
+        {/* Separator + dark mode toggle */}
+        <div
+          className="my-1"
+          style={{
+            width: 16,
+            height: 1,
+            background: "rgba(61, 50, 72, 0.2)",
+          }}
+        />
+        <DarkModeToggle />
       </div>
     </nav>
   );
