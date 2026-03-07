@@ -48,12 +48,7 @@ html {
   transition: background-color 0.35s ease, color 0.35s ease;
 }
 
-/* Custom banana cursor for non-touch devices */
-@media (pointer: fine) {
-  * {
-    cursor: url("/nano-banana-cursor.png") 10 4, auto !important;
-  }
-}
+/* Custom banana cursor — applied via layout.tsx to avoid Lightningcss stripping url() */
 
 body {
   background: var(--color-surface);

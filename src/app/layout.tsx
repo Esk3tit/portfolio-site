@@ -42,6 +42,8 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning className={`${inter.variable} ${spaceGrotesk.variable}`}>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+        {/* Banana cursor — inline style to bypass Lightningcss stripping url() */}
+        <style dangerouslySetInnerHTML={{ __html: `@media (pointer: fine) { * { cursor: url("/nano-banana-cursor.png") 10 4, auto !important; } }` }} />
       </head>
       <body className="font-body antialiased">
         <CustomCursor />
