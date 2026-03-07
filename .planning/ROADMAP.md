@@ -64,11 +64,12 @@ Plans:
   3. Buttons, links, and cards respond to hover with visible micro-interactions (scale, rotation, or morphs)
   4. Headings animate with character or word split text reveal effects
   5. Dark mode toggles with animation, detects system preference, persists across sessions, and noise/grain texture plus gradient animations are visible
-**Plans**: TBD
+**Plans:** 3 plans
 
 Plans:
-- [ ] 03-01: TBD
-- [ ] 03-02: TBD
+- [ ] 03-01-PLAN.md — Dark mode foundation (CSS custom properties, provider, toggle) + noise texture overlay + gradient animation
+- [ ] 03-02-PLAN.md — Custom cursor with magnetic pull + hover micro-interactions (button lift, card tilt, tag wiggle, link underline)
+- [ ] 03-03-PLAN.md — Text reveal animations (SplitText word/char split on headings) + scroll animation polish + visual checkpoint
 
 ### Phase 4: Responsive, Accessibility, and Launch
 **Goal**: The site works flawlessly across mobile, tablet, and desktop, meets accessibility standards, hits performance targets, and is live on Vercel at khaiphan.dev
@@ -94,5 +95,5 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 |-------|----------------|--------|-----------|
 | 1. Foundation and Design Exploration | 4/4 | Complete   | 2026-03-06 |
 | 2. Content Sections | 3/3 | Complete   | 2026-03-06 |
-| 3. Interactivity and Visual Effects | 0/0 | Not started | - |
+| 3. Interactivity and Visual Effects | 0/3 | Planning complete | - |
 | 4. Responsive, Accessibility, and Launch | 0/0 | Not started | - |
