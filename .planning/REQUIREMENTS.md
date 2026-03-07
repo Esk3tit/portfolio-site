@@ -69,32 +69,32 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| CLEAN-01 | TBD | Pending |
-| CLEAN-02 | TBD | Pending |
-| CLEAN-03 | TBD | Pending |
-| CLEAN-04 | TBD | Pending |
-| CLEAN-05 | TBD | Pending |
-| RESP-01 | TBD | Pending |
-| RESP-02 | TBD | Pending |
-| RESP-03 | TBD | Pending |
-| RESP-04 | TBD | Pending |
-| A11Y-01 | TBD | Pending |
-| A11Y-02 | TBD | Pending |
-| A11Y-03 | TBD | Pending |
-| A11Y-04 | TBD | Pending |
-| A11Y-05 | TBD | Pending |
-| A11Y-06 | TBD | Pending |
-| A11Y-07 | TBD | Pending |
-| META-01 | TBD | Pending |
-| META-02 | TBD | Pending |
-| META-03 | TBD | Pending |
-| PERF-01 | TBD | Pending |
+| CLEAN-01 | Phase 4 | Pending |
+| CLEAN-02 | Phase 5 | Pending |
+| CLEAN-03 | Phase 4 | Pending |
+| CLEAN-04 | Phase 4 | Pending |
+| CLEAN-05 | Phase 4 | Pending |
+| RESP-01 | Phase 6 | Pending |
+| RESP-02 | Phase 6 | Pending |
+| RESP-03 | Phase 6 | Pending |
+| RESP-04 | Phase 6 | Pending |
+| A11Y-01 | Phase 7 | Pending |
+| A11Y-02 | Phase 7 | Pending |
+| A11Y-03 | Phase 7 | Pending |
+| A11Y-04 | Phase 7 | Pending |
+| A11Y-05 | Phase 7 | Pending |
+| A11Y-06 | Phase 7 | Pending |
+| A11Y-07 | Phase 7 | Pending |
+| META-01 | Phase 8 | Pending |
+| META-02 | Phase 8 | Pending |
+| META-03 | Phase 8 | Pending |
+| PERF-01 | Phase 8 | Pending |
 
 **Coverage:**
 - v4.3 requirements: 20 total
-- Mapped to phases: 0
-- Unmapped: 20
+- Mapped to phases: 20
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-07*
-*Last updated: 2026-03-07 after initial definition*
+*Last updated: 2026-03-07 after roadmap creation*
