@@ -59,3 +59,19 @@ body {
   background: var(--color-surface);
   color: var(--color-text);
 }
+
+/* Animated underline for body text links -- draws in from left on hover */
+.e6-link-underline {
+  background-image: linear-gradient(var(--accent-purple), var(--accent-purple));
+  background-size: 0% 2px;
+  background-position: left bottom;
+  background-repeat: no-repeat;
+  transition: background-size 0.3s ease;
+  text-decoration: none;
+}
+
+@media (hover: hover) {
+  .e6-link-underline:hover {
+    background-size: 100% 2px;
+  }
+}

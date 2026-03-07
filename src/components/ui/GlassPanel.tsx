@@ -1,4 +1,7 @@
-import { type ReactNode, type CSSProperties, type ElementType } from "react";
+"use client";
+
+import { useRef, useCallback, type ReactNode, type CSSProperties } from "react";
+import { gsap } from "@/lib/gsap";
 
 interface GlassPanelProps {
   children: ReactNode;
@@ -8,6 +11,7 @@ interface GlassPanelProps {
   rotate?: string;
   padding?: string;
   style?: CSSProperties;
+  tilt?: boolean;
 }
 
 export function GlassPanel({
@@ -18,9 +22,47 @@ export function GlassPanel({
   rotate,
   padding,
   style,
+  tilt = false,
 }: GlassPanelProps) {
+  const panelRef = useRef<HTMLDivElement>(null);
+
+  const onMouseMove = useCallback(
+    (e: React.MouseEvent<HTMLElement>) => {
+      if (!tilt || !panelRef.current) return;
+      // Only on devices with hover capability
+      if (!window.matchMedia("(hover: hover)").matches) return;
+
+      const rect = panelRef.current.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      const relX = (e.clientX - centerX) / (rect.width / 2); // -1 to 1
+      const relY = (e.clientY - centerY) / (rect.height / 2); // -1 to 1
+
+      gsap.to(panelRef.current, {
+        rotateY: relX * 8,
+        rotateX: -relY * 8,
+        duration: 0.4,
+        ease: "power2.out",
+        transformPerspective: 800,
+        overwrite: true,
+      });
+    },
+    [tilt]
+  );
+
+  const onMouseLeave = useCallback(() => {
+    if (!tilt || !panelRef.current) return;
+    gsap.to(panelRef.current, {
+      rotateX: 0,
+      rotateY: 0,
+      duration: 0.6,
+      ease: "elastic.out(1, 0.5)",
+    });
+  }, [tilt]);
+
   return (
     <Tag
+      ref={panelRef as React.Ref<HTMLDivElement>}
       className={`relative overflow-hidden rounded-2xl ${className}`}
       style={{
         background:
@@ -34,6 +76,9 @@ export function GlassPanel({
         ...(padding ? { padding } : {}),
         ...style,
       }}
+      onMouseMove={tilt ? onMouseMove : undefined}
+      onMouseLeave={tilt ? onMouseLeave : undefined}
+      {...(tilt ? { "data-magnetic": true } : {})}
     >
       {/* Specular rim -- bright continuous edge like real glass refraction */}
       <div

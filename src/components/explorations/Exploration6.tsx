@@ -448,6 +448,7 @@ export default function Exploration6() {
                 key={exp.company}
                 className={`e6-experience-card px-8 py-8`}
                 rotate={i % 2 === 0 ? "0.5deg" : "-0.5deg"}
+                tilt
               >
                 {/* Emoji badge */}
                 <GlassPanel
@@ -556,6 +557,7 @@ export default function Exploration6() {
                 key={project.title}
                 className="e6-project-card group cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-[6px_6px_0px_#3d3248]"
                 style={{ overflow: "visible" }}
+                tilt
               >
                 {/* Clickable card face */}
                 <div onClick={() => toggleProject(index)}>
