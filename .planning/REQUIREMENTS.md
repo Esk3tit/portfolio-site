@@ -29,8 +29,8 @@ Requirements for initial release. Each maps to roadmap phases.
 ### Animation
 
 - [ ] **ANIM-01**: Scroll-triggered section reveal animations using GSAP ScrollTrigger
-- [ ] **ANIM-02**: Custom cursor effects on desktop (magnetic near interactive elements, disabled on touch devices)
-- [ ] **ANIM-03**: Hover micro-interactions on buttons, links, and cards (scale, rotation, morphs)
+- [x] **ANIM-02**: Custom cursor effects on desktop (magnetic near interactive elements, disabled on touch devices)
+- [x] **ANIM-03**: Hover micro-interactions on buttons, links, and cards (scale, rotation, morphs)
 - [ ] **ANIM-04**: Text reveal animations with character/word split on headings (GSAP SplitText)
 
 ### Infrastructure
@@ -86,8 +86,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DSGN-05 | Phase 3 | Complete |
 | DSGN-06 | Phase 2 | Complete |
 | ANIM-01 | Phase 3 | Pending |
-| ANIM-02 | Phase 3 | Pending |
-| ANIM-03 | Phase 3 | Pending |
+| ANIM-02 | Phase 3 | Complete |
+| ANIM-03 | Phase 3 | Complete |
 | ANIM-04 | Phase 3 | Pending |
 | INFR-01 | Phase 4 | Pending |
 | INFR-02 | Phase 4 | Pending |
