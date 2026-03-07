@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v4.2
 milestone_name: milestone
-status: completed
-stopped_at: Phase 3 context gathered
-last_updated: "2026-03-06T23:53:01.154Z"
-last_activity: 2026-03-06 -- Completed plan 02-03 (Projects expand, Contact, FloatingNav, GSAP timing fix)
+status: in-progress
+stopped_at: Completed 03-01-PLAN.md
+last_updated: "2026-03-07T02:02:13Z"
+last_activity: 2026-03-07 -- Completed plan 03-01 (Dark mode, noise overlay, gradient animation)
 progress:
   total_phases: 4
   completed_phases: 2
-  total_plans: 7
-  completed_plans: 7
+  total_plans: 10
+  completed_plans: 8
   percent: 100
 ---
 
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-06)
 
 **Core value:** Visitors immediately get a sense of Khai's personality and technical ability through a portfolio that is as engaging to interact with as the work it showcases.
-**Current focus:** Phase 2: Content Sections (executing)
+**Current focus:** Phase 3: Interactivity and Visual Effects (executing)
 
 ## Current Position
 
-Phase: 2 of 4 (Content Sections) -- COMPLETE
-Plan: 3 of 3 in current phase (02-03 complete)
-Status: Phase 2 Complete
-Last activity: 2026-03-06 -- Completed plan 02-03 (Projects expand, Contact, FloatingNav, GSAP timing fix)
+Phase: 3 of 4 (Interactivity and Visual Effects)
+Plan: 1 of 3 in current phase (03-01 complete)
+Status: Executing Phase 3
+Last activity: 2026-03-07 -- Completed plan 03-01 (Dark mode, noise overlay, gradient animation)
 
-Progress: [██████████] 100%
+Progress: [████████░░] 80%
 
 ## Performance Metrics
 
@@ -53,6 +53,7 @@ Progress: [██████████] 100%
 *Updated after each plan completion*
 | Phase 02 P02 | 2min | 2 tasks | 1 files |
 | Phase 02 P03 | 8min | 3 tasks | 3 files |
+| Phase 03 P01 | 3min | 2 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -86,6 +87,10 @@ Recent decisions affecting current work:
 - [Phase 02]: Experience cards use alternating rotation (0.5deg/-0.5deg) for DSGN-02 personality
 - [Phase 02]: Double-rAF + ScrollTrigger.refresh(true) pattern required for GSAP in Next.js to fix hydration timing
 - [Phase 02]: Hero timeline needs delay:0.1 to avoid hydration race with CTA buttons
+- [Phase 03]: CSS custom properties on :root/.dark for theme switching (not Tailwind dark: variant)
+- [Phase 03]: MutationObserver on html class to restart gradient animation on theme change
+- [Phase 03]: color-mix() for intermediate gradient stops
+- [Phase 03]: cursor:none added globally as prep for custom cursor (Plan 02)
 
 ### Pending Todos
 
@@ -98,6 +103,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-06T23:53:01.152Z
-Stopped at: Phase 3 context gathered
-Resume file: .planning/phases/03-interactivity-and-visual-effects/03-CONTEXT.md
+Last session: 2026-03-07T02:02:13Z
+Stopped at: Completed 03-01-PLAN.md
+Resume file: .planning/phases/03-interactivity-and-visual-effects/03-01-SUMMARY.md

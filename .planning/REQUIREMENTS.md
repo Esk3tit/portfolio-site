@@ -21,9 +21,9 @@ Requirements for initial release. Each maps to roadmap phases.
 
 - [x] **DSGN-01**: Multiple distinct design explorations generated for browser preview and user iteration before committing to a final direction
 - [x] **DSGN-02**: Creative but safe layout — asymmetric grids, overlapping elements, unconventional flow while maintaining readability
-- [ ] **DSGN-03**: Dark mode with system preference detection and animated toggle, persisted in localStorage
-- [ ] **DSGN-04**: Noise/grain texture overlay for visual depth
-- [ ] **DSGN-05**: Gradient animations or dynamic color shifts
+- [x] **DSGN-03**: Dark mode with system preference detection and animated toggle, persisted in localStorage
+- [x] **DSGN-04**: Noise/grain texture overlay for visual depth
+- [x] **DSGN-05**: Gradient animations or dynamic color shifts
 - [x] **DSGN-06**: Personality-driven copy tone throughout (playful, human, specific — not generic corporate)
 
 ### Animation
@@ -81,9 +81,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CONT-07 | Phase 2 | Complete |
 | DSGN-01 | Phase 1 | Complete |
 | DSGN-02 | Phase 2 | Complete |
-| DSGN-03 | Phase 3 | Pending |
-| DSGN-04 | Phase 3 | Pending |
-| DSGN-05 | Phase 3 | Pending |
+| DSGN-03 | Phase 3 | Complete |
+| DSGN-04 | Phase 3 | Complete |
+| DSGN-05 | Phase 3 | Complete |
 | DSGN-06 | Phase 2 | Complete |
 | ANIM-01 | Phase 3 | Pending |
 | ANIM-02 | Phase 3 | Pending |
