@@ -41,10 +41,11 @@
   2. Favicon in the browser tab shows the old portfolio icon, not the Vercel triangle
   3. No Vercel default SVGs or starter images remain in public/
   4. Build completes with zero unused import warnings from removed files
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 04-01: TBD
+- [ ] 04-01-PLAN.md -- Delete dead routes, prototype components, Vercel SVGs, and replace favicon
+- [ ] 04-02-PLAN.md -- Audit and remove dead CSS/TypeScript code, verify clean build
 
 ### Phase 5: Component Extraction
 **Goal**: Each portfolio section is an independent component owning its own data, animations, and ref scope -- site functions identically to before
@@ -112,7 +113,7 @@ Phases execute in numeric order: 4 → 5 → 6 → 7 → 8
 | 1. Foundation and Design Exploration | v4.2 | 4/4 | Complete | 2026-03-06 |
 | 2. Content Sections | v4.2 | 3/3 | Complete | 2026-03-06 |
 | 3. Interactivity and Visual Effects | v4.2 | 3/3 | Complete | 2026-03-07 |
-| 4. Code Cleanup | v4.3 | 0/? | Not started | - |
+| 4. Code Cleanup | v4.3 | 0/2 | Not started | - |
 | 5. Component Extraction | v4.3 | 0/? | Not started | - |
 | 6. Responsive Design | v4.3 | 0/? | Not started | - |
 | 7. Accessibility | v4.3 | 0/? | Not started | - |
