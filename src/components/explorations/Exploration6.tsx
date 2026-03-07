@@ -152,6 +152,15 @@ export default function Exploration6() {
       if (heroNameEl) {
         const heroSplit = new SplitText(".e6-hero-name", { type: "chars" });
         splitInstances.push(heroSplit);
+        // Re-apply gradient to split chars (SplitText strips it from parent span)
+        const gradientChars = heroNameEl.querySelectorAll(".e6-hero-name-gradient div");
+        gradientChars.forEach((char: Element) => {
+          const el = char as HTMLElement;
+          el.style.background = "linear-gradient(135deg, var(--accent-pink) 0%, var(--accent-purple) 50%, var(--accent-blue) 100%)";
+          el.style.webkitBackgroundClip = "text";
+          el.style.webkitTextFillColor = "transparent";
+          el.style.backgroundClip = "text";
+        });
         // Set initial state so unsplit text is invisible (no hydration flash)
         gsap.set(heroSplit.chars, { y: 30, opacity: 0 });
         heroTl.to(
@@ -333,15 +342,7 @@ export default function Exploration6() {
               }}
             >
               I&apos;m{" "}
-              <span
-                style={{
-                  background:
-                    "linear-gradient(135deg, var(--accent-pink) 0%, var(--accent-purple) 50%, var(--accent-blue) 100%)",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  backgroundClip: "text",
-                }}
-              >
+              <span className="e6-hero-name-gradient">
                 {heroContent.name}
               </span>
               <span style={{ color: "var(--accent-pink)" }}>.</span>
