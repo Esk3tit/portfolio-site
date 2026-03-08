@@ -27,7 +27,7 @@ Requirements for the Cleanup and Launch milestone. Each maps to roadmap phases.
 - [x] **A11Y-01**: Semantic HTML structure with proper heading hierarchy (h1 > h2 > h3)
 - [x] **A11Y-02**: Keyboard navigation works for all interactive elements (buttons, links, project cards)
 - [x] **A11Y-03**: Focus indicators visible on all focusable elements
-- [ ] **A11Y-04**: prefers-reduced-motion replaces animations with instant reveals (opacity 0->1, no motion)
+- [x] **A11Y-04**: prefers-reduced-motion replaces animations with instant reveals (opacity 0->1, no motion)
 - [x] **A11Y-05**: Color contrast meets WCAG AA (4.5:1 for text, 3:1 for large text) in both themes
 - [x] **A11Y-06**: Skip-to-content link for keyboard users
 - [x] **A11Y-07**: ARIA labels on interactive elements (project expand buttons, nav dots, theme toggle)
@@ -81,7 +81,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | A11Y-01 | Phase 7 | Complete |
 | A11Y-02 | Phase 7 | Complete |
 | A11Y-03 | Phase 7 | Complete |
-| A11Y-04 | Phase 7 | Pending |
+| A11Y-04 | Phase 7 | Complete |
 | A11Y-05 | Phase 7 | Complete |
 | A11Y-06 | Phase 7 | Complete |
 | A11Y-07 | Phase 7 | Complete |
