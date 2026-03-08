@@ -56,7 +56,7 @@ export function ContactSection() {
   );
 
   return (
-    <section ref={containerRef} id="contact" className="contact-section relative z-[2] px-6 py-28 md:px-12">
+    <section ref={containerRef} id="contact" className="contact-section relative z-[2] px-6 py-16 sm:py-28 md:px-12">
       <div className="mx-auto max-w-4xl">
         <div className="mb-14 text-center">
           <NeoBrutalHeading emoji={"\u{1F4AC}"} rotate="1deg">
@@ -64,7 +64,7 @@ export function ContactSection() {
           </NeoBrutalHeading>
         </div>
 
-        <GlassPanel className="px-8 py-10 md:px-12" tilt>
+        <GlassPanel className="px-5 py-8 sm:px-8 sm:py-10 md:px-12" tilt>
           <div className="flex flex-col items-center gap-6 sm:flex-row sm:justify-center">
             {contactLinks.map((link) => (
               <a
@@ -72,11 +72,11 @@ export function ContactSection() {
                 href={link.href}
                 target={link.name !== "Email" ? "_blank" : undefined}
                 rel={link.name !== "Email" ? "noopener noreferrer" : undefined}
-                className="contact-section__card group w-full sm:w-auto"
+                className="contact-section__card group w-full min-h-[44px] sm:w-auto"
                 data-magnetic
               >
                 <GlassPanel
-                  className="flex flex-col items-center gap-2 px-8 py-6 text-center transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-[6px_6px_0px_#3d3248]"
+                  className="flex flex-col items-center gap-2 px-6 py-5 text-center transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-[6px_6px_0px_#3d3248] sm:px-8 sm:py-6"
                   tilt
                 >
                   <span className="text-3xl">{link.emoji}</span>

@@ -105,7 +105,7 @@ export function ProjectsSection() {
   );
 
   return (
-    <section ref={containerRef} id="projects" className="projects-section relative z-[2] px-6 py-28 md:px-12">
+    <section ref={containerRef} id="projects" className="projects-section relative z-[2] px-6 py-16 sm:py-28 md:px-12">
       <div className="mx-auto max-w-5xl">
         <div className="projects-section__heading mb-14">
           <NeoBrutalHeading emoji={"\u{1F6E0}\uFE0F"} rotate="-1deg">
@@ -125,7 +125,7 @@ export function ProjectsSection() {
               <div onClick={() => toggleProject(index)}>
                 {/* Neobrutalist colored header bar */}
                 <div
-                  className="flex items-center justify-between gap-3 overflow-hidden px-6 py-3"
+                  className="flex min-h-[44px] items-center justify-between gap-3 overflow-hidden px-4 py-3 sm:px-6"
                   style={{
                     background: project.headerColor,
                     borderBottom: "3px solid var(--glass-border)",
@@ -151,7 +151,7 @@ export function ProjectsSection() {
                   </span>
                 </div>
 
-                <div className="px-6 py-6">
+                <div className="px-4 py-5 sm:px-6 sm:py-6">
                   <p
                     className="mb-5 text-sm leading-relaxed"
                     style={{ color: "var(--text-body)", transition: "color 0.35s ease" }}
@@ -173,7 +173,7 @@ export function ProjectsSection() {
                 style={{ height: 0, opacity: 0, overflow: "hidden" }}
               >
                 <div
-                  className="border-t-2 px-6 pb-6 pt-5"
+                  className="border-t-2 px-4 pb-5 pt-4 sm:px-6 sm:pb-6 sm:pt-5"
                   style={{ borderColor: "rgba(61, 50, 72, 0.2)" }}
                 >
                   <div className="mb-4">

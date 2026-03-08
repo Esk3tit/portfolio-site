@@ -130,19 +130,19 @@ export function HeroSection() {
 
         {/* Glass hero card -- Liquid Glass style */}
         <GlassPanel
-          className="hero-section__glass px-10 py-14 md:px-16 md:py-18"
+          className="hero-section__glass px-6 py-10 sm:px-10 sm:py-14 md:px-16 md:py-18"
           shadow="5px 5px 0px #3d3248"
           tilt
         >
           <p
-            className="hero-section__greeting text-sm font-semibold tracking-[0.3em] uppercase"
+            className="hero-section__greeting text-xs font-semibold tracking-[0.3em] uppercase sm:text-sm"
             style={{ color: "#b8a9c9" }}
           >
             {heroContent.greeting}
           </p>
 
           <h1
-            className="hero-section__name mt-5 text-5xl font-bold leading-tight tracking-tight sm:text-6xl md:text-7xl"
+            className="hero-section__name mt-5 text-3xl font-bold leading-tight tracking-tight sm:text-6xl md:text-7xl"
             style={{
               color: "var(--text-primary)",
               fontFamily:
@@ -159,7 +159,7 @@ export function HeroSection() {
 
           {/* Neobrutalist subtitle banner */}
           <div
-            className="hero-section__tagline mx-auto mt-8 inline-block px-6 py-3"
+            className="hero-section__tagline mx-auto mt-6 inline-block px-4 py-2.5 sm:mt-8 sm:px-6 sm:py-3"
             style={{
               background: "var(--hero-tagline-bg)",
               border: "3px solid var(--glass-border)",
@@ -169,7 +169,7 @@ export function HeroSection() {
             }}
           >
             <p
-              className="text-base font-semibold md:text-lg"
+              className="text-sm font-semibold sm:text-base md:text-lg"
               style={{ color: "var(--text-primary)", transition: "color 0.35s ease" }}
             >
               {heroContent.tagline}

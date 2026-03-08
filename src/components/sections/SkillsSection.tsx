@@ -56,7 +56,7 @@ export function SkillsSection() {
   );
 
   return (
-    <section ref={containerRef} id="skills" className="skills-section relative z-[2] px-6 py-28 md:px-12">
+    <section ref={containerRef} id="skills" className="skills-section relative z-[2] px-6 py-16 sm:py-28 md:px-12">
       <div className="mx-auto max-w-5xl">
         <div className="mb-14 text-center">
           <NeoBrutalHeading emoji={"\u{1F9E0}"} rotate="-1deg">
@@ -68,7 +68,7 @@ export function SkillsSection() {
           {skillCategories.map((category) => (
             <GlassPanel
               key={category.name}
-              className="skills-section__category px-8 py-8"
+              className="skills-section__category px-5 py-6 sm:px-8 sm:py-8"
               tilt
             >
               <h3

@@ -55,7 +55,7 @@ export function ExperienceSection() {
   );
 
   return (
-    <section ref={containerRef} id="experience" className="experience-section relative z-[2] px-6 py-28 md:px-12">
+    <section ref={containerRef} id="experience" className="experience-section relative z-[2] px-6 py-16 sm:py-28 md:px-12">
       <div className="mx-auto max-w-4xl">
         <div className="mb-14 text-center">
           <NeoBrutalHeading emoji={"\u{1F4BC}"} rotate="1deg">
@@ -67,7 +67,7 @@ export function ExperienceSection() {
           {experiences.map((exp, i) => (
             <GlassPanel
               key={exp.company}
-              className={`experience-section__card px-8 py-8`}
+              className={`experience-section__card px-5 py-6 sm:px-8 sm:py-8`}
               rotate={i % 2 === 0 ? "0.5deg" : "-0.5deg"}
               tilt
             >
