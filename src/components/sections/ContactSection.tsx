@@ -37,7 +37,7 @@ export function ContactSection() {
       // Contact cards stagger animation
       gsap.fromTo(".contact-section__card",
         { y: 40, opacity: 0 },
-        { scrollTrigger: { trigger: ".contact-section", start: "top 85%" }, y: 0, opacity: 1, duration: 0.7, stagger: 0.12, ease: "power3.out" }
+        { scrollTrigger: { trigger: containerRef.current, start: "top 85%" }, y: 0, opacity: 1, duration: 0.7, stagger: 0.12, ease: "power3.out" }
       );
 
       // Recalculate trigger positions after hydration paint

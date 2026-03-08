@@ -36,7 +36,7 @@ export function ExperienceSection() {
       // Experience cards stagger animation
       gsap.fromTo(".experience-section__card",
         { y: 50, opacity: 0, scale: 0.95 },
-        { scrollTrigger: { trigger: ".experience-section", start: "top 85%" }, y: 0, opacity: 1, scale: 1, duration: 0.8, stagger: 0.12, ease: "power3.out" }
+        { scrollTrigger: { trigger: containerRef.current, start: "top 85%" }, y: 0, opacity: 1, scale: 1, duration: 0.8, stagger: 0.12, ease: "power3.out" }
       );
 
       // Recalculate trigger positions after hydration paint

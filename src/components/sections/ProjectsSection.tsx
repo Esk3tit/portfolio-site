@@ -80,13 +80,13 @@ export function ProjectsSection() {
       // Projects heading slide-in
       gsap.fromTo(".projects-section__heading",
         { x: -50, opacity: 0 },
-        { scrollTrigger: { trigger: ".projects-section", start: "top 85%" }, x: 0, opacity: 1, duration: 0.7, ease: "power3.out" }
+        { scrollTrigger: { trigger: containerRef.current, start: "top 85%" }, x: 0, opacity: 1, duration: 0.7, ease: "power3.out" }
       );
 
       // Project cards stagger
       gsap.fromTo(".projects-section__card",
         { y: 60, opacity: 0, scale: 0.95 },
-        { scrollTrigger: { trigger: ".projects-section", start: "top 85%" }, y: 0, opacity: 1, scale: 1, duration: 0.8, stagger: 0.12, ease: "power3.out" }
+        { scrollTrigger: { trigger: containerRef.current, start: "top 85%" }, y: 0, opacity: 1, scale: 1, duration: 0.8, stagger: 0.12, ease: "power3.out" }
       );
 
       // Recalculate trigger positions after hydration paint

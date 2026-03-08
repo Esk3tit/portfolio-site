@@ -37,7 +37,7 @@ export function SkillsSection() {
       // Skill categories stagger animation
       gsap.fromTo(".skills-section__category",
         { y: 40, opacity: 0 },
-        { scrollTrigger: { trigger: ".skills-section", start: "top 85%" }, y: 0, opacity: 1, duration: 0.7, stagger: 0.1, ease: "power3.out" }
+        { scrollTrigger: { trigger: containerRef.current, start: "top 85%" }, y: 0, opacity: 1, duration: 0.7, stagger: 0.1, ease: "power3.out" }
       );
 
       // Recalculate trigger positions after hydration paint

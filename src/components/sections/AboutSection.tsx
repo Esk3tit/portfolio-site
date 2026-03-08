@@ -13,13 +13,13 @@ export function AboutSection() {
       // About heading animation
       gsap.fromTo(".about-section__heading",
         { y: 40, opacity: 0 },
-        { scrollTrigger: { trigger: ".about-section", start: "top 85%" }, y: 0, opacity: 1, duration: 0.8, ease: "power3.out" }
+        { scrollTrigger: { trigger: containerRef.current, start: "top 85%" }, y: 0, opacity: 1, duration: 0.8, ease: "power3.out" }
       );
 
       // About panels animation
       gsap.fromTo(".about-section__panel",
         { scale: 0.95, opacity: 0, y: 50 },
-        { scrollTrigger: { trigger: ".about-section", start: "top 85%" }, scale: 1, opacity: 1, y: 0, duration: 0.8, stagger: 0.12, ease: "power3.out" }
+        { scrollTrigger: { trigger: containerRef.current, start: "top 85%" }, scale: 1, opacity: 1, y: 0, duration: 0.8, stagger: 0.12, ease: "power3.out" }
       );
 
       // Recalculate trigger positions after hydration paint

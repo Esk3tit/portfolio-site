@@ -77,7 +77,10 @@ export function HeroSection() {
           { y: 0, opacity: 1, duration: 0.8 },
           "-=0.3"
         )
-        .fromTo(
+      // Clear CSS transition on buttons so it doesn't fight GSAP's transform animation
+      gsap.set(".hero-section__cta", { clearProps: "transition" });
+
+      heroTl.fromTo(
           ".hero-section__cta",
           { scale: 0, rotation: -6, opacity: 0 },
           {
@@ -87,6 +90,12 @@ export function HeroSection() {
             duration: 0.5,
             ease: "back.out(2)",
             stagger: 0.1,
+            onComplete() {
+              // Restore CSS transition for hover effects after entrance animation
+              document.querySelectorAll(".hero-section__cta").forEach((el) => {
+                (el as HTMLElement).style.transition = "transform 0.2s ease, box-shadow 0.2s ease";
+              });
+            },
           },
           "-=0.3"
         );
