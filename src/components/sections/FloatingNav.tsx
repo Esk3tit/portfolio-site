@@ -19,15 +19,27 @@ export function FloatingNav() {
   const lenis = useLenis();
 
   useGSAP(() => {
-    // Track active section
-    sections.forEach((section) => {
-      ScrollTrigger.create({
-        trigger: `#${section.id}`,
-        start: "top 50%",
-        end: "bottom 50%",
-        onEnter: () => setActiveSection(section.id),
-        onEnterBack: () => setActiveSection(section.id),
+    const mm = gsap.matchMedia();
+
+    // ScrollTrigger section tracking works in both modes (state-driven, not animation)
+    const setupScrollTracking = () => {
+      sections.forEach((section) => {
+        ScrollTrigger.create({
+          trigger: `#${section.id}`,
+          start: "top 50%",
+          end: "bottom 50%",
+          onEnter: () => setActiveSection(section.id),
+          onEnterBack: () => setActiveSection(section.id),
+        });
       });
+    };
+
+    mm.add("(prefers-reduced-motion: no-preference)", () => {
+      setupScrollTracking();
+    });
+
+    mm.add("(prefers-reduced-motion: reduce)", () => {
+      setupScrollTracking();
     });
 
     // Refresh after hydration to ensure correct trigger positions

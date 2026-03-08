@@ -18,87 +18,106 @@ export function HeroSection() {
 
   useGSAP(
     () => {
-      // Track SplitText instances for cleanup
-      const splitInstances: InstanceType<typeof SplitText>[] = [];
+      const mm = gsap.matchMedia();
 
-      // Hero entrance -- use fromTo() so start states are set explicitly
-      // and the timeline reliably plays on first visit after hydration.
-      const heroTl = gsap.timeline({
-        defaults: { ease: "power3.out" },
-        delay: 0.15,
+      mm.add("(prefers-reduced-motion: no-preference)", () => {
+        // Track SplitText instances for cleanup
+        const splitInstances: InstanceType<typeof SplitText>[] = [];
+
+        // Hero entrance -- use fromTo() so start states are set explicitly
+        // and the timeline reliably plays on first visit after hydration.
+        const heroTl = gsap.timeline({
+          defaults: { ease: "power3.out" },
+          delay: 0.15,
+        });
+
+        heroTl
+          .fromTo(
+            ".hero-section__emoji",
+            { scale: 0, rotation: -180 },
+            { scale: 1, rotation: 0, duration: 0.7, ease: "back.out(1.7)" }
+          )
+          .fromTo(
+            ".hero-section__glass",
+            { scale: 0.92, opacity: 0, y: 40 },
+            { scale: 1, opacity: 1, y: 0, duration: 1.2 },
+            "-=0.3"
+          )
+          .fromTo(
+            ".hero-section__greeting",
+            { y: 30, opacity: 0 },
+            { y: 0, opacity: 1, duration: 0.8 },
+            "-=0.7"
+          );
+
+        // Hero name -- character-by-character reveal for premium feel
+        const heroNameEl = containerRef.current?.querySelector(".hero-section__name");
+        if (heroNameEl) {
+          const heroSplit = new SplitText(".hero-section__name", { type: "chars" });
+          splitInstances.push(heroSplit);
+          // Re-apply gradient to split chars (SplitText strips it from parent span)
+          const gradientChars = heroNameEl.querySelectorAll(".hero-section__name-gradient div");
+          gradientChars.forEach((char: Element) => {
+            const el = char as HTMLElement;
+            el.style.background = "linear-gradient(135deg, var(--accent-pink) 0%, var(--accent-purple) 50%, var(--accent-blue) 100%)";
+            el.style.webkitBackgroundClip = "text";
+            el.style.webkitTextFillColor = "transparent";
+            el.style.backgroundClip = "text";
+          });
+          // Set initial state so unsplit text is invisible (no hydration flash)
+          gsap.set(heroSplit.chars, { y: 30, opacity: 0 });
+          heroTl.to(
+            heroSplit.chars,
+            { y: 0, opacity: 1, duration: 0.5, stagger: 0.03, ease: "power3.out" },
+            "-=0.5"
+          );
+        }
+
+        heroTl
+          .fromTo(
+            ".hero-section__tagline",
+            { y: 25, opacity: 0 },
+            { y: 0, opacity: 1, duration: 0.8 },
+            "-=0.3"
+          )
+        // Clear CSS transition on buttons so it doesn't fight GSAP's transform animation
+        gsap.set(".hero-section__cta", { clearProps: "transition" });
+
+        heroTl.fromTo(
+            ".hero-section__cta",
+            { scale: 0, rotation: -6, opacity: 0 },
+            {
+              scale: 1,
+              rotation: 0,
+              opacity: 1,
+              duration: 0.5,
+              ease: "back.out(2)",
+              stagger: 0.1,
+              onComplete() {
+                // Restore CSS transition for hover effects after entrance animation
+                document.querySelectorAll(".hero-section__cta").forEach((el) => {
+                  (el as HTMLElement).style.transition = "transform 0.2s ease, box-shadow 0.2s ease";
+                });
+              },
+            },
+            "-=0.3"
+          );
+
+        // Cleanup: revert SplitText instances on unmount
+        return () => {
+          splitInstances.forEach((s) => s.revert());
+        };
       });
 
-      heroTl
-        .fromTo(
-          ".hero-section__emoji",
-          { scale: 0, rotation: -180 },
-          { scale: 1, rotation: 0, duration: 0.7, ease: "back.out(1.7)" }
-        )
-        .fromTo(
-          ".hero-section__glass",
-          { scale: 0.92, opacity: 0, y: 40 },
-          { scale: 1, opacity: 1, y: 0, duration: 1.2 },
-          "-=0.3"
-        )
-        .fromTo(
-          ".hero-section__greeting",
-          { y: 30, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.8 },
-          "-=0.7"
-        );
-
-      // Hero name -- character-by-character reveal for premium feel
-      const heroNameEl = containerRef.current?.querySelector(".hero-section__name");
-      if (heroNameEl) {
-        const heroSplit = new SplitText(".hero-section__name", { type: "chars" });
-        splitInstances.push(heroSplit);
-        // Re-apply gradient to split chars (SplitText strips it from parent span)
-        const gradientChars = heroNameEl.querySelectorAll(".hero-section__name-gradient div");
-        gradientChars.forEach((char: Element) => {
-          const el = char as HTMLElement;
-          el.style.background = "linear-gradient(135deg, var(--accent-pink) 0%, var(--accent-purple) 50%, var(--accent-blue) 100%)";
-          el.style.webkitBackgroundClip = "text";
-          el.style.webkitTextFillColor = "transparent";
-          el.style.backgroundClip = "text";
-        });
-        // Set initial state so unsplit text is invisible (no hydration flash)
-        gsap.set(heroSplit.chars, { y: 30, opacity: 0 });
-        heroTl.to(
-          heroSplit.chars,
-          { y: 0, opacity: 1, duration: 0.5, stagger: 0.03, ease: "power3.out" },
-          "-=0.5"
-        );
-      }
-
-      heroTl
-        .fromTo(
-          ".hero-section__tagline",
-          { y: 25, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.8 },
-          "-=0.3"
-        )
-      // Clear CSS transition on buttons so it doesn't fight GSAP's transform animation
-      gsap.set(".hero-section__cta", { clearProps: "transition" });
-
-      heroTl.fromTo(
-          ".hero-section__cta",
-          { scale: 0, rotation: -6, opacity: 0 },
-          {
-            scale: 1,
-            rotation: 0,
-            opacity: 1,
-            duration: 0.5,
-            ease: "back.out(2)",
-            stagger: 0.1,
-            onComplete() {
-              // Restore CSS transition for hover effects after entrance animation
-              document.querySelectorAll(".hero-section__cta").forEach((el) => {
-                (el as HTMLElement).style.transition = "transform 0.2s ease, box-shadow 0.2s ease";
-              });
-            },
-          },
-          "-=0.3"
-        );
+      mm.add("(prefers-reduced-motion: reduce)", () => {
+        // Instant reveal -- no spatial motion, no SplitText
+        gsap.set(".hero-section__emoji", { scale: 1, rotation: 0, opacity: 1 });
+        gsap.set(".hero-section__glass", { scale: 1, opacity: 1, y: 0 });
+        gsap.set(".hero-section__greeting", { opacity: 1, y: 0 });
+        gsap.set(".hero-section__name", { opacity: 1 });
+        gsap.set(".hero-section__tagline", { opacity: 1, y: 0 });
+        gsap.set(".hero-section__cta", { scale: 1, rotation: 0, opacity: 1 });
+      });
 
       // Recalculate trigger positions after hydration paint
       requestAnimationFrame(() => {
@@ -106,11 +125,6 @@ export function HeroSection() {
           ScrollTrigger.refresh(true);
         });
       });
-
-      // Cleanup: revert SplitText instances on unmount
-      return () => {
-        splitInstances.forEach((s) => s.revert());
-      };
     },
     { scope: containerRef }
   );
