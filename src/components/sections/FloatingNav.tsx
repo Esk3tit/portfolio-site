@@ -44,7 +44,7 @@ export function FloatingNav() {
 
   return (
     <nav
-      className="e6-floating-nav fixed right-6 top-1/2 z-50 -translate-y-1/2 hidden md:flex"
+      className="floating-nav fixed right-6 top-1/2 z-50 -translate-y-1/2 hidden md:flex"
       aria-label="Section navigation"
     >
       <div className="flex flex-col items-center gap-3">

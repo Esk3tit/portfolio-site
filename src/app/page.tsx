@@ -1,58 +1,100 @@
-import Link from "next/link";
+"use client";
 
-const explorations = [
-  {
-    id: 1,
-    name: "Light + Airy",
-    description: "Generous whitespace, soft pastels, elegant minimalism",
-  },
-  {
-    id: 2,
-    name: "Colorful + Playful",
-    description: "Saturated colors, fun energy, personality-forward",
-  },
-  {
-    id: 3,
-    name: "Glassmorphism",
-    description:
-      "Frosted glass panels, transparency layers, Apple-like polish",
-  },
-  {
-    id: 4,
-    name: "Neobrutalism",
-    description: "Thick borders, raw shapes, bold colors, anti-polish",
-  },
-  {
-    id: 5,
-    name: "Video Game-Inspired",
-    description: "Game UI elements, HUD feel, interactive but clean",
-  },
-];
+import { useRef, useCallback, useEffect } from "react";
+import { gsap } from "@/lib/gsap";
+import { HeroSection } from "@/components/sections/HeroSection";
+import { AboutSection } from "@/components/sections/AboutSection";
+import { ExperienceSection } from "@/components/sections/ExperienceSection";
+import { SkillsSection } from "@/components/sections/SkillsSection";
+import { ProjectsSection } from "@/components/sections/ProjectsSection";
+import { ContactSection } from "@/components/sections/ContactSection";
+import { FloatingNav } from "@/components/sections/FloatingNav";
 
 export default function HomePage() {
-  return (
-    <main className="mx-auto min-h-screen max-w-4xl px-6 py-20">
-      <h1 className="font-display text-4xl font-bold tracking-tight md:text-5xl">
-        Design Explorations
-      </h1>
-      <p className="mt-4 max-w-xl text-lg text-text/60">
-        Browse each direction, then pick your favorite.
-      </p>
+  const gradientTweenRef = useRef<gsap.core.Tween | null>(null);
 
-      <nav className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {explorations.map((exp) => (
-          <Link
-            key={exp.id}
-            href={`/explore/${exp.id}`}
-            className="group rounded-xl border border-text/10 p-6 transition-colors hover:border-primary-500/40 hover:bg-primary-500/5"
-          >
-            <h2 className="font-display text-xl font-semibold group-hover:text-primary-500">
-              {exp.name}
-            </h2>
-            <p className="mt-2 text-sm text-text/50">{exp.description}</p>
-          </Link>
-        ))}
-      </nav>
-    </main>
+  const startGradientAnimation = useCallback(() => {
+    if (gradientTweenRef.current) gradientTweenRef.current.kill();
+    const isDark = document.documentElement.classList.contains("dark");
+    const root = document.documentElement;
+    const startBase = isDark ? "#1a1520" : "#e8ddd5";
+    const endBase = isDark ? "#1e2030" : "#cdd0e5";
+    const startTarget = isDark ? "#1e1828" : "#eddcd2";
+    const endTarget = isDark ? "#222438" : "#d5cbe8";
+    root.style.setProperty("--bg-gradient-start", startBase);
+    root.style.setProperty("--bg-gradient-end", endBase);
+    gradientTweenRef.current = gsap.to(root, {
+      "--bg-gradient-start": startTarget,
+      "--bg-gradient-end": endTarget,
+      duration: 25,
+      ease: "sine.inOut",
+      yoyo: true,
+      repeat: -1,
+    });
+  }, []);
+
+  useEffect(() => {
+    startGradientAnimation();
+    const observer = new MutationObserver((mutations) => {
+      for (const mutation of mutations) {
+        if (
+          mutation.type === "attributes" &&
+          mutation.attributeName === "class"
+        ) {
+          requestAnimationFrame(() => startGradientAnimation());
+        }
+      }
+    });
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+    return () => {
+      observer.disconnect();
+      if (gradientTweenRef.current) gradientTweenRef.current.kill();
+    };
+  }, [startGradientAnimation]);
+
+  return (
+    <div
+      className="relative min-h-screen overflow-hidden"
+      style={{
+        background:
+          "linear-gradient(180deg, var(--bg-gradient-start) 0%, color-mix(in srgb, var(--bg-gradient-start) 60%, var(--bg-gradient-end)) 30%, color-mix(in srgb, var(--bg-gradient-end) 70%, var(--bg-gradient-start)) 60%, var(--bg-gradient-end) 100%)",
+        fontFamily: "var(--font-body, 'Inter', system-ui, sans-serif)",
+        transition: "background 0.35s ease",
+      }}
+    >
+      <FloatingNav />
+
+      {/* SVG noise filter for frosted glass grain texture */}
+      <svg className="absolute h-0 w-0">
+        <filter id="glass-noise">
+          <feTurbulence
+            type="fractalNoise"
+            baseFrequency="0.65"
+            numOctaves="3"
+            stitchTiles="stitch"
+          />
+          <feColorMatrix type="saturate" values="0" />
+        </filter>
+      </svg>
+
+      {/* Page-level noise texture overlay */}
+      <div
+        className="pointer-events-none fixed inset-0 z-[1]"
+        style={{
+          filter: "url(#glass-noise)",
+          opacity: 0.06,
+        }}
+      />
+
+      <HeroSection />
+      <AboutSection />
+      <ExperienceSection />
+      <SkillsSection />
+      <ProjectsSection />
+      <ContactSection />
+    </div>
   );
 }
