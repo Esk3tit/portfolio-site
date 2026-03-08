@@ -56,7 +56,7 @@ export function SkillsSection() {
   );
 
   return (
-    <section ref={containerRef} id="skills" className="skills-section relative z-[2] px-6 py-16 sm:py-28 md:px-12">
+    <section ref={containerRef} id="skills" aria-label="Skills" className="skills-section relative z-[2] px-6 py-16 sm:py-28 md:px-12">
       <div className="mx-auto max-w-5xl">
         <div className="mb-14 text-center">
           <NeoBrutalHeading emoji={"\u{1F9E0}"} rotate="-1deg">

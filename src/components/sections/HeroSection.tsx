@@ -116,7 +116,7 @@ export function HeroSection() {
   );
 
   return (
-    <section ref={containerRef} id="hero" className="relative z-[2] flex min-h-screen items-center justify-center px-6">
+    <section ref={containerRef} id="hero" aria-label="Introduction" className="relative z-[2] flex min-h-screen items-center justify-center px-6">
       <div className="relative z-10 w-full max-w-2xl text-center">
         {/* Emoji badge -- playful energy */}
         <GlassPanel

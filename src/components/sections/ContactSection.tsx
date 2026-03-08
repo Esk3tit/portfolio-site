@@ -56,7 +56,7 @@ export function ContactSection() {
   );
 
   return (
-    <section ref={containerRef} id="contact" className="contact-section relative z-[2] px-6 py-16 sm:py-28 md:px-12">
+    <section ref={containerRef} id="contact" aria-label="Contact" className="contact-section relative z-[2] px-6 py-16 sm:py-28 md:px-12">
       <div className="mx-auto max-w-4xl">
         <div className="mb-14 text-center">
           <NeoBrutalHeading emoji={"\u{1F4AC}"} rotate="1deg">

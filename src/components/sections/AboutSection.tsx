@@ -33,7 +33,7 @@ export function AboutSection() {
   );
 
   return (
-    <section ref={containerRef} id="about" className="about-section relative z-[2] px-6 py-16 sm:py-28 md:px-12">
+    <section ref={containerRef} id="about" aria-label="About Me" className="about-section relative z-[2] px-6 py-16 sm:py-28 md:px-12">
       <div className="mx-auto max-w-5xl">
         <div className="about-section__heading mb-14 text-center">
           <h2

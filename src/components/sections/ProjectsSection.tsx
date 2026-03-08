@@ -105,7 +105,7 @@ export function ProjectsSection() {
   );
 
   return (
-    <section ref={containerRef} id="projects" className="projects-section relative z-[2] px-6 py-16 sm:py-28 md:px-12">
+    <section ref={containerRef} id="projects" aria-label="Projects" className="projects-section relative z-[2] px-6 py-16 sm:py-28 md:px-12">
       <div className="mx-auto max-w-5xl">
         <div className="projects-section__heading mb-14">
           <NeoBrutalHeading emoji={"\u{1F6E0}\uFE0F"} rotate="-1deg">
@@ -122,7 +122,12 @@ export function ProjectsSection() {
               tilt
             >
               {/* Clickable card face */}
-              <div onClick={() => toggleProject(index)}>
+              <button
+                onClick={() => toggleProject(index)}
+                aria-expanded={expandedProject === index}
+                className="w-full text-left"
+                style={{ background: 'none', border: 'none', padding: 0, font: 'inherit', color: 'inherit', cursor: 'pointer' }}
+              >
                 {/* Neobrutalist colored header bar */}
                 <div
                   className="flex min-h-[44px] items-center justify-between gap-3 overflow-hidden px-4 py-3 sm:px-6"
@@ -165,7 +170,7 @@ export function ProjectsSection() {
                     ))}
                   </div>
                 </div>
-              </div>
+              </button>
 
               {/* Expandable case study detail */}
               <div

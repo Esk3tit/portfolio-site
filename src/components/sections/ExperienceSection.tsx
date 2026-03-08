@@ -55,7 +55,7 @@ export function ExperienceSection() {
   );
 
   return (
-    <section ref={containerRef} id="experience" className="experience-section relative z-[2] px-6 py-16 sm:py-28 md:px-12">
+    <section ref={containerRef} id="experience" aria-label="Work Experience" className="experience-section relative z-[2] px-6 py-16 sm:py-28 md:px-12">
       <div className="mx-auto max-w-4xl">
         <div className="mb-14 text-center">
           <NeoBrutalHeading emoji={"\u{1F4BC}"} rotate="1deg">
