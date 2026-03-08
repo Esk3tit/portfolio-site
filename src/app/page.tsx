@@ -9,6 +9,7 @@ import { SkillsSection } from "@/components/sections/SkillsSection";
 import { ProjectsSection } from "@/components/sections/ProjectsSection";
 import { ContactSection } from "@/components/sections/ContactSection";
 import { FloatingNav } from "@/components/sections/FloatingNav";
+import { MobileNav } from "@/components/sections/MobileNav";
 
 export default function HomePage() {
   const gradientTweenRef = useRef<gsap.core.Tween | null>(null);
@@ -66,6 +67,7 @@ export default function HomePage() {
       }}
     >
       <FloatingNav />
+      <MobileNav />
 
       {/* SVG noise filter for frosted glass grain texture */}
       <svg className="absolute h-0 w-0">
