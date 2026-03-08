@@ -15,7 +15,7 @@ export function NeoBrutalHeading({
 }: NeoBrutalHeadingProps) {
   return (
     <h2
-      className={`e6-split-heading inline-block px-6 py-3 text-2xl font-bold md:text-3xl ${className}`}
+      className={`split-heading inline-block px-6 py-3 text-2xl font-bold md:text-3xl ${className}`}
       style={{
         color: "#fff",
         background: "#3d3248",
