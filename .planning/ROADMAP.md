@@ -90,7 +90,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 07-01: TBD
+- [ ] 07-01-PLAN.md -- Semantic HTML, focus styles, contrast fixes, skip-to-content, ARIA attributes, keyboard navigation
+- [ ] 07-02-PLAN.md -- Reduced-motion support: GSAP matchMedia branches, Lenis disable, gradient freeze, CSS fallbacks
 
 ### Phase 8: Meta and Performance
 **Goal**: The site shares well on social platforms and scores 90+ on Lighthouse mobile -- ready for production deploy
@@ -118,9 +119,9 @@ Phases execute in numeric order: 4 → 5 → 6 → 7 → 8
 | 4. Code Cleanup | v4.3 | 0/2 | Not started | - |
 | 5. Component Extraction | 2/2 | Complete   | 2026-03-08 | - |
 | 6. Responsive Design | 2/2 | Complete   | 2026-03-08 | - |
-| 7. Accessibility | v4.3 | 0/? | Not started | - |
+| 7. Accessibility | v4.3 | 0/2 | Not started | - |
 | 8. Meta and Performance | v4.3 | 0/? | Not started | - |
 
 ---
 *Roadmap created: 2026-03-07*
-*Last updated: 2026-03-07*
+*Last updated: 2026-03-08*
