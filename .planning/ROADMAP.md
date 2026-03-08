@@ -71,10 +71,11 @@ Plans:
   2. A visible navigation bar appears on mobile screens (below 768px) since FloatingNav is desktop-only
   3. Dark mode toggle is reachable and functional on mobile without scrolling to a hidden element
   4. All buttons, links, and interactive cards have at least 44x44px touch targets on mobile
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 06-01: TBD
+- [ ] 06-01-PLAN.md -- Mobile navigation with hamburger button and full-screen glass drawer
+- [ ] 06-02-PLAN.md -- Responsive layout, typography scaling, and touch targets across all sections
 
 ### Phase 7: Accessibility
 **Goal**: The site is navigable by keyboard, comprehensible by screen readers, and comfortable for users who prefer reduced motion
@@ -86,7 +87,7 @@ Plans:
   3. With prefers-reduced-motion enabled, no elements animate with motion -- all reveals are instant opacity fades, and Lenis smooth scroll is disabled
   4. All body text meets 4.5:1 contrast ratio and large text meets 3:1 in both light and dark themes
   5. Screen reader announces project card expand/collapse state via aria-expanded and nav dots via aria-label
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
 - [ ] 07-01: TBD
@@ -99,7 +100,7 @@ Plans:
   1. Sharing the site URL on Slack, Twitter, or iMessage shows a rich preview with title, description, and the OG image
   2. Twitter card renders correctly with summary_large_image card type
   3. Lighthouse mobile audit scores 90+ across Performance, Accessibility, Best Practices, and SEO
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
 - [ ] 08-01: TBD
