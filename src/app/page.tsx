@@ -15,6 +15,7 @@ export default function HomePage() {
   const gradientTweenRef = useRef<gsap.core.Tween | null>(null);
 
   const startGradientAnimation = useCallback(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     if (gradientTweenRef.current) gradientTweenRef.current.kill();
     const isDark = document.documentElement.classList.contains("dark");
     const root = document.documentElement;

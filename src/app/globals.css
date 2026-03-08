@@ -92,3 +92,16 @@ body {
   top: 1rem;
 }
 
+/* ─── Reduced-motion fallback ─── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+  /* Preserve color/opacity transitions for theme switching */
+  html {
+    transition: background-color 0.35s ease, color 0.35s ease;
+  }
+}
+
