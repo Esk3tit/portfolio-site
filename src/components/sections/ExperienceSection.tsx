@@ -93,7 +93,7 @@ export function ExperienceSection() {
                 </h3>
                 <p
                   className="mt-1 text-sm font-semibold"
-                  style={{ color: "var(--accent-purple)" }}
+                  style={{ color: "var(--accent-purple-text)" }}
                 >
                   {exp.title}
                 </p>

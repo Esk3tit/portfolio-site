@@ -19,10 +19,11 @@
   --glass-specular-top: rgba(255, 255, 255, 0.7);
   --text-primary: #3d3248;
   --text-body: #5a4d66;
-  --text-secondary: #8a7d96;
+  --text-secondary: #6d6080;
   --bg-gradient-start: #e8ddd5;
   --bg-gradient-end: #cdd0e5;
   --accent-purple: #a78bcd;
+  --accent-purple-text: #7d65a8;
   --accent-pink: #c9a4b2;
   --accent-blue: #8bb4d4;
   --tag-bg: rgba(255, 255, 255, 0.5);
@@ -53,5 +54,41 @@ html {
 body {
   background: var(--color-surface);
   color: var(--color-text);
+}
+
+/* ─── Focus-visible styles ─── */
+:focus-visible {
+  outline: 2px solid var(--accent-purple);
+  outline-offset: 2px;
+  border-radius: inherit;
+}
+
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* ─── Skip-to-content ─── */
+.skip-to-content {
+  position: fixed;
+  top: -100%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  padding: 0.75rem 1.5rem;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-decoration: none;
+  transition: top 0.2s ease;
+}
+
+.skip-to-content:focus {
+  top: 1rem;
 }
 

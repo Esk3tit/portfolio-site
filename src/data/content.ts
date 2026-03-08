@@ -139,7 +139,7 @@ export const projects: Project[] = [
     description:
       "A webapp to track your LeetCode grind so you can finally stop pretending you remember two-pointer from three months ago.",
     tags: ["React", "Node.js", "MongoDB", "LeetCode API"],
-    headerColor: "#c9a4b2",
+    headerColor: "#8a6474",
     github: "https://github.com/Esk3tit/l33tcode-tracker",
     problem:
       "LeetCode's built-in tracking is minimal -- you can't easily see which patterns you're weak on or when you last practiced a topic.",
@@ -157,7 +157,7 @@ export const projects: Project[] = [
     description:
       "An AI-powered phone interface that's somehow less annoying than your actual phone. Voice-first, context-aware, and actually useful.",
     tags: ["Python", "OpenAI API", "React Native", "WebSocket"],
-    headerColor: "#a78bcd",
+    headerColor: "#7a5ea6",
     github: "https://github.com/Esk3tit/aiphone-but-better",
     problem:
       "Existing AI assistants feel disconnected from how you actually use your phone -- they're bolted on, not built in.",
@@ -175,7 +175,7 @@ export const projects: Project[] = [
     description:
       "A typing test built in Python because sometimes you need to prove you can type fast AND write the thing that tests it.",
     tags: ["Python", "Curses", "CLI", "Threading"],
-    headerColor: "#8bb4d4",
+    headerColor: "#5a8aad",
     github: "https://github.com/Esk3tit/pytype",
     problem:
       "Online typing tests are full of ads and distractions. Sometimes you just want a clean, terminal-based experience.",
@@ -193,7 +193,7 @@ export const projects: Project[] = [
     description:
       "Property analysis platform that turns raw real estate data into actually useful insights. Think Zillow meets data science.",
     tags: ["React", "Node.js", "PostgreSQL", "AWS", "Python"],
-    headerColor: "#c9a4b2",
+    headerColor: "#8a6474",
     problem:
       "Real estate data is scattered across dozens of sources and formats. Agents and investors waste hours manually gathering basic property info.",
     approach:

@@ -66,6 +66,10 @@ export default function HomePage() {
         transition: "background 0.35s ease",
       }}
     >
+      <a href="#main-content" className="skip-to-content">
+        Skip to content
+      </a>
+
       <FloatingNav />
       <MobileNav />
 
@@ -91,12 +95,14 @@ export default function HomePage() {
         }}
       />
 
-      <HeroSection />
-      <AboutSection />
-      <ExperienceSection />
-      <SkillsSection />
-      <ProjectsSection />
-      <ContactSection />
+      <main id="main-content" tabIndex={-1}>
+        <HeroSection />
+        <AboutSection />
+        <ExperienceSection />
+        <SkillsSection />
+        <ProjectsSection />
+        <ContactSection />
+      </main>
     </div>
   );
 }

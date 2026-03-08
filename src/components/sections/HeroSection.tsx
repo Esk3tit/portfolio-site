@@ -136,7 +136,7 @@ export function HeroSection() {
         >
           <p
             className="hero-section__greeting text-xs font-semibold tracking-[0.3em] uppercase sm:text-sm"
-            style={{ color: "#b8a9c9" }}
+            style={{ color: "var(--text-secondary)", transition: "color 0.35s ease" }}
           >
             {heroContent.greeting}
           </p>
