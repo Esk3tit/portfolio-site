@@ -18,8 +18,8 @@ Requirements for the Cleanup and Launch milestone. Each maps to roadmap phases.
 ### Responsive
 
 - [ ] **RESP-01**: Site renders correctly on mobile (<640px), tablet (640-1024px), and desktop (>1024px) breakpoints
-- [ ] **RESP-02**: Mobile navigation bar visible on small screens (FloatingNav is hidden on mobile)
-- [ ] **RESP-03**: Dark mode toggle accessible on mobile (currently hidden with FloatingNav)
+- [x] **RESP-02**: Mobile navigation bar visible on small screens (FloatingNav is hidden on mobile)
+- [x] **RESP-03**: Dark mode toggle accessible on mobile (currently hidden with FloatingNav)
 - [ ] **RESP-04**: Touch targets meet 44px minimum on mobile
 
 ### Accessibility
@@ -75,8 +75,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CLEAN-04 | Phase 4 | Complete |
 | CLEAN-05 | Phase 4 | Complete |
 | RESP-01 | Phase 6 | Pending |
-| RESP-02 | Phase 6 | Pending |
-| RESP-03 | Phase 6 | Pending |
+| RESP-02 | Phase 6 | Complete |
+| RESP-03 | Phase 6 | Complete |
 | RESP-04 | Phase 6 | Pending |
 | A11Y-01 | Phase 7 | Pending |
 | A11Y-02 | Phase 7 | Pending |
