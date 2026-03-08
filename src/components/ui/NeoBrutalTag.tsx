@@ -15,12 +15,13 @@ export function NeoBrutalTag({ children, className = "" }: NeoBrutalTagProps) {
     // Only animate on devices with hover capability
     if (!window.matchMedia("(hover: hover)").matches) return;
     if (!tagRef.current) return;
-    gsap.to(tagRef.current, {
-      rotation: gsap.utils.random(-3, 3),
-      scale: 1.1,
-      duration: 0.2,
-      ease: "power2.out",
-    });
+    const el = tagRef.current;
+    // Wiggle side-to-side then settle with a scale pop
+    gsap.timeline()
+      .to(el, { rotation: -3, duration: 0.06, ease: "power1.inOut" })
+      .to(el, { rotation: 3, duration: 0.06, ease: "power1.inOut" })
+      .to(el, { rotation: -2, duration: 0.06, ease: "power1.inOut" })
+      .to(el, { rotation: gsap.utils.random(-1, 1), scale: 1.1, duration: 0.15, ease: "elastic.out(1, 0.5)" });
   }, []);
 
   const onMouseLeave = useCallback(() => {
@@ -36,7 +37,7 @@ export function NeoBrutalTag({ children, className = "" }: NeoBrutalTagProps) {
   return (
     <span
       ref={tagRef}
-      className={`inline-block px-3 py-1 text-xs font-bold uppercase ${className}`}
+      className={`inline-block px-2.5 py-1 text-xs font-bold uppercase sm:px-3 ${className}`}
       style={{
         background: "var(--tag-bg)",
         border: "2px solid var(--glass-border)",
