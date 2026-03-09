@@ -104,7 +104,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 08-01: TBD
+- [ ] 08-01-PLAN.md — OG image creation and meta tags (META-01, META-02, META-03)
+- [ ] 08-02-PLAN.md — GSAP code-splitting and mobile glass panel optimization (PERF-01)
 
 ## Progress
 
