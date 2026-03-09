@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useCallback } from "react";
-import { gsap } from "@/lib/gsap";
+import { initGSAP } from "@/lib/gsap";
 import { useLenis } from "lenis/react";
 import { DarkModeToggle } from "@/components/ui/DarkModeToggle";
 
@@ -18,12 +18,16 @@ export function MobileNav() {
   const drawerRef = useRef<HTMLDivElement>(null);
   const lenis = useLenis();
 
-  const openDrawer = useCallback(() => {
+  const openDrawer = useCallback(async () => {
     setIsOpen(true);
     const drawer = drawerRef.current;
     if (!drawer) return;
 
     lenis?.stop();
+
+    await initGSAP();
+    const { gsap } = await import("@/lib/gsap");
+    if (!gsap) return;
 
     // Make visible before animating
     drawer.style.visibility = "visible";
@@ -48,9 +52,13 @@ export function MobileNav() {
     );
   }, [lenis]);
 
-  const closeDrawer = useCallback(() => {
+  const closeDrawer = useCallback(async () => {
     const drawer = drawerRef.current;
     if (!drawer) return;
+
+    await initGSAP();
+    const { gsap } = await import("@/lib/gsap");
+    if (!gsap) return;
 
     gsap.to(drawer, {
       opacity: 0,

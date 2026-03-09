@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { gsap } from "@/lib/gsap";
+import { useEffect, useState, useRef } from "react";
+import { initGSAP } from "@/lib/gsap";
 
 /**
  * MagneticPull -- invisible component that adds magnetic pull behavior
@@ -10,6 +10,7 @@ import { gsap } from "@/lib/gsap";
  */
 export function CustomCursor() {
   const [isTouchDevice, setIsTouchDevice] = useState(true);
+  const cleanupRef = useRef<(() => void) | null>(null);
 
   useEffect(() => {
     const isTouch =
@@ -17,68 +18,72 @@ export function CustomCursor() {
     setIsTouchDevice(isTouch);
     if (isTouch) return;
 
-    // Magnetic pull on nearby [data-magnetic] elements
-    const onMouseMove = (e: MouseEvent) => {
-      const magneticEls = document.querySelectorAll<HTMLElement>("[data-magnetic]");
-      magneticEls.forEach((el) => {
-        const rect = el.getBoundingClientRect();
-        const centerX = rect.left + rect.width / 2;
-        const centerY = rect.top + rect.height / 2;
-        const distX = e.clientX - centerX;
-        const distY = e.clientY - centerY;
-        const dist = Math.sqrt(distX * distX + distY * distY);
+    let cancelled = false;
 
-        if (dist < 50) {
-          const pull = 1 - dist / 50;
-          gsap.to(el, {
-            x: distX * pull * 0.3,
-            y: distY * pull * 0.3,
-            duration: 0.3,
-            ease: "power2.out",
-            overwrite: true,
-          });
-        }
-      });
-    };
+    (async () => {
+      await initGSAP();
+      if (cancelled) return;
+      const { gsap } = await import("@/lib/gsap");
+      if (!gsap || cancelled) return;
 
-    // Snap-back on mouseleave for magnetic elements
-    const onMagneticLeave = (e: Event) => {
-      const target = e.currentTarget as HTMLElement;
-      gsap.to(target, {
-        x: 0,
-        y: 0,
-        duration: 0.5,
-        ease: "elastic.out(1, 0.3)",
-      });
-    };
+      // Magnetic pull on nearby [data-magnetic] elements
+      const PULL_RADIUS = 60; // px from element edge
+      const activeEls = new Set<HTMLElement>();
 
-    const attachMagneticListeners = () => {
-      const magneticEls = document.querySelectorAll<HTMLElement>("[data-magnetic]");
-      magneticEls.forEach((el) => {
-        el.addEventListener("mouseleave", onMagneticLeave);
-      });
-      return magneticEls;
-    };
+      const onMouseMove = (e: MouseEvent) => {
+        const magneticEls = document.querySelectorAll<HTMLElement>("[data-magnetic]");
+        magneticEls.forEach((el) => {
+          const rect = el.getBoundingClientRect();
+          const centerX = rect.left + rect.width / 2;
+          const centerY = rect.top + rect.height / 2;
+          const distX = e.clientX - centerX;
+          const distY = e.clientY - centerY;
+          // Distance from edge of element, not center
+          const edgeDistX = Math.max(0, Math.abs(distX) - rect.width / 2);
+          const edgeDistY = Math.max(0, Math.abs(distY) - rect.height / 2);
+          const edgeDist = Math.sqrt(edgeDistX * edgeDistX + edgeDistY * edgeDistY);
 
-    let magneticEls = attachMagneticListeners();
+          if (edgeDist < PULL_RADIUS) {
+            const pull = 1 - edgeDist / PULL_RADIUS;
+            gsap.to(el, {
+              x: distX * pull * 0.12,
+              y: distY * pull * 0.12,
+              duration: 0.3,
+              ease: "power2.out",
+              overwrite: "auto",
+            });
+            activeEls.add(el);
+          } else if (activeEls.has(el)) {
+            // Snap back when leaving pull zone
+            gsap.to(el, {
+              x: 0,
+              y: 0,
+              duration: 0.5,
+              ease: "elastic.out(1, 0.3)",
+              overwrite: "auto",
+            });
+            activeEls.delete(el);
+          }
+        });
+      };
 
-    // Re-attach on DOM changes
-    const observer = new MutationObserver(() => {
-      magneticEls.forEach((el) => {
-        el.removeEventListener("mouseleave", onMagneticLeave);
-      });
-      magneticEls = attachMagneticListeners();
-    });
+      window.addEventListener("mousemove", onMouseMove);
 
-    observer.observe(document.body, { childList: true, subtree: true });
-    window.addEventListener("mousemove", onMouseMove);
+      cleanupRef.current = () => {
+        window.removeEventListener("mousemove", onMouseMove);
+        activeEls.forEach((el) => {
+          gsap.set(el, { x: 0, y: 0 });
+        });
+        activeEls.clear();
+      };
+    })();
 
     return () => {
-      window.removeEventListener("mousemove", onMouseMove);
-      observer.disconnect();
-      magneticEls.forEach((el) => {
-        el.removeEventListener("mouseleave", onMagneticLeave);
-      });
+      cancelled = true;
+      if (cleanupRef.current) {
+        cleanupRef.current();
+        cleanupRef.current = null;
+      }
     };
   }, [isTouchDevice]);
 

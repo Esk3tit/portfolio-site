@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useCallback, useEffect } from "react";
-import { gsap } from "@/lib/gsap";
+import { initGSAP } from "@/lib/gsap";
 import { HeroSection } from "@/components/sections/HeroSection";
 import { AboutSection } from "@/components/sections/AboutSection";
 import { ExperienceSection } from "@/components/sections/ExperienceSection";
@@ -12,11 +12,16 @@ import { FloatingNav } from "@/components/sections/FloatingNav";
 import { MobileNav } from "@/components/sections/MobileNav";
 
 export default function HomePage() {
-  const gradientTweenRef = useRef<gsap.core.Tween | null>(null);
+  const gradientTweenRef = useRef<ReturnType<typeof import("gsap").gsap.to> | null>(null);
 
-  const startGradientAnimation = useCallback(() => {
+  const startGradientAnimation = useCallback(async () => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    if (gradientTweenRef.current) gradientTweenRef.current.kill();
+
+    await initGSAP();
+    const { gsap } = await import("@/lib/gsap");
+    if (!gsap) return;
+
+    if (gradientTweenRef.current) (gradientTweenRef.current as gsap.core.Tween).kill();
     const isDark = document.documentElement.classList.contains("dark");
     const root = document.documentElement;
     const startBase = isDark ? "#1a1520" : "#e8ddd5";
@@ -53,7 +58,7 @@ export default function HomePage() {
     });
     return () => {
       observer.disconnect();
-      if (gradientTweenRef.current) gradientTweenRef.current.kill();
+      if (gradientTweenRef.current) (gradientTweenRef.current as gsap.core.Tween).kill();
     };
   }, [startGradientAnimation]);
 

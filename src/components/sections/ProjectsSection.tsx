@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, useCallback } from "react";
-import { gsap, ScrollTrigger, useGSAP, SplitText } from "@/lib/gsap";
+import { initGSAP, useGSAP } from "@/lib/gsap";
 import { projects } from "@/data/content";
 import { GlassPanel } from "@/components/ui/GlassPanel";
 import { NeoBrutalButton } from "@/components/ui/NeoBrutalButton";
@@ -13,9 +13,13 @@ export function ProjectsSection() {
   const [expandedProject, setExpandedProject] = useState<number | null>(null);
 
   const toggleProject = useCallback(
-    (index: number) => {
+    async (index: number) => {
       const detailEl = document.querySelector(`.projects-section__detail-${index}`);
       if (!detailEl) return;
+
+      await initGSAP();
+      const { gsap } = await import("@/lib/gsap");
+      if (!gsap) return;
 
       if (expandedProject === index) {
         // Collapse
@@ -55,75 +59,81 @@ export function ProjectsSection() {
 
   useGSAP(
     () => {
-      const mm = gsap.matchMedia();
+      (async () => {
+        await initGSAP();
+        const { gsap, ScrollTrigger, SplitText } = await import("@/lib/gsap");
+        if (!gsap || !ScrollTrigger || !SplitText) return;
 
-      mm.add("(prefers-reduced-motion: no-preference)", () => {
-        // Track SplitText instances for cleanup
-        const splitInstances: InstanceType<typeof SplitText>[] = [];
+        const mm = gsap.matchMedia();
 
-        // Word-split heading animation
-        const headings = containerRef.current?.querySelectorAll(".split-heading");
-        headings?.forEach((heading) => {
-          const split = new SplitText(heading, { type: "words" });
-          splitInstances.push(split);
-          gsap.fromTo(
-            split.words,
-            { y: 40, opacity: 0 },
-            {
-              y: 0,
-              opacity: 1,
-              duration: 0.6,
-              stagger: 0.08,
-              ease: "power3.out",
-              scrollTrigger: { trigger: heading, start: "top 85%" },
-            }
+        mm.add("(prefers-reduced-motion: no-preference)", () => {
+          // Track SplitText instances for cleanup
+          const splitInstances: InstanceType<typeof SplitText>[] = [];
+
+          // Word-split heading animation
+          const headings = containerRef.current?.querySelectorAll(".split-heading");
+          headings?.forEach((heading) => {
+            const split = new SplitText(heading, { type: "words" });
+            splitInstances.push(split);
+            gsap.fromTo(
+              split.words,
+              { y: 40, opacity: 0 },
+              {
+                y: 0,
+                opacity: 1,
+                duration: 0.6,
+                stagger: 0.08,
+                ease: "power3.out",
+                scrollTrigger: { trigger: heading, start: "top 85%" },
+              }
+            );
+          });
+
+          // Projects heading slide-in
+          gsap.fromTo(".projects-section__heading",
+            { x: -50, opacity: 0 },
+            { scrollTrigger: { trigger: containerRef.current, start: "top 85%" }, x: 0, opacity: 1, duration: 0.7, ease: "power3.out" }
+          );
+
+          // Project cards stagger
+          gsap.fromTo(".projects-section__card",
+            { y: 60, opacity: 0, scale: 0.95 },
+            { scrollTrigger: { trigger: containerRef.current, start: "top 85%" }, y: 0, opacity: 1, scale: 1, duration: 0.8, stagger: 0.12, ease: "power3.out" }
+          );
+
+          // Cleanup: revert SplitText instances on unmount
+          return () => {
+            splitInstances.forEach((s) => s.revert());
+          };
+        });
+
+        mm.add("(prefers-reduced-motion: reduce)", () => {
+          // No SplitText -- instant heading reveal
+          const headings = containerRef.current?.querySelectorAll(".split-heading");
+          headings?.forEach((heading) => {
+            gsap.set(heading, { opacity: 1 });
+          });
+
+          // Projects heading -- instant reveal, no slide-in
+          gsap.fromTo(".projects-section__heading",
+            { opacity: 0 },
+            { scrollTrigger: { trigger: containerRef.current, start: "top 85%" }, opacity: 1, duration: 0 }
+          );
+
+          // Project cards -- instant opacity reveal with ScrollTrigger
+          gsap.fromTo(".projects-section__card",
+            { opacity: 0 },
+            { scrollTrigger: { trigger: containerRef.current, start: "top 85%" }, opacity: 1, duration: 0 }
           );
         });
 
-        // Projects heading slide-in
-        gsap.fromTo(".projects-section__heading",
-          { x: -50, opacity: 0 },
-          { scrollTrigger: { trigger: containerRef.current, start: "top 85%" }, x: 0, opacity: 1, duration: 0.7, ease: "power3.out" }
-        );
-
-        // Project cards stagger
-        gsap.fromTo(".projects-section__card",
-          { y: 60, opacity: 0, scale: 0.95 },
-          { scrollTrigger: { trigger: containerRef.current, start: "top 85%" }, y: 0, opacity: 1, scale: 1, duration: 0.8, stagger: 0.12, ease: "power3.out" }
-        );
-
-        // Cleanup: revert SplitText instances on unmount
-        return () => {
-          splitInstances.forEach((s) => s.revert());
-        };
-      });
-
-      mm.add("(prefers-reduced-motion: reduce)", () => {
-        // No SplitText -- instant heading reveal
-        const headings = containerRef.current?.querySelectorAll(".split-heading");
-        headings?.forEach((heading) => {
-          gsap.set(heading, { opacity: 1 });
-        });
-
-        // Projects heading -- instant reveal, no slide-in
-        gsap.fromTo(".projects-section__heading",
-          { opacity: 0 },
-          { scrollTrigger: { trigger: containerRef.current, start: "top 85%" }, opacity: 1, duration: 0 }
-        );
-
-        // Project cards -- instant opacity reveal with ScrollTrigger
-        gsap.fromTo(".projects-section__card",
-          { opacity: 0 },
-          { scrollTrigger: { trigger: containerRef.current, start: "top 85%" }, opacity: 1, duration: 0 }
-        );
-      });
-
-      // Recalculate trigger positions after hydration paint
-      requestAnimationFrame(() => {
+        // Recalculate trigger positions after hydration paint
         requestAnimationFrame(() => {
-          ScrollTrigger.refresh(true);
+          requestAnimationFrame(() => {
+            ScrollTrigger.refresh(true);
+          });
         });
-      });
+      })();
     },
     { scope: containerRef }
   );

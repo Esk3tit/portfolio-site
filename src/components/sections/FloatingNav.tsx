@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { gsap, useGSAP } from "@/lib/gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { initGSAP, useGSAP } from "@/lib/gsap";
 import { useLenis } from "lenis/react";
 import { DarkModeToggle } from "@/components/ui/DarkModeToggle";
 
@@ -19,35 +18,41 @@ export function FloatingNav() {
   const lenis = useLenis();
 
   useGSAP(() => {
-    const mm = gsap.matchMedia();
+    (async () => {
+      await initGSAP();
+      const { gsap, ScrollTrigger } = await import("@/lib/gsap");
+      if (!gsap || !ScrollTrigger) return;
 
-    // ScrollTrigger section tracking works in both modes (state-driven, not animation)
-    const setupScrollTracking = () => {
-      sections.forEach((section) => {
-        ScrollTrigger.create({
-          trigger: `#${section.id}`,
-          start: "top 50%",
-          end: "bottom 50%",
-          onEnter: () => setActiveSection(section.id),
-          onEnterBack: () => setActiveSection(section.id),
+      const mm = gsap.matchMedia();
+
+      // ScrollTrigger section tracking works in both modes (state-driven, not animation)
+      const setupScrollTracking = () => {
+        sections.forEach((section) => {
+          ScrollTrigger.create({
+            trigger: `#${section.id}`,
+            start: "top 50%",
+            end: "bottom 50%",
+            onEnter: () => setActiveSection(section.id),
+            onEnterBack: () => setActiveSection(section.id),
+          });
+        });
+      };
+
+      mm.add("(prefers-reduced-motion: no-preference)", () => {
+        setupScrollTracking();
+      });
+
+      mm.add("(prefers-reduced-motion: reduce)", () => {
+        setupScrollTracking();
+      });
+
+      // Refresh after hydration to ensure correct trigger positions
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          ScrollTrigger.refresh(true);
         });
       });
-    };
-
-    mm.add("(prefers-reduced-motion: no-preference)", () => {
-      setupScrollTracking();
-    });
-
-    mm.add("(prefers-reduced-motion: reduce)", () => {
-      setupScrollTracking();
-    });
-
-    // Refresh after hydration to ensure correct trigger positions
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        ScrollTrigger.refresh(true);
-      });
-    });
+    })();
   });
 
   const scrollTo = (id: string) => {

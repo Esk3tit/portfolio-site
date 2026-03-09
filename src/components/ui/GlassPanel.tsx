@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useCallback, type ReactNode, type CSSProperties } from "react";
-import { gsap } from "@/lib/gsap";
+import { initGSAP } from "@/lib/gsap";
 
 interface GlassPanelProps {
   children: ReactNode;
@@ -27,10 +27,14 @@ export function GlassPanel({
   const panelRef = useRef<HTMLDivElement>(null);
 
   const onMouseMove = useCallback(
-    (e: React.MouseEvent<HTMLElement>) => {
+    async (e: React.MouseEvent<HTMLElement>) => {
       if (!tilt || !panelRef.current) return;
       // Only on devices with hover capability
       if (!window.matchMedia("(hover: hover)").matches) return;
+
+      await initGSAP();
+      const { gsap } = await import("@/lib/gsap");
+      if (!gsap) return;
 
       const rect = panelRef.current.getBoundingClientRect();
       const centerX = rect.left + rect.width / 2;
@@ -44,14 +48,19 @@ export function GlassPanel({
         duration: 0.4,
         ease: "power2.out",
         transformPerspective: 800,
-        overwrite: true,
+        overwrite: "auto",
       });
     },
     [tilt]
   );
 
-  const onMouseLeave = useCallback(() => {
+  const onMouseLeave = useCallback(async () => {
     if (!tilt || !panelRef.current) return;
+
+    await initGSAP();
+    const { gsap } = await import("@/lib/gsap");
+    if (!gsap) return;
+
     gsap.to(panelRef.current, {
       rotateX: 0,
       rotateY: 0,
@@ -67,8 +76,8 @@ export function GlassPanel({
       style={{
         background:
           "linear-gradient(160deg, var(--glass-fill) 0%, var(--glass-fill-end) 100%)",
-        backdropFilter: "blur(40px) saturate(1.6)",
-        WebkitBackdropFilter: "blur(40px) saturate(1.6)",
+        backdropFilter: "blur(var(--glass-blur)) saturate(var(--glass-saturate))",
+        WebkitBackdropFilter: "blur(var(--glass-blur)) saturate(var(--glass-saturate))",
         border: "3px solid var(--glass-border)",
         boxShadow: shadow,
         transition: "background 0.35s ease, border-color 0.35s ease",

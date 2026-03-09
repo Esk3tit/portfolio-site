@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { gsap, ScrollTrigger, useGSAP, SplitText } from "@/lib/gsap";
+import { initGSAP, useGSAP } from "@/lib/gsap";
 import { skillCategories } from "@/data/content";
 import { GlassPanel } from "@/components/ui/GlassPanel";
 import { NeoBrutalHeading } from "@/components/ui/NeoBrutalHeading";
@@ -12,63 +12,69 @@ export function SkillsSection() {
 
   useGSAP(
     () => {
-      const mm = gsap.matchMedia();
+      (async () => {
+        await initGSAP();
+        const { gsap, ScrollTrigger, SplitText } = await import("@/lib/gsap");
+        if (!gsap || !ScrollTrigger || !SplitText) return;
 
-      mm.add("(prefers-reduced-motion: no-preference)", () => {
-        // Track SplitText instances for cleanup
-        const splitInstances: InstanceType<typeof SplitText>[] = [];
+        const mm = gsap.matchMedia();
 
-        // Word-split heading animation
-        const headings = containerRef.current?.querySelectorAll(".split-heading");
-        headings?.forEach((heading) => {
-          const split = new SplitText(heading, { type: "words" });
-          splitInstances.push(split);
-          gsap.fromTo(
-            split.words,
+        mm.add("(prefers-reduced-motion: no-preference)", () => {
+          // Track SplitText instances for cleanup
+          const splitInstances: InstanceType<typeof SplitText>[] = [];
+
+          // Word-split heading animation
+          const headings = containerRef.current?.querySelectorAll(".split-heading");
+          headings?.forEach((heading) => {
+            const split = new SplitText(heading, { type: "words" });
+            splitInstances.push(split);
+            gsap.fromTo(
+              split.words,
+              { y: 40, opacity: 0 },
+              {
+                y: 0,
+                opacity: 1,
+                duration: 0.6,
+                stagger: 0.08,
+                ease: "power3.out",
+                scrollTrigger: { trigger: heading, start: "top 85%" },
+              }
+            );
+          });
+
+          // Skill categories stagger animation
+          gsap.fromTo(".skills-section__category",
             { y: 40, opacity: 0 },
-            {
-              y: 0,
-              opacity: 1,
-              duration: 0.6,
-              stagger: 0.08,
-              ease: "power3.out",
-              scrollTrigger: { trigger: heading, start: "top 85%" },
-            }
+            { scrollTrigger: { trigger: containerRef.current, start: "top 85%" }, y: 0, opacity: 1, duration: 0.7, stagger: 0.1, ease: "power3.out" }
+          );
+
+          // Cleanup: revert SplitText instances on unmount
+          return () => {
+            splitInstances.forEach((s) => s.revert());
+          };
+        });
+
+        mm.add("(prefers-reduced-motion: reduce)", () => {
+          // No SplitText -- instant heading reveal
+          const headings = containerRef.current?.querySelectorAll(".split-heading");
+          headings?.forEach((heading) => {
+            gsap.set(heading, { opacity: 1 });
+          });
+
+          // Skill categories -- instant opacity reveal with ScrollTrigger
+          gsap.fromTo(".skills-section__category",
+            { opacity: 0 },
+            { scrollTrigger: { trigger: containerRef.current, start: "top 85%" }, opacity: 1, duration: 0 }
           );
         });
 
-        // Skill categories stagger animation
-        gsap.fromTo(".skills-section__category",
-          { y: 40, opacity: 0 },
-          { scrollTrigger: { trigger: containerRef.current, start: "top 85%" }, y: 0, opacity: 1, duration: 0.7, stagger: 0.1, ease: "power3.out" }
-        );
-
-        // Cleanup: revert SplitText instances on unmount
-        return () => {
-          splitInstances.forEach((s) => s.revert());
-        };
-      });
-
-      mm.add("(prefers-reduced-motion: reduce)", () => {
-        // No SplitText -- instant heading reveal
-        const headings = containerRef.current?.querySelectorAll(".split-heading");
-        headings?.forEach((heading) => {
-          gsap.set(heading, { opacity: 1 });
-        });
-
-        // Skill categories -- instant opacity reveal with ScrollTrigger
-        gsap.fromTo(".skills-section__category",
-          { opacity: 0 },
-          { scrollTrigger: { trigger: containerRef.current, start: "top 85%" }, opacity: 1, duration: 0 }
-        );
-      });
-
-      // Recalculate trigger positions after hydration paint
-      requestAnimationFrame(() => {
+        // Recalculate trigger positions after hydration paint
         requestAnimationFrame(() => {
-          ScrollTrigger.refresh(true);
+          requestAnimationFrame(() => {
+            ScrollTrigger.refresh(true);
+          });
         });
-      });
+      })();
     },
     { scope: containerRef }
   );

@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useCallback, type ReactNode } from "react";
-import { gsap } from "@/lib/gsap";
+import { initGSAP } from "@/lib/gsap";
 
 interface NeoBrutalTagProps {
   children: ReactNode;
@@ -11,10 +11,15 @@ interface NeoBrutalTagProps {
 export function NeoBrutalTag({ children, className = "" }: NeoBrutalTagProps) {
   const tagRef = useRef<HTMLSpanElement>(null);
 
-  const onMouseEnter = useCallback(() => {
+  const onMouseEnter = useCallback(async () => {
     // Only animate on devices with hover capability
     if (!window.matchMedia("(hover: hover)").matches) return;
     if (!tagRef.current) return;
+
+    await initGSAP();
+    const { gsap } = await import("@/lib/gsap");
+    if (!gsap) return;
+
     const el = tagRef.current;
     // Wiggle side-to-side then settle with a scale pop
     gsap.timeline()
@@ -24,8 +29,13 @@ export function NeoBrutalTag({ children, className = "" }: NeoBrutalTagProps) {
       .to(el, { rotation: gsap.utils.random(-1, 1), scale: 1.1, duration: 0.15, ease: "elastic.out(1, 0.5)" });
   }, []);
 
-  const onMouseLeave = useCallback(() => {
+  const onMouseLeave = useCallback(async () => {
     if (!tagRef.current) return;
+
+    await initGSAP();
+    const { gsap } = await import("@/lib/gsap");
+    if (!gsap) return;
+
     gsap.to(tagRef.current, {
       rotation: 0,
       scale: 1,

@@ -2,7 +2,7 @@
 
 import { ReactLenis, type LenisRef } from "lenis/react";
 import { useEffect, useRef, useState } from "react";
-import { gsap } from "@/lib/gsap";
+import { initGSAP } from "@/lib/gsap";
 
 export function SmoothScrollProvider({
   children,
@@ -26,14 +26,29 @@ export function SmoothScrollProvider({
   useEffect(() => {
     if (prefersReducedMotion) return;
 
-    function update(time: number) {
-      lenisRef.current?.lenis?.raf(time * 1000);
-    }
-    gsap.ticker.add(update);
-    gsap.ticker.lagSmoothing(0);
+    let cancelled = false;
+    let removeUpdate: (() => void) | null = null;
+
+    (async () => {
+      await initGSAP();
+      if (cancelled) return;
+      const { gsap } = await import("@/lib/gsap");
+      if (!gsap || cancelled) return;
+
+      function update(time: number) {
+        lenisRef.current?.lenis?.raf(time * 1000);
+      }
+      gsap.ticker.add(update);
+      gsap.ticker.lagSmoothing(0);
+
+      removeUpdate = () => {
+        gsap.ticker.remove(update);
+      };
+    })();
 
     return () => {
-      gsap.ticker.remove(update);
+      cancelled = true;
+      if (removeUpdate) removeUpdate();
     };
   }, [prefersReducedMotion]);
 
