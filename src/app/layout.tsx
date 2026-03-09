@@ -16,8 +16,31 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "Khai Phan - Software Engineer",
+  metadataBase: new URL("https://khaiphan.dev"),
+  title: "Khai Phan",
   description: "I build software. Sometimes it's good.",
+  openGraph: {
+    title: "Khai Phan",
+    description: "I build software. Sometimes it's good.",
+    url: "https://khaiphan.dev",
+    siteName: "Khai Phan",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Khai Phan - Software Engineer",
+      },
+    ],
+    type: "website",
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Khai Phan",
+    description: "I build software. Sometimes it's good.",
+    images: ["/og-image.png"],
+  },
   other: {
     "apple-mobile-web-app-title": "Khai Phan",
   },
