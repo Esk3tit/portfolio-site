@@ -13,6 +13,8 @@
 
 /* ─── Theme custom properties ─── */
 :root {
+  --glass-blur: 40px;
+  --glass-saturate: 1.6;
   --glass-fill: rgba(255, 255, 255, 0.08);
   --glass-fill-end: rgba(255, 255, 255, 0.03);
   --glass-border: #3d3248;
@@ -43,6 +45,13 @@
   --tag-bg: rgba(255, 255, 255, 0.12);
   --heading-bg: rgba(61, 50, 72, 0.6);
   --hero-tagline-bg: rgba(30, 25, 40, 0.8);
+}
+
+@media (max-width: 639px) {
+  :root {
+    --glass-blur: 12px;
+    --glass-saturate: 1.3;
+  }
 }
 
 html {
