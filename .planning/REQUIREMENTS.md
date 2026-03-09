@@ -37,7 +37,7 @@ Requirements for the Cleanup and Launch milestone. Each maps to roadmap phases.
 - [x] **META-01**: Open Graph meta tags (title, description, image, url) for proper link previews
 - [x] **META-02**: Twitter card meta tags
 - [x] **META-03**: OG image (1200x630) created and committed
-- [ ] **PERF-01**: Lighthouse mobile score >= 90
+- [x] **PERF-01**: Lighthouse mobile score >= 90
 
 ## v2 Requirements
 
@@ -88,7 +88,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | META-01 | Phase 8 | Complete |
 | META-02 | Phase 8 | Complete |
 | META-03 | Phase 8 | Complete |
-| PERF-01 | Phase 8 | Pending |
+| PERF-01 | Phase 8 | Complete |
 
 **Coverage:**
 - v4.3 requirements: 20 total
