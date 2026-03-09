@@ -2,10 +2,10 @@
 gsd_state_version: 1.0
 milestone: v4.3
 milestone_name: Cleanup and Launch
-status: completed
-stopped_at: Completed 08-02-PLAN.md -- all phases complete
-last_updated: "2026-03-09T03:15:49.837Z"
-last_activity: 2026-03-09 -- Completed 08-02 GSAP code-splitting and mobile blur optimization
+status: archived
+stopped_at: Milestone v4.3 archived
+last_updated: "2026-03-09"
+last_activity: 2026-03-09 -- Milestone v4.3 archived
 progress:
   total_phases: 5
   completed_phases: 5
@@ -18,94 +18,33 @@ progress:
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-03-07)
+See: .planning/PROJECT.md (updated 2026-03-09)
 
 **Core value:** Visitors immediately get a sense of Khai's personality and technical ability through a portfolio that is as engaging to interact with as the work it showcases.
-**Current focus:** Phase 8 - Meta and Performance
+**Current focus:** Planning next milestone
 
 ## Current Position
 
-Phase: 8 of 8 (Meta and Performance)
-Plan: 2 of 2 in current phase (complete)
-Status: Complete
-Last activity: 2026-03-09 -- Completed 08-02 GSAP code-splitting and mobile blur optimization
+Milestone v4.3 Cleanup and Launch: SHIPPED 2026-03-09
+All 5 phases (10 plans) complete and archived.
 
 Progress: [██████████] 100%
-
-## Performance Metrics
-
-**Velocity:**
-- Total plans completed: 1 (v4.3)
-- Average duration: 2min
-- Total execution time: 2min
-
-**By Phase:**
-
-| Phase | Plans | Total | Avg/Plan |
-|-------|-------|-------|----------|
-| 04-code-cleanup P01 | 2min | 2 tasks | 19 files |
-
-**Recent Trend:**
-- Last 5 plans: 2min
-- Trend: -
-
-| Phase 04 P02 | 1min | 2 tasks | 1 files |
-| Phase 05 P01 | 3min | 2 tasks | 7 files |
-| Phase 05 P02 | 3min | 2 tasks | 3 files |
-| Phase 06 P01 | 3min | 2 tasks | 3 files |
-| Phase 06 P02 | 2min | 2 tasks | 9 files |
-
-*Updated after each plan completion*
-| Phase 07 P01 | 2min | 2 tasks | 10 files |
-| Phase 07 P02 | 3min | 2 tasks | 10 files |
-| Phase 08 P01 | 3min | 2 tasks | 5 files |
-| Phase 08 P02 | 6min | 2 tasks | 15 files |
-| Phase 08 P01 | 2min | 2 tasks | 2 files |
 
 ## Accumulated Context
 
 ### Decisions
 
-Decisions are logged in PROJECT.md Key Decisions table.
-Recent decisions affecting current work:
-
-- [v4.2]: Exploration6.tsx as main page -- single file renders at `/`, v4.3 extracts it
-- [v4.2]: CSS banana cursor replacing GSAP dot follower -- user feedback on lag
-- [v4.2]: GSAP as single animation engine (no Framer Motion)
-- [Phase 04-code-cleanup]: Favicon files placed in src/app/ per Next.js App Router convention for automatic metadata
-- [Phase 04]: All CSS custom properties confirmed actively used -- none removed during dead code sweep
-- [Phase 05-01]: Each section owns its own containerRef and useGSAP scope for independent hot-reload
-- [Phase 05-01]: BEM naming convention: {section}-section__{element} replaces all e6-* prefixes
-- [Phase 05-02]: Gradient animation uses useEffect + gsap.to on documentElement (not useGSAP scope)
-- [Phase 05-02]: MutationObserver watches class attribute for dark mode toggle to restart gradient
-- [Phase 06-01]: Visibility-hidden mount pattern for GSAP drawer targets (not conditional render)
-- [Phase 06-01]: DarkModeToggle size prop with proportional fontSize scaling (14/32 ratio)
-- [Phase 06-02]: NeoBrutalTag kept without 44px touch target -- purely decorative, no onClick
-- [Phase 06-02]: Touch target pattern: min-h-[44px] sm:min-h-0 for interactive mobile elements
-- [Phase 07-01]: --accent-purple-text (#7d65a8) for readable accent text in light theme (job titles)
-- [Phase 07-01]: Project headerColor darkened to pass 4.5:1 with white: #8a6474, #7a5ea6, #5a8aad
-- [Phase 07-01]: :focus-visible pattern with 2px accent-purple outline, mouse clicks suppressed
-- [Phase 07]: Synchronous matchMedia check in gradient callback to avoid flash before state resolves
-- [Phase 07]: gsap.matchMedia() pattern: no-preference branch has full animations, reduce branch has instant opacity reveals
-- [Phase 08-02]: Async IIFE inside useGSAP callbacks for dynamic import pattern
-- [Phase 08-02]: initGSAP singleton with Promise caching prevents duplicate loads
-- [Phase 08-02]: 12px mobile blur threshold under 20px GPU cost limit
-- [Phase 08-02]: Event handler components lazy-load gsap on first interaction
-- [Phase 08-01]: OG image generated programmatically with canvas, script removed -- PNG is the artifact
-- [Phase 08-01]: Page title simplified to "Khai Phan" for cleaner social cards
-- [Phase 08-01]: metadataBase set to https://khaiphan.dev for absolute URL resolution
+All decisions logged in PROJECT.md Key Decisions table.
 
 ### Pending Todos
 
-None yet.
+None.
 
 ### Blockers/Concerns
 
-- [Research]: Lighthouse 90+ mobile is MEDIUM confidence -- GSAP bundle + backdrop-filter may need iterative tuning in Phase 8
-- [RESOLVED]: `--text-secondary` fixed from #8a7d96 to #6d6080 in Phase 07-01
-- [Research]: SplitText `autoSplit` with gradient text needs validation during Phase 5/6
+None -- all resolved during v4.3.
 
 ## Session Continuity
 
-Last session: 2026-03-09T03:11:47Z
-Stopped at: Completed 08-02-PLAN.md -- all phases complete
+Last session: 2026-03-09
+Stopped at: Milestone v4.3 archived

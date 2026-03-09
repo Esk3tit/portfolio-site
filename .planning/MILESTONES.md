@@ -1,5 +1,26 @@
 # Milestones
 
+## v4.3 Cleanup and Launch (Shipped: 2026-03-09)
+
+**Phases completed:** 5 phases, 10 plans
+**Git range:** `docs(06)` .. `docs(v4.3)`
+**Timeline:** 2 days (2026-03-07 to 2026-03-09)
+**Stats:** 54 files changed, 5,564 insertions, 468 deletions | 41 commits
+
+**Key accomplishments:**
+- Cleaned codebase — removed explore routes, Vercel defaults, dead code, replaced favicon
+- Extracted Exploration6 monolith into 6 independent section components with scoped GSAP animations
+- Built responsive design with mobile hamburger nav, glass drawer, and 44px touch targets
+- Added full accessibility — semantic HTML, keyboard nav, focus-visible, skip-to-content, WCAG AA contrast
+- Implemented prefers-reduced-motion with gsap.matchMedia() branching across all animations
+- Added OG/Twitter meta tags, created OG image, code-split GSAP via dynamic imports for Lighthouse 90+
+
+**Tech debt (non-critical):**
+- 4 content TODOs in content.ts (resume PDF, dates, descriptions, email)
+- Empty src/components/explorations/ directory (cosmetic)
+
+---
+
 ## v4.2 Foundation through Interactivity (Shipped: 2026-03-07)
 
 **Phases completed:** 3 phases, 10 plans

@@ -30,30 +30,22 @@ Visitors immediately get a sense of Khai's personality and technical ability thr
 - ✓ Hover micro-interactions on buttons, links, and cards -- v4.2
 - ✓ Text reveal animations with SplitText on headings -- v4.2
 - ✓ Vercel deployment with static export (Next.js 16 + Tailwind v4.2 + GSAP 3.14 + Lenis) -- v4.2
-
-## Current Milestone: v4.3 Cleanup and Launch
-
-**Goal:** Clean up the codebase (remove explore pages, extract components, swap assets), make the site responsive and accessible, and deploy to production at khaiphan.dev.
-
-**Target features:**
-- Remove explore pages and Vercel default assets
-- Extract Exploration6 into separate section components
-- Favicon and assets from old portfolio
-- Responsive design across breakpoints
-- Accessibility, reduced-motion, OG tags
-- Lighthouse mobile 90+ and Vercel deploy
+- ✓ Remove explore pages and Vercel default assets -- v4.3
+- ✓ Extract Exploration6.tsx into 6 independent section components -- v4.3
+- ✓ Remove dead code (orphaned CSS, unused imports) -- v4.3
+- ✓ Replace favicon with old portfolio favicon -- v4.3
+- ✓ Responsive design across mobile, tablet, and desktop breakpoints -- v4.3
+- ✓ Mobile navigation with hamburger menu and glass drawer -- v4.3
+- ✓ Open Graph and Twitter Card meta tags for social previews -- v4.3
+- ✓ prefers-reduced-motion support with gsap.matchMedia() branching -- v4.3
+- ✓ Semantic HTML, keyboard navigation, focus-visible, skip-to-content -- v4.3
+- ✓ WCAG AA color contrast in both themes -- v4.3
+- ✓ ARIA labels on interactive elements -- v4.3
+- ✓ Lighthouse mobile score 90+ via GSAP code-splitting -- v4.3
 
 ### Active
 
-- [ ] Remove explore pages (`/explore/[id]`, explorations 1-5, explore index)
-- [ ] Extract Exploration6.tsx into separate section components (Hero, About, Experience, Skills, Projects, Contact)
-- [ ] Remove Vercel default assets and dead code (orphaned CSS, unused imports)
-- [ ] Replace favicon with old portfolio favicon
-- [ ] Responsive design across mobile, tablet, and desktop breakpoints
-- [ ] Open Graph and social meta tags for proper link preview
-- [ ] `prefers-reduced-motion` support -- replace animations with fades/opacity
-- [ ] Semantic HTML structure and keyboard accessibility (aria labels, focus management, color contrast)
-- [ ] Performance budget -- Lighthouse mobile score >= 90
+(None -- planning next milestone)
 
 ### Out of Scope
 
@@ -69,9 +61,12 @@ Visitors immediately get a sense of Khai's personality and technical ability thr
 
 ## Context
 
-Shipped v4.2 with 3,014 LOC TypeScript/TSX/CSS across 69 files.
-Tech stack: Next.js 16, Tailwind v4.2, GSAP 3.14 (with SplitText), Lenis smooth scroll.
+Shipped v4.3 with ~8,100 lines across 70+ files.
+Tech stack: Next.js 16, Tailwind v4.2, GSAP 3.14 (code-split via dynamic imports), Lenis smooth scroll.
 Design: Liquid Glass + Neobrutalism hybrid -- see-through glass panels with specular rims, 3px #3d3248 borders, offset shadows, warm mid-tone gradient background.
+Architecture: 6 independent section components (Hero, About, Experience, Skills, Projects, Contact) with scoped GSAP animations.
+Responsive: Mobile hamburger nav with glass drawer, touch-friendly targets, fluid typography.
+Accessible: Semantic HTML, keyboard nav, focus-visible, skip-to-content, WCAG AA contrast, prefers-reduced-motion.
 Content data in `src/data/content.ts` with TODO markers for Khai to personalize (resume PDF, email, experience details).
 
 ## Key Decisions
@@ -89,6 +84,13 @@ Content data in `src/data/content.ts` with TODO markers for Khai to personalize 
 | CSS custom properties for theming (not Tailwind dark:) | Full control over theme switching with MutationObserver | ✓ Good |
 | CSS banana cursor replacing GSAP dot follower | User feedback: GSAP cursor had visible lag | ✓ Good |
 | SplitText word split for headings, char split for hero | Visual hierarchy -- hero gets more dramatic reveal | ✓ Good |
+| BEM naming convention ({section}-section__{element}) | Clear component boundaries, replaces e6-* prefixes | ✓ Good |
+| Each section owns containerRef + useGSAP scope | Independent hot-reload, scoped animations | ✓ Good |
+| Visibility-hidden mount for GSAP drawer targets | Avoids conditional render breaking GSAP refs | ✓ Good |
+| gsap.matchMedia() for reduced-motion branching | Full animations vs instant opacity reveals per preference | ✓ Good |
+| initGSAP singleton with Promise caching | Prevents duplicate dynamic imports across 13 consumers | ✓ Good |
+| 12px mobile blur threshold | Under 20px GPU cost limit for mobile performance | ✓ Good |
+| metadataBase set to https://khaiphan.dev | Absolute URL resolution for OG tags | ✓ Good |
 
 ## Constraints
 
@@ -98,4 +100,4 @@ Content data in `src/data/content.ts` with TODO markers for Khai to personalize 
 - **Accessibility**: Creative layout must remain navigable and readable
 
 ---
-*Last updated: 2026-03-07 after v4.3 milestone start*
+*Last updated: 2026-03-09 after v4.3 milestone*
