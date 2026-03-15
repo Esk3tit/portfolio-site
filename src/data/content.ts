@@ -1,6 +1,5 @@
 // ─── Portfolio Content Data ───
 // Single source of truth for all portfolio copy.
-// TODO: Replace public/resume.pdf with Khai's actual resume PDF.
 
 // ─── Types ───
 
@@ -78,28 +77,49 @@ export const aboutPanels: AboutPanel[] = [
 ];
 
 // ─── Experience ───
-// TODO: Khai -- verify dates, titles, and bullet points for accuracy.
 
 export const experiences: Experience[] = [
   {
-    company: "RealAssist.AI",
-    title: "Software Engineer",
-    dates: "2023 -- Present",
-    emoji: "\u{1F3E0}",
+    company: "PromptArmor (YC W24)",
+    title: "Founding Engineer",
+    dates: "Oct 2025 -- Present",
+    emoji: "\u{1F6E1}\uFE0F",
     bullets: [
-      "Built full-stack property analysis platform processing 10k+ reports/month with React, Node.js, and PostgreSQL",
-      "Architected real-time data pipeline integrating 5+ third-party APIs for automated property insights",
-      "Led frontend redesign that improved user engagement by 40% through interactive data visualizations",
+      "Engineered an internal shareable alerts system enabling customers to route security risk alerts to business owners; adopted by 31 organizations",
+      "Refined internal platform for publishing reports and monitoring vendors in 2 weeks, cutting weekly rate of reports requiring manual intervention from 70% to 0%",
+      "Shipped end-to-end vendor tagging using Python's OpenAI SDK, labeling 20,000 vendors with security metadata and building an internal control panel to manage tags",
+      "Developed an LLM-powered pipeline to extract AI security settings/configurations, increasing actionable findings on reports and reducing customer AI risk",
     ],
   },
   {
-    company: "UC Davis",
-    title: "Computer Science, B.S.",
-    dates: "2019 -- 2023",
+    company: "Tesla",
+    title: "Software Engineer",
+    dates: "Jan 2024 -- Oct 2025",
+    emoji: "\u{26A1}",
+    bullets: [
+      "Integrated automated screenshot capture into automated test reports, reclaiming 16 team-hours weekly for 4 engineers by streamlining debugging processes",
+      "Developed and rapidly iterated on 12 REST API endpoints using Golang in collaboration with CATL, integrating Tesla's employee data with CATL's user management system",
+      "Implemented an AI Test Automation agent using Python and the Agno library to reduce time spent writing boilerplate end-to-end test code by 1.5 hours per week",
+      "Automated test environment deployment in CI/CD pipeline by developing a custom tool in Go, eliminating 3 hours weekly of manual release regression setup",
+    ],
+  },
+  {
+    company: "Cue Health",
+    title: "Software Development Intern",
+    dates: "Jun 2023 -- Aug 2023",
+    emoji: "\u{1FA7A}",
+    bullets: [
+      "Reduced the time to treatment recommendation for customers by 21.7% by implementing multi-select widget answers in the health chatbot using OpenAI API and Java",
+      "Enhanced chatbot recommendation capabilities by researching, comparing, and integrating the best of 3 vector databases for suggesting relevant blog posts to end users",
+    ],
+  },
+  {
+    company: "Oregon State University",
+    title: "B.S. Computer Science",
+    dates: "Sep 2019 -- Sep 2023",
     emoji: "\u{1F393}",
     bullets: [
-      "Studied algorithms, systems programming, and software engineering fundamentals",
-      "Built multiple full-stack projects spanning web dev, systems, and developer tooling",
+      "Dean's List/Honor Roll (all terms); Summa Cum Laude; GPA: 3.98/4.00",
     ],
   },
 ];
@@ -110,111 +130,69 @@ export const skillCategories: SkillCategory[] = [
   {
     name: "Languages",
     emoji: "\u{1F4DD}",
-    skills: ["Python", "C++", "JavaScript", "TypeScript", "Go", "Java", "SQL"],
+    skills: ["Python", "JavaScript", "TypeScript", "SQL", "HTML", "CSS", "Golang", "C", "C++"],
   },
   {
-    name: "Frameworks & Libraries",
+    name: "Frameworks",
     emoji: "\u{2699}\uFE0F",
-    skills: ["React", "Next.js", "Node.js", "Express", "Flask", "Django"],
+    skills: ["React", "Next.js", "FastAPI", "Node.js", "Express.js", "Flask"],
   },
   {
-    name: "Cloud & DevOps",
+    name: "Technologies",
     emoji: "\u2601\uFE0F",
-    skills: ["AWS", "Docker", "Kubernetes", "CI/CD", "Git", "Linux"],
-  },
-  {
-    name: "Design & UI",
-    emoji: "\u{1F3A8}",
-    skills: ["Tailwind CSS", "GSAP", "Figma", "Motion Design", "Responsive Design"],
+    skills: ["Git", "Docker", "PostgreSQL", "REST APIs", "Claude Code", "AWS", "Kubernetes", "Redis"],
   },
 ];
 
 // ─── Projects ───
-// TODO: Khai -- enrich descriptions and verify details for each project.
 
 export const projects: Project[] = [
   {
-    emoji: "\u{1F3C6}",
-    title: "L33tC0de Tracker",
+    emoji: "\u{1F3AF}",
+    title: "WTCS Map Ban",
     description:
-      "A webapp to track your LeetCode grind so you can finally stop pretending you remember two-pointer from three months ago.",
-    tags: ["React", "Node.js", "MongoDB", "LeetCode API"],
+      "A real-time map-ban voting web app used by 127 members of the official War Thunder eSports team for tournament matches.",
+    tags: ["React", "TypeScript", "Convex", "Netlify", "Tailwind"],
     headerColor: "#8a6474",
-    github: "https://github.com/Esk3tit/l33tcode-tracker",
+    github: "https://github.com/Esk3tit/wtcs-map-ban",
     problem:
-      "LeetCode's built-in tracking is minimal -- you can't easily see which patterns you're weak on or when you last practiced a topic.",
+      "War Thunder eSports teams needed a way to coordinate map bans during tournament matches -- no existing tool handled real-time voting with fraud prevention.",
     approach:
-      "Built a full-stack tracker with spaced repetition logic that surfaces problems you're due to revisit, grouped by pattern and difficulty.",
+      "Built a real-time voting app with Convex for live data sync, rate limiting, observability, and voting fraud prevention measures.",
     highlights: [
-      "Spaced repetition algorithm for optimal review scheduling",
-      "Pattern-based grouping (sliding window, DP, graphs, etc.)",
-      "Progress dashboard with streak tracking and weak-spot analysis",
+      "Real-time map-ban voting with live sync across 127 team members",
+      "Productionized with rate limiting, telemetry, and fraud prevention",
+      "300+ unit tests and 12+ end-to-end tests running in GitHub Actions",
     ],
   },
   {
-    emoji: "\u{1F4F1}",
-    title: "AIPhone But Better",
+    emoji: "\u{1F916}",
+    title: "Akula Bot",
     description:
-      "An AI-powered phone interface that's somehow less annoying than your actual phone. Voice-first, context-aware, and actually useful.",
-    tags: ["Python", "OpenAI API", "React Native", "WebSocket"],
+      "A Twitch stream notification Discord bot used by ~250 users across 3 servers. Because missing a stream is a war crime.",
+    tags: ["Python", "discord.py", "PostgreSQL", "pytest", "Fly.io"],
     headerColor: "#7a5ea6",
-    github: "https://github.com/Esk3tit/aiphone-but-better",
+    github: "https://github.com/Esk3tit/akula-bot",
     problem:
-      "Existing AI assistants feel disconnected from how you actually use your phone -- they're bolted on, not built in.",
+      "Discord users kept missing Twitch streams from their favorite creators -- existing bots were unreliable or bloated with features nobody asked for.",
     approach:
-      "Created a voice-first AI interface that maintains conversation context and integrates with device capabilities for natural interactions.",
+      "Built a focused notification bot with PostgreSQL persistence and a CI/CD pipeline with 30 pytest tests running on a development server environment.",
     highlights: [
-      "Real-time voice processing with streaming responses",
-      "Persistent conversation context across sessions",
-      "Natural language device control (calls, messages, search)",
-    ],
-  },
-  {
-    emoji: "\u{2328}\uFE0F",
-    title: "PyType",
-    description:
-      "A typing test built in Python because sometimes you need to prove you can type fast AND write the thing that tests it.",
-    tags: ["Python", "Curses", "CLI", "Threading"],
-    headerColor: "#5a8aad",
-    github: "https://github.com/Esk3tit/pytype",
-    problem:
-      "Online typing tests are full of ads and distractions. Sometimes you just want a clean, terminal-based experience.",
-    approach:
-      "Built a terminal typing test using Python's curses library with real-time WPM calculation, accuracy tracking, and a clean TUI.",
-    highlights: [
-      "Real-time WPM and accuracy calculation as you type",
-      "Clean terminal UI with curses -- no browser needed",
-      "Multiple difficulty modes with customizable word lists",
-    ],
-  },
-  {
-    emoji: "\u{1F3E0}",
-    title: "RealAssist.AI",
-    description:
-      "Property analysis platform that turns raw real estate data into actually useful insights. Think Zillow meets data science.",
-    tags: ["React", "Node.js", "PostgreSQL", "AWS", "Python"],
-    headerColor: "#8a6474",
-    problem:
-      "Real estate data is scattered across dozens of sources and formats. Agents and investors waste hours manually gathering basic property info.",
-    approach:
-      "Built an automated pipeline that aggregates data from multiple APIs, runs analysis models, and generates comprehensive property reports.",
-    highlights: [
-      "Automated report generation processing 10k+ reports/month",
-      "Interactive data visualizations for property comparisons",
-      "Multi-source data aggregation with 5+ API integrations",
+      "Stream notifications serving ~250 users across 3 Discord servers",
+      "CI/CD pipeline with 30 pytest unit and integration tests",
+      "Deployed on Fly.io with PostgreSQL for reliable uptime",
     ],
   },
 ];
 
 // ─── Contact ───
-// TODO: Khai -- replace placeholder email with your real email.
 
 export const contactLinks: ContactLink[] = [
   {
     name: "Email",
     emoji: "\u{1F4E7}",
-    href: "mailto:khai@example.com",
-    label: "khai@example.com",
+    href: "mailto:khaiphn41@gmail.com",
+    label: "khaiphn41@gmail.com",
   },
   {
     name: "GitHub",
