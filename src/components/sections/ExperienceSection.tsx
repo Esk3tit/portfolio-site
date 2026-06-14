@@ -128,21 +128,78 @@ export function ExperienceSection() {
                   {exp.dates}
                 </p>
 
-                <ul className="mt-4 flex flex-col gap-2">
-                  {exp.bullets.map((bullet) => (
-                    <li
-                      key={bullet}
-                      className="flex items-start gap-2 text-sm leading-relaxed"
-                      style={{ color: "var(--text-body)", transition: "color 0.35s ease" }}
+                {exp.redacted ? (
+                  <>
+                    <ul
+                      className="mt-4 flex flex-col gap-2"
+                      aria-label="Redacted experience details"
                     >
-                      <span
-                        className="mt-1.5 inline-block h-1.5 w-1.5 shrink-0 rounded-full"
-                        style={{ background: "var(--accent-pink)" }}
-                      />
-                      {bullet}
-                    </li>
-                  ))}
-                </ul>
+                      {exp.bullets.map((bullet, bi) => (
+                        <li
+                          key={bi}
+                          className="group/redaction flex cursor-help items-start gap-2 text-sm leading-relaxed"
+                        >
+                          <span
+                            className="mt-1.5 inline-block h-1.5 w-1.5 shrink-0 rounded-full"
+                            style={{ background: "var(--accent-pink)" }}
+                          />
+                          <span className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
+                            <span className="sr-only">
+                              Redacted -- details available in resume
+                            </span>
+                            {/*
+                              Each "word" is a solid black censor bar. The fake
+                              lorem text only sets the bar width; it is rendered
+                              transparent and aria-hidden so nothing meaningful
+                              is exposed to readers, the DOM, or assistive tech.
+                            */}
+                            {bullet.split(" ").map((word, wi) => (
+                              <span
+                                key={wi}
+                                aria-hidden="true"
+                                className="select-none rounded-[3px] border border-white/10 bg-black px-1 leading-none text-transparent"
+                              >
+                                {word}
+                              </span>
+                            ))}
+                            <span
+                              aria-hidden="true"
+                              title="Shhh..."
+                              className="pointer-events-none ml-1 text-base opacity-0 transition-opacity duration-200 group-hover/redaction:opacity-100"
+                            >
+                              {"\u{1F92B}"}
+                            </span>
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                    {exp.disclaimer && (
+                      <p
+                        className="mt-4 flex items-center gap-2 text-sm font-medium italic"
+                        style={{ color: "var(--text-secondary)", transition: "color 0.35s ease" }}
+                      >
+                        <span aria-hidden="true">{"\u{1F910}"}</span>
+                        {exp.disclaimer}
+                      </p>
+                    )}
+                  </>
+                ) : (
+                  <ul className="mt-4 flex flex-col gap-2">
+                    {exp.bullets.map((bullet) => (
+                      <li
+                        key={bullet}
+                        className="flex items-start gap-2 text-sm leading-relaxed"
+                        style={{ color: "var(--text-body)", transition: "color 0.35s ease" }}
+                      >
+                        <span
+                          className="mt-1.5 inline-block h-1.5 w-1.5 shrink-0 rounded-full"
+                          style={{ background: "var(--accent-pink)" }}
+                        />
+                        {bullet}
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
             </GlassPanel>
           ))}

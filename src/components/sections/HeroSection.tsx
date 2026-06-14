@@ -207,7 +207,7 @@ export function HeroSection() {
               {heroContent.ctaText}
             </NeoBrutalButton>
             <NeoBrutalButton
-              href="/Khai Phan Resume 2-6-2026.pdf"
+              href="/Resume.pdf"
               download="Khai_Phan_Resume.pdf"
               color="#a78bcd"
               rotate="-1deg"

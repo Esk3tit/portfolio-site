@@ -9,6 +9,12 @@ export interface Experience {
   dates: string;
   bullets: string[];
   emoji: string;
+  // When true, bullets are rendered as black-ops redaction bars. The strings in
+  // `bullets` are intentionally fake (lorem ipsum) so no real, sensitive copy is
+  // ever shipped to the browser/DOM. Real details live only in the resume PDF.
+  redacted?: boolean;
+  // Visible note explaining why the section is blacked out (shown with 🤐).
+  disclaimer?: string;
 }
 
 export interface Project {
@@ -84,11 +90,18 @@ export const experiences: Experience[] = [
     title: "Founding Engineer",
     dates: "Oct 2025 -- Present",
     emoji: "\u{1F6E1}\uFE0F",
+    redacted: true,
+    disclaimer: "Stealth startup -- full details available in my resume",
+    // NOTE: These are deliberately fake placeholder strings. The real work
+    // descriptions are confidential and intentionally NOT included anywhere in
+    // the site source/DOM. They exist only in the redacted resume PDF. The UI
+    // covers these with solid black redaction bars; even revealed, they say
+    // nothing. Do not replace with real bullet copy.
     bullets: [
-      "Engineered an internal shareable alerts system enabling customers to route security risk alerts to business owners; adopted by 31 organizations",
-      "Refined internal platform for publishing reports and monitoring vendors in 2 weeks, cutting weekly rate of reports requiring manual intervention from 70% to 0%",
-      "Shipped end-to-end vendor tagging using Python's OpenAI SDK, labeling 20,000 vendors with security metadata and building an internal control panel to manage tags",
-      "Developed an LLM-powered pipeline to extract AI security settings/configurations, increasing actionable findings on reports and reducing customer AI risk",
+      "Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt",
+      "Ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea",
+      "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat",
+      "Excepteur sint occaecat cupidatat non proident sunt in culpa qui officia deserunt mollit",
     ],
   },
   {
