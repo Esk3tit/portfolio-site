@@ -9,6 +9,18 @@ export interface Experience {
   dates: string;
   bullets: string[];
   emoji: string;
+  // When true, the experience is rendered as black-ops redaction bars driven by
+  // `redactedBars` (numeric widths only). `bullets` MUST be empty for redacted
+  // entries so no real/sensitive copy is ever shipped to the browser/DOM. Real
+  // details live only in the resume PDF.
+  redacted?: boolean;
+  // Visible note explaining why the section is blacked out (shown with 🤐).
+  disclaimer?: string;
+  // For redacted entries: censor-bar layout as pure widths (approx character
+  // count per "word"), one inner array per bullet. No real text is ever
+  // rendered -- bars are sized purely from these numbers, so a sensitive string
+  // can never reach the DOM/bundle even by accident.
+  redactedBars?: number[][];
 }
 
 export interface Project {
@@ -84,11 +96,21 @@ export const experiences: Experience[] = [
     title: "Founding Engineer",
     dates: "Oct 2025 -- Present",
     emoji: "\u{1F6E1}\uFE0F",
-    bullets: [
-      "Engineered an internal shareable alerts system enabling customers to route security risk alerts to business owners; adopted by 31 organizations",
-      "Refined internal platform for publishing reports and monitoring vendors in 2 weeks, cutting weekly rate of reports requiring manual intervention from 70% to 0%",
-      "Shipped end-to-end vendor tagging using Python's OpenAI SDK, labeling 20,000 vendors with security metadata and building an internal control panel to manage tags",
-      "Developed an LLM-powered pipeline to extract AI security settings/configurations, increasing actionable findings on reports and reducing customer AI risk",
+    redacted: true,
+    disclaimer:
+      "Mum's the word -- technical details are limited to protect proprietary market strategy. The rules are strict, so my lips are sealed!",
+    // No real copy lives here. The redacted card renders solid black bars sized
+    // purely from `redactedBars` below -- there is NO text node to reveal, copy,
+    // or scrape. The actual descriptions exist only in the resume PDF.
+    // `bullets` is intentionally empty for this entry; do not add real copy.
+    bullets: [],
+    // Each inner array is one bullet; each number is a bar width (~char count of
+    // a "word"). Pure layout data -- carries zero information.
+    redactedBars: [
+      [10, 8, 9, 6, 7, 4, 9, 5],
+      [2, 4, 2, 5, 8, 11, 7, 6, 3],
+      [4, 5, 5, 6, 2, 9, 6, 8, 7],
+      [9, 4, 8, 7, 3, 8, 2, 7, 6, 5],
     ],
   },
   {

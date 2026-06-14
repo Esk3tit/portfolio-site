@@ -91,7 +91,9 @@ export function ExperienceSection() {
           {experiences.map((exp, i) => (
             <GlassPanel
               key={exp.company}
-              className={`experience-section__card px-5 py-6 sm:px-8 sm:py-8`}
+              className={`experience-section__card px-5 py-6 sm:px-8 sm:py-8${
+                exp.redacted ? " group/redaction" : ""
+              }`}
               rotate={i % 2 === 0 ? "0.5deg" : "-0.5deg"}
               tilt
             >
@@ -103,7 +105,19 @@ export function ExperienceSection() {
                 {exp.emoji}
               </GlassPanel>
 
-              <div className="ml-6">
+              {/* Black-ops watermark -- a ghostly shush rises into the card on hover */}
+              {exp.redacted && (
+                <span
+                  aria-hidden="true"
+                  className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center overflow-hidden select-none"
+                >
+                  <span className="translate-y-6 scale-90 text-[9rem] leading-none opacity-0 blur-[1px] transition-all duration-500 ease-out group-hover/redaction:translate-y-0 group-hover/redaction:scale-100 group-hover/redaction:opacity-[0.22] sm:text-[13rem]">
+                    {"\u{1F92B}"}
+                  </span>
+                </span>
+              )}
+
+              <div className="relative z-[1] ml-6">
                 <h3
                   className="text-xl font-bold"
                   style={{
@@ -128,21 +142,70 @@ export function ExperienceSection() {
                   {exp.dates}
                 </p>
 
-                <ul className="mt-4 flex flex-col gap-2">
-                  {exp.bullets.map((bullet) => (
-                    <li
-                      key={bullet}
-                      className="flex items-start gap-2 text-sm leading-relaxed"
-                      style={{ color: "var(--text-body)", transition: "color 0.35s ease" }}
+                {exp.redacted ? (
+                  <>
+                    <ul
+                      className="mt-4 flex flex-col gap-2"
+                      aria-label="Experience details redacted -- proprietary information withheld"
                     >
-                      <span
-                        className="mt-1.5 inline-block h-1.5 w-1.5 shrink-0 rounded-full"
-                        style={{ background: "var(--accent-pink)" }}
-                      />
-                      {bullet}
-                    </li>
-                  ))}
-                </ul>
+                      {(exp.redactedBars ?? []).map((bars, bi) => (
+                        <li
+                          key={bi}
+                          className="flex cursor-help items-start gap-2 text-sm leading-relaxed"
+                          title="Proprietary details withheld"
+                        >
+                          <span
+                            className="mt-1.5 inline-block h-1.5 w-1.5 shrink-0 rounded-full"
+                            style={{ background: "var(--accent-pink)" }}
+                          />
+                          {/*
+                            Solid black censor bars sized purely from numeric
+                            widths -- there is NO text node here at all, so no
+                            real (or placeholder) copy can be revealed, copied,
+                            or scraped from the DOM. Decorative + aria-hidden.
+                          */}
+                          <span
+                            aria-hidden="true"
+                            className="mt-0.5 flex flex-wrap items-center gap-x-1.5 gap-y-1"
+                          >
+                            {bars.map((w, wi) => (
+                              <span
+                                key={wi}
+                                className="inline-block h-[0.85em] select-none rounded-[3px] border border-white/20 bg-black ring-1 ring-black/40 dark:border-black/25 dark:bg-white/85 dark:ring-white/15"
+                                style={{ width: `${Math.max(2, w * 0.62).toFixed(2)}ch` }}
+                              />
+                            ))}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                    {exp.disclaimer && (
+                      <p
+                        className="mt-4 flex items-center gap-2 text-sm font-medium italic"
+                        style={{ color: "var(--text-secondary)", transition: "color 0.35s ease" }}
+                      >
+                        <span aria-hidden="true">{"\u{1F910}"}</span>
+                        {exp.disclaimer}
+                      </p>
+                    )}
+                  </>
+                ) : (
+                  <ul className="mt-4 flex flex-col gap-2">
+                    {exp.bullets.map((bullet, bi) => (
+                      <li
+                        key={bi}
+                        className="flex items-start gap-2 text-sm leading-relaxed"
+                        style={{ color: "var(--text-body)", transition: "color 0.35s ease" }}
+                      >
+                        <span
+                          className="mt-1.5 inline-block h-1.5 w-1.5 shrink-0 rounded-full"
+                          style={{ background: "var(--accent-pink)" }}
+                        />
+                        {bullet}
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
             </GlassPanel>
           ))}
