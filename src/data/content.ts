@@ -9,12 +9,18 @@ export interface Experience {
   dates: string;
   bullets: string[];
   emoji: string;
-  // When true, bullets are rendered as black-ops redaction bars. The strings in
-  // `bullets` are intentionally fake (lorem ipsum) so no real, sensitive copy is
-  // ever shipped to the browser/DOM. Real details live only in the resume PDF.
+  // When true, the experience is rendered as black-ops redaction bars driven by
+  // `redactedBars` (numeric widths only). `bullets` MUST be empty for redacted
+  // entries so no real/sensitive copy is ever shipped to the browser/DOM. Real
+  // details live only in the resume PDF.
   redacted?: boolean;
   // Visible note explaining why the section is blacked out (shown with 🤐).
   disclaimer?: string;
+  // For redacted entries: censor-bar layout as pure widths (approx character
+  // count per "word"), one inner array per bullet. No real text is ever
+  // rendered -- bars are sized purely from these numbers, so a sensitive string
+  // can never reach the DOM/bundle even by accident.
+  redactedBars?: number[][];
 }
 
 export interface Project {
@@ -93,16 +99,18 @@ export const experiences: Experience[] = [
     redacted: true,
     disclaimer:
       "Mum's the word -- technical details are limited to protect proprietary market strategy. The rules are strict, so my lips are sealed!",
-    // NOTE: These are deliberately fake placeholder strings. The real work
-    // descriptions are confidential and intentionally NOT included anywhere in
-    // the site source/DOM. They exist only in the redacted resume PDF. The UI
-    // covers these with solid black redaction bars; even revealed, they say
-    // nothing. Do not replace with real bullet copy.
-    bullets: [
-      "Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt",
-      "Ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea",
-      "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat",
-      "Excepteur sint occaecat cupidatat non proident sunt in culpa qui officia deserunt mollit",
+    // No real copy lives here. The redacted card renders solid black bars sized
+    // purely from `redactedBars` below -- there is NO text node to reveal, copy,
+    // or scrape. The actual descriptions exist only in the resume PDF.
+    // `bullets` is intentionally empty for this entry; do not add real copy.
+    bullets: [],
+    // Each inner array is one bullet; each number is a bar width (~char count of
+    // a "word"). Pure layout data -- carries zero information.
+    redactedBars: [
+      [10, 8, 9, 6, 7, 4, 9, 5],
+      [2, 4, 2, 5, 8, 11, 7, 6, 3],
+      [4, 5, 5, 6, 2, 9, 6, 8, 7],
+      [9, 4, 8, 7, 3, 8, 2, 7, 6, 5],
     ],
   },
   {

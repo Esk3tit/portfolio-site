@@ -146,9 +146,9 @@ export function ExperienceSection() {
                   <>
                     <ul
                       className="mt-4 flex flex-col gap-2"
-                      aria-label="Redacted experience details"
+                      aria-label="Experience details redacted -- proprietary information withheld"
                     >
-                      {exp.bullets.map((bullet, bi) => (
+                      {(exp.redactedBars ?? []).map((bars, bi) => (
                         <li
                           key={bi}
                           className="flex cursor-help items-start gap-2 text-sm leading-relaxed"
@@ -157,24 +157,22 @@ export function ExperienceSection() {
                             className="mt-1.5 inline-block h-1.5 w-1.5 shrink-0 rounded-full"
                             style={{ background: "var(--accent-pink)" }}
                           />
-                          <span className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
-                            <span className="sr-only">
-                              Redacted -- proprietary details withheld
-                            </span>
-                            {/*
-                              Each "word" is a solid black censor bar. The fake
-                              lorem text only sets the bar width; it is rendered
-                              transparent and aria-hidden so nothing meaningful
-                              is exposed to readers, the DOM, or assistive tech.
-                            */}
-                            {bullet.split(" ").map((word, wi) => (
+                          {/*
+                            Solid black censor bars sized purely from numeric
+                            widths -- there is NO text node here at all, so no
+                            real (or placeholder) copy can be revealed, copied,
+                            or scraped from the DOM. Decorative + aria-hidden.
+                          */}
+                          <span
+                            aria-hidden="true"
+                            className="mt-0.5 flex flex-wrap items-center gap-x-1.5 gap-y-1"
+                          >
+                            {bars.map((w, wi) => (
                               <span
                                 key={wi}
-                                aria-hidden="true"
-                                className="select-none rounded-[3px] border border-white/10 bg-black px-1 leading-none text-transparent"
-                              >
-                                {word}
-                              </span>
+                                className="inline-block h-[0.85em] select-none rounded-[3px] border border-white/10 bg-black"
+                                style={{ width: `${Math.max(2, w * 0.62).toFixed(2)}ch` }}
+                              />
                             ))}
                           </span>
                         </li>
@@ -192,9 +190,9 @@ export function ExperienceSection() {
                   </>
                 ) : (
                   <ul className="mt-4 flex flex-col gap-2">
-                    {exp.bullets.map((bullet) => (
+                    {exp.bullets.map((bullet, bi) => (
                       <li
-                        key={bullet}
+                        key={bi}
                         className="flex items-start gap-2 text-sm leading-relaxed"
                         style={{ color: "var(--text-body)", transition: "color 0.35s ease" }}
                       >
