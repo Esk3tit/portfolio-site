@@ -171,7 +171,7 @@ export function ExperienceSection() {
                             {bars.map((w, wi) => (
                               <span
                                 key={wi}
-                                className="inline-block h-[0.85em] select-none rounded-[3px] border border-white/20 bg-black ring-1 ring-black/40"
+                                className="inline-block h-[0.85em] select-none rounded-[3px] border border-white/20 bg-black ring-1 ring-black/40 dark:border-black/25 dark:bg-white/85 dark:ring-white/15"
                                 style={{ width: `${Math.max(2, w * 0.62).toFixed(2)}ch` }}
                               />
                             ))}
