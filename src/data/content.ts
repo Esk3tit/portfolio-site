@@ -91,7 +91,8 @@ export const experiences: Experience[] = [
     dates: "Oct 2025 -- Present",
     emoji: "\u{1F6E1}\uFE0F",
     redacted: true,
-    disclaimer: "Stealth startup -- full details available in my resume",
+    disclaimer:
+      "Mum's the word -- technical details are limited to protect proprietary market strategy. The rules are strict, so my lips are sealed!",
     // NOTE: These are deliberately fake placeholder strings. The real work
     // descriptions are confidential and intentionally NOT included anywhere in
     // the site source/DOM. They exist only in the redacted resume PDF. The UI

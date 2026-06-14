@@ -145,7 +145,7 @@ export function ExperienceSection() {
                           />
                           <span className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
                             <span className="sr-only">
-                              Redacted -- details available in resume
+                              Redacted -- proprietary details withheld
                             </span>
                             {/*
                               Each "word" is a solid black censor bar. The fake
