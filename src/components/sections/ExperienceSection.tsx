@@ -111,7 +111,7 @@ export function ExperienceSection() {
                   aria-hidden="true"
                   className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center overflow-hidden select-none"
                 >
-                  <span className="translate-y-6 scale-90 text-[9rem] leading-none opacity-0 blur-[1px] transition-all duration-500 ease-out group-hover/redaction:translate-y-0 group-hover/redaction:scale-100 group-hover/redaction:opacity-[0.13] sm:text-[13rem]">
+                  <span className="translate-y-6 scale-90 text-[9rem] leading-none opacity-0 blur-[1px] transition-all duration-500 ease-out group-hover/redaction:translate-y-0 group-hover/redaction:scale-100 group-hover/redaction:opacity-[0.22] sm:text-[13rem]">
                     {"\u{1F92B}"}
                   </span>
                 </span>
