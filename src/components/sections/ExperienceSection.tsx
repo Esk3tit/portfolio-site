@@ -152,6 +152,7 @@ export function ExperienceSection() {
                         <li
                           key={bi}
                           className="flex cursor-help items-start gap-2 text-sm leading-relaxed"
+                          title="Proprietary details withheld"
                         >
                           <span
                             className="mt-1.5 inline-block h-1.5 w-1.5 shrink-0 rounded-full"
@@ -170,7 +171,7 @@ export function ExperienceSection() {
                             {bars.map((w, wi) => (
                               <span
                                 key={wi}
-                                className="inline-block h-[0.85em] select-none rounded-[3px] border border-white/10 bg-black"
+                                className="inline-block h-[0.85em] select-none rounded-[3px] border border-white/20 bg-black ring-1 ring-black/40"
                                 style={{ width: `${Math.max(2, w * 0.62).toFixed(2)}ch` }}
                               />
                             ))}
