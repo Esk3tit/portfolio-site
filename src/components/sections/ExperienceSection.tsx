@@ -91,7 +91,9 @@ export function ExperienceSection() {
           {experiences.map((exp, i) => (
             <GlassPanel
               key={exp.company}
-              className={`experience-section__card px-5 py-6 sm:px-8 sm:py-8`}
+              className={`experience-section__card px-5 py-6 sm:px-8 sm:py-8${
+                exp.redacted ? " group/redaction" : ""
+              }`}
               rotate={i % 2 === 0 ? "0.5deg" : "-0.5deg"}
               tilt
             >
@@ -103,7 +105,19 @@ export function ExperienceSection() {
                 {exp.emoji}
               </GlassPanel>
 
-              <div className="ml-6">
+              {/* Black-ops watermark -- a ghostly shush rises into the card on hover */}
+              {exp.redacted && (
+                <span
+                  aria-hidden="true"
+                  className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center overflow-hidden select-none"
+                >
+                  <span className="translate-y-6 scale-90 text-[9rem] leading-none opacity-0 blur-[1px] transition-all duration-500 ease-out group-hover/redaction:translate-y-0 group-hover/redaction:scale-100 group-hover/redaction:opacity-[0.13] sm:text-[13rem]">
+                    {"\u{1F92B}"}
+                  </span>
+                </span>
+              )}
+
+              <div className="relative z-[1] ml-6">
                 <h3
                   className="text-xl font-bold"
                   style={{
@@ -137,7 +151,7 @@ export function ExperienceSection() {
                       {exp.bullets.map((bullet, bi) => (
                         <li
                           key={bi}
-                          className="group/redaction flex cursor-help items-start gap-2 text-sm leading-relaxed"
+                          className="flex cursor-help items-start gap-2 text-sm leading-relaxed"
                         >
                           <span
                             className="mt-1.5 inline-block h-1.5 w-1.5 shrink-0 rounded-full"
@@ -162,13 +176,6 @@ export function ExperienceSection() {
                                 {word}
                               </span>
                             ))}
-                            <span
-                              aria-hidden="true"
-                              title="Shhh..."
-                              className="pointer-events-none ml-1 text-base opacity-0 transition-opacity duration-200 group-hover/redaction:opacity-100"
-                            >
-                              {"\u{1F92B}"}
-                            </span>
                           </span>
                         </li>
                       ))}
