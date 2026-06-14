@@ -44,7 +44,13 @@ None.
 
 None -- all resolved during v4.3.
 
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+| 260614-rdt | Redact PromptArmor experience (black-ops UI) + swap to redacted Resume.pdf | 2026-06-14 | 90dc3fe | [260614-rdt-redact-promptarmor](./quick/260614-rdt-redact-promptarmor/) |
+
 ## Session Continuity
 
-Last session: 2026-03-09
-Stopped at: Milestone v4.3 archived
+Last session: 2026-06-14
+Stopped at: Quick task 260614-rdt complete -- PromptArmor section redacted, resume swapped
