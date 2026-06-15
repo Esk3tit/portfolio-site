@@ -49,8 +49,9 @@ None -- all resolved during v4.3.
 | # | Description | Date | Commit | Directory |
 |---|-------------|------|--------|-----------|
 | 260614-rdt | Redact PromptArmor experience (black-ops UI) + swap to redacted Resume.pdf | 2026-06-14 | 90dc3fe | [260614-rdt-redact-promptarmor](./quick/260614-rdt-redact-promptarmor/) |
+| 260614-abt | Rewrite "About Me" copy (What I Do / When I'm Not Coding) in casual, dry voice | 2026-06-14 | 09b9d42 | [260614-abt-rewrite-about-copy](./quick/260614-abt-rewrite-about-copy/) |
 
 ## Session Continuity
 
 Last session: 2026-06-14
-Stopped at: Quick task 260614-rdt complete -- PromptArmor section redacted, resume swapped
+Stopped at: Quick task 260614-abt complete -- About Me copy rewritten in casual voice
