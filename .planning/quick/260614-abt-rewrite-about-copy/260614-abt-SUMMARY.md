@@ -18,9 +18,11 @@ interesting things. I like picking up new tech and shipping useful stuff for me
 and my friends — and occasionally it even works on the first try. All that jazz."
 
 **When I'm Not Coding** — before: "geeking out over motion design… typography
-rabbit holes". After: "A little gaming, some chill-mode YouTube, and a healthy
-amount of movies. I'm a foodie who'll go out of my way for a good meal, then hit
-the gym and the trails to pretend it never happened. All that jazz ✨".
+rabbit holes". After: "Weekdays it's work, eat, gym, sleep, repeat. Come the
+weekend I participate in nerd emoji 🤓 activities: getting farmed like a vegetable
+in video games, brain-rotting on YouTube, binging movies, and hunting down new
+food spots like the foodie I am." ("all that jazz" dropped here so it appears
+only once, in What I Do.)
 
 ## Files
 
@@ -35,3 +37,8 @@ the gym and the trails to pretend it never happened. All that jazz ✨".
 
 Ran inline (no agent fleet) — a two-string copy rewrite with user-supplied voice
 doesn't benefit from the `--full` research/plan-check/verify pipeline.
+
+The "When I'm Not Coding" copy went through two in-PR revisions after the initial
+draft: (1) reworked into the weekday-loop / weekend bit and dropped the duplicate
+"all that jazz", then (2) the literal "nerd emoji 🤓 activities" phrasing. This
+summary reflects the final committed copy in `src/data/content.ts`.

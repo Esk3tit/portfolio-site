@@ -28,8 +28,10 @@ User-provided voice anchors:
 
 1. Rewrite `aboutPanels[0].content` ("What I Do") in the new voice — punchy,
    self-deprecating, ends on "All that jazz."
-2. Rewrite `aboutPanels[1].content` ("When I'm Not Coding") covering gaming,
-   YouTube, movies, food, gym/hiking — same tone.
+2. Rewrite `aboutPanels[1].content` ("When I'm Not Coding") covering the
+   weekday work/eat/gym/sleep loop and weekend "nerd emoji 🤓 activities"
+   (video games, YouTube, movies, food) — same tone, without reusing
+   "all that jazz" (kept only in What I Do).
 
 ## Verify
 
