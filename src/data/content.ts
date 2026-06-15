@@ -84,7 +84,7 @@ export const aboutPanels: AboutPanel[] = [
     emoji: "\u{1F3AE}",
     title: "When I'm Not Coding",
     content:
-      "Weekdays it's work, eat, gym, sleep, repeat. Come the weekend I switch to nerd mode: getting farmed like a vegetable in video games, brain-rotting on YouTube, binging movies, and hunting down new food spots like the foodie I am.",
+      "Weekdays it's work, eat, gym, sleep, repeat. Come the weekend I participate in nerd emoji \u{1F913} activities: getting farmed like a vegetable in video games, brain-rotting on YouTube, binging movies, and hunting down new food spots like the foodie I am.",
   },
 ];
 
