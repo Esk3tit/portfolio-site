@@ -78,13 +78,13 @@ export const aboutPanels: AboutPanel[] = [
     emoji: "\u{1F680}",
     title: "What I Do",
     content:
-      "I'm a developer obsessed with the intersection of engineering and design. I build interfaces that feel polished and effortless -- the kind where the tech disappears and the interaction just flows. From complex web apps to thoughtful component libraries, I bring an eye for detail and code that actually stands up over time.",
+      "I'm a developer who builds cool, interesting things. I like picking up new tech and shipping useful stuff for me and my friends -- and occasionally it even works on the first try. All that jazz.",
   },
   {
     emoji: "\u{1F3AE}",
     title: "When I'm Not Coding",
     content:
-      "You'll find me geeking out over motion design, fiddling with animation easing curves, or going down typography rabbit holes. I think the little moments of delight are what make software feel alive. Great software lives at the edge of engineering and aesthetics -- where performance meets polish \u2728",
+      "Weekdays it's work, eat, gym, sleep, repeat. Come the weekend I participate in nerd emoji \u{1F913} activities: getting farmed like a vegetable in video games, brain-rotting on YouTube, binging movies, and hunting down new food spots like the foodie I am.",
   },
 ];
 
